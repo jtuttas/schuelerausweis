@@ -2,7 +2,7 @@
 POST http://localhost:8080/login.html HTTP/1.1
 content-type: application/x-www-form-urlencoded
 
-user=tuttas&pwd=m0n1t0r
+user=tuttas&pwd=geheim
 
 ### Login Diklabu
 POST https://diklabu.mm-bbs.de:8080/Diklabu/api/v1/auth/login HTTP/1.1
