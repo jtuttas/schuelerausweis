@@ -109,9 +109,10 @@ app.post("/decode", function (req, res) {
         res.send('{"msg":"no key"}');
     }
 });
-// start the express server
-app.listen(port, function () {
-    // tslint:disable-next-line:no-console
-    console.log("server started at http://localhost:" + port);
+https_1.default.createServer({
+    key: fs_1.default.readFileSync('geheim/server.key'),
+    cert: fs_1.default.readFileSync('geheim/server.cert')
+}, app).listen(port, function () {
+    console.log("server started at https://localhost:" + port);
 });
 //# sourceMappingURL=index.js.map

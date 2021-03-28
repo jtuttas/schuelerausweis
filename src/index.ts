@@ -130,8 +130,10 @@ app.post("/decode", (req, res) => {
 });
 
 
-// start the express server
-app.listen(port, () => {
-    // tslint:disable-next-line:no-console
-    console.log(`server started at http://localhost:${port}`);
-});
+
+https.createServer({
+    key: fs.readFileSync('geheim/server.key'),
+    cert: fs.readFileSync('geheim/server.cert')
+}, app).listen(port, function () {
+        console.log(`server started at https://localhost:${port}`);
+    });
