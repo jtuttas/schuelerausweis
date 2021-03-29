@@ -1,5 +1,5 @@
 # elektronisch lesbarer Schülerausweis
-Der Ausweis enthält einen RSA verschlüsseltes JSON, welches wichtige Daten beinhaltet. Über eine spezielle Webapp kann der Ausweis ausgelesen werden. Exemplarisch finden Sie diese WebApp in einem Docker Container z.B. unter [https://https://130.61.61.100:8082/login.html](https://130.61.61.100:8082/login.html)!
+Der Ausweis enthält einen RSA verschlüsseltes JSON, welches wichtige Daten beinhaltet. Über eine spezielle Webapp kann der Ausweis ausgelesen werden. Exemplarisch finden Sie diese WebApp in einem Docker Container z.B. unter [https://130.61.61.100:8082/login.html](https://130.61.61.100:8082/login.html)!
 
 ## Beispiel
 ![qr](qrcode.png)

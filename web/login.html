@@ -44,15 +44,15 @@
         </header>
         <section id="formArea">
             <article>
-                <form id="input-form" class="form-signin">
+                <form method="POST" id="input-form" class="form-signin" action="/log">
                     <div class="form-group">
                     <label for="inputName" class="sr-only">Name</label>
-                    <input type="name" id="inputName" class="form-control" placeholder="Name" aria-describedby="inputNameFeedback" required
+                    <input name="user" type="name" id="inputName" class="form-control" placeholder="Name" aria-describedby="inputNameFeedback" required
                         autofocus>
                     </div>
                         <div class="form-group">
                             <label for="inputPW"class="sr-only">Passwort</label>
-                            <input type="password" class="form-control" id="inputPW" placeholder="Passwort">
+                            <input name="pwd" type="password" class="form-control" id="inputPW" placeholder="Passwort">
                           </div>
                     <button id="s1" class="btn btn-block btn-lg btn-primary">Absenden</button>        
                 </form>
