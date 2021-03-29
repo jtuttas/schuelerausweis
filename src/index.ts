@@ -13,7 +13,7 @@ keys.push("geheim");
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 
-let rsakey = fs.readFileSync("geheim/ausweis.private");
+let rsakey = fs.readFileSync("config/ausweis.private");
 const key = new nodeRSA(rsakey);
 
 const app = express();
@@ -132,8 +132,8 @@ app.post("/decode", (req, res) => {
 
 
 https.createServer({
-    key: fs.readFileSync('geheim/server.key'),
-    cert: fs.readFileSync('geheim/server.cert')
+    key: fs.readFileSync('config/server.key'),
+    cert: fs.readFileSync('config/server.cert')
 }, app).listen(port, function () {
         console.log(`server started at https://localhost:${port}`);
     });

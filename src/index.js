@@ -11,7 +11,7 @@ var keys = [];
 // Für Testzwecke
 keys.push("geheim");
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-var rsakey = fs_1.default.readFileSync("geheim/ausweis.private");
+var rsakey = fs_1.default.readFileSync("config/ausweis.private");
 var key = new node_rsa_1.default(rsakey);
 var app = express_1.default();
 var port = 8080; // default port to listen
@@ -110,8 +110,8 @@ app.post("/decode", function (req, res) {
     }
 });
 https_1.default.createServer({
-    key: fs_1.default.readFileSync('geheim/server.key'),
-    cert: fs_1.default.readFileSync('geheim/server.cert')
+    key: fs_1.default.readFileSync('config/server.key'),
+    cert: fs_1.default.readFileSync('config/server.cert')
 }, app).listen(port, function () {
     console.log("server started at https://localhost:" + port);
 });
