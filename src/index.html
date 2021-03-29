@@ -10,6 +10,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="/js/jsQR.js"></script>
+    <style>
+        .err {
+            color: red;
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>
@@ -19,11 +25,32 @@
         req.send(null);
         var key = req.getResponseHeader("key");
         console.log('key:' + key);
+
+        var selectedDevice = "";
     </script>
     <h1>MMBbS Schülerausweis Scanner</h1>
-    <h3>Angemeldet als <!--name--></h3>
+    <h3>Angemeldet als
+        <!--name-->
+    </h3>
+    <div class="row">
+
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Video Source
+                    <span class="caret"></span></button>
+                <ul id="videosources" class="dropdown-menu">
+                </ul>
+            </div>
+        </div>
+
+    </div>
     <div id="loadingMessage">🎥 Unable to access video stream (please make sure you have a webcam enabled)</div>
     <canvas id="canvas" hidden></canvas>
+    <div id="errorMessage">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <p class="err" id="error"></p>
+        </div>
+    </div>
     <div id="results" class="row" hidden>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <table class="table">
@@ -60,9 +87,9 @@
                     </tr>
                 </tbody>
             </table>
-            
+
             <button id="scan" type="button" class="btn btn-danger">Scan</button>
-            
+
         </div>
 
     </div>
@@ -71,7 +98,44 @@
         var canvasElement = document.getElementById("canvas");
         var canvas = canvasElement.getContext("2d");
         var loadingMessage = document.getElementById("loadingMessage");
-        var stopTicker=false;
+        var stopTicker = false;
+
+        navigator.mediaDevices.enumerateDevices().then(function (devices) {
+            for (var i = 0; i < devices.length; i++) {
+                var device = devices[i];
+                if (device.kind === 'videoinput') {
+                    if (selectedDevice == "") {
+                        selectedDevice = device.deviceId;
+                    }
+                    console.log('Device ' + device.label + "  id=" + device.deviceId);
+                    $("#videosources").append('<li><a href="#" devid="' + device.deviceId + '" >' + device.label || 'camera ' + (i + 1) + '</a></li>');
+                    /*
+                    var option = document.createElement('option');
+                    option.value = device.deviceId;
+                    option.text = device.label || 'camera ' + (i + 1);
+                    document.querySelector('select#videoSource').appendChild(option);
+                    */
+                }
+            };
+            navigator.mediaDevices.getUserMedia({ video: { deviceId: selectedDevice } }).then(function (stream) {
+                video.srcObject = stream;
+                video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
+                video.play();
+                requestAnimationFrame(tick);
+            });
+
+            $(".dropdown-menu li a").click(function () {
+                selectedDevice = $(this).attr("devid");
+                console.log('Selected: ' + $(this).text() + " ID=" + selectedDevice);
+                navigator.mediaDevices.getUserMedia({ video: { deviceId: selectedDevice } }).then(function (stream) {
+                    video.srcObject = stream;
+                    video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
+                    video.play();
+                    requestAnimationFrame(tick);
+                });
+            });
+
+        });
 
         function drawLine(begin, end, color) {
             canvas.beginPath();
@@ -82,14 +146,17 @@
             canvas.stroke();
         }
 
+
         // Use facingMode: environment to attemt to get the front camera on phones
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function (stream) {
+        /*
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: selectedDevice } }).then(function (stream) {
+
             video.srcObject = stream;
             video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
             video.play();
             requestAnimationFrame(tick);
         });
-
+        */
         function tick() {
             loadingMessage.innerText = "⌛ Loading video..."
             if (video.readyState === video.HAVE_ENOUGH_DATA) {
@@ -109,7 +176,8 @@
                     drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
                     drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
                     console.log('QR read:' + code.data);
-                    stopTicker=true;
+                    stopTicker = true;
+                    $("#errorMessage").hide();
                     data = {
                         id: code.data
                     }
@@ -136,25 +204,34 @@
                             },
                             error: function (xhr, status, error) {
                                 var err = eval("(" + xhr.responseText + ")");
-                                console.log('Error:' + err.Message);
-                                stopTicker=false;
+                                console.log('Error:' + error.Message);
+                                stopTicker = false;
+                                $("#errorMessage").show();
+                                $("#error").text("Invalid QR Code");
                                 //alert(err.Message);
                             }
                         })
-                } 
+                }
+                else {
+                    $("#error").text("No QR Code found");
+                }
             }
-            if (stopTicker==false) {
+            if (stopTicker == false) {
                 requestAnimationFrame(tick);
             }
         }
 
-        $("#scan").click(function (e) { 
-            stopTicker=false;
+        $("#scan").click(function (e) {
+            stopTicker = false;
             canvasElement.hidden = false;
+            $("#errorMessage").show();
             $("#results").hide();
             requestAnimationFrame(tick);
-            
+
         });
+
+
+
     </script>
 </body>
 
