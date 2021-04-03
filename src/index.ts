@@ -27,6 +27,36 @@ app.use(express.urlencoded({ extended: true }));
 
 let obj;
 
+app.get("/validate", (req, res) => {
+    
+    // render the index template
+    let s: string = fs.readFileSync('src/validate.html', 'utf8');
+    
+    if (req.query.id) {
+        let sid: string = req.query.id.toString();
+        console.log("ID="+sid);
+        try {
+            let decrypted = key.decrypt(req.query.id.toString(), 'utf8');
+            console.log("Decrypted:" + decrypted);
+            let obj:ID = JSON.parse(decrypted);
+            s = s.replace("<!--result-->", "Der Schülerausweis ist gültig!");
+            s=s.replace("<!--date-->","Gültig bis "+obj.v);
+        }
+        catch (error) {
+            console.log(error);
+            
+            s = s.replace("<!--result-->", "Der Schülerausweis ist ungültig!");
+        }
+    }
+    else {
+        console.log("No ID Parameter");
+        s=s.replace("<!--result-->","Der Schülerausweis ist ungültig (missing ID Parameter)");
+    }
+    res.statusCode = 401;
+    res.send(s);
+});
+
+
 // define a route handler for the default home page
 app.get("/log", (req, res) => {
     // render the index template

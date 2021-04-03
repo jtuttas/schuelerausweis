@@ -15,10 +15,14 @@ content-type: application/json
 }
 
 ### Decode an id
-POST http://localhost:8080/decode HTTP/1.1
+POST https://localhost:8080/decode HTTP/1.1
 content-type: application/json
 key: geheim
 
 {
     "id":"WAR0VqblXDWuRWPmKkpXFMF+5Td79aqS/zurmp9Cnz2P7B8Zx7SZmPkb338P4Mv9Kp5v4Dt/caQJ2541uD9e+5YCuIlgtA98422AROL/kqBwJcgIqYRPIxhrArVRtiZfJ1G26gPld5wGPGiItAldNvohSO/PInOIkso1bUpzC5FdSnBgSaF9FFY03foqK0/I1iXMZvEBxAg9w50GACcj6MHc2ZExMu32AFiA3qXLop2cvisIATi/b732HtqSxHRsERHBKFfbSziuAyF+iMzNRlzhBu0o5NG+7IWkklzo3ddsERfliae9O7bH+1JxuIx3Eteg8RbkzKMkq48ReP6MbA=="
 }
+
+### Validate id
+GET https://localhost:8080/validate?id=WAR0VqblXDWuRWPmKkpXFMF%2B5Td79aqS/zurmp9Cnz2P7B8Zx7SZmPkb338P4Mv9Kp5v4Dt/caQJ2541uD9e%2B5YCuIlgtA98422AROL/kqBwJcgIqYRPIxhrArVRtiZfJ1G26gPld5wGPGiItAldNvohSO/PInOIkso1bUpzC5FdSnBgSaF9FFY03foqK0/I1iXMZvEBxAg9w50GACcj6MHc2ZExMu32AFiA3qXLop2cvisIATi/b732HtqSxHRsERHBKFfbSziuAyF%2BiMzNRlzhBu0o5NG%2B7IWkklzo3ddsERfliae9O7bH%2B1JxuIx3Eteg8RbkzKMkq48ReP6MbA== HTTP/1.1
+content-type: text/html
