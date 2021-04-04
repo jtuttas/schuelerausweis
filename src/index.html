@@ -178,8 +178,13 @@
                     console.log('QR read:' + code.data);
                     stopTicker = true;
                     $("#errorMessage").hide();
+                    rsaid = ""+code.data
+                    rsaid=rsaid.substring(rsaid.indexOf("?id=")+4);
+                    rsaid = decodeURI(rsaid);
+                    rsaid=rsaid.replaceAll("%2B","+");
+                    console.log('RSAID:'+rsaid);
                     data = {
-                        id: code.data
+                        id: rsaid
                     }
                     $.ajax
                         ({

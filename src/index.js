@@ -120,6 +120,7 @@ app.post("/decode", function (req, res) {
                 res.json(JSON.parse(decrypted));
             }
             catch (error) {
+                console.log(error);
                 res.statusCode = 401;
                 res.send('{"msg":"error decrypt key"}');
             }

@@ -17,7 +17,7 @@ class StudentId
         $data1 = $enc.GetBytes($str) 
         $endcrypt = $rsa.Encrypt($data1,$true)
         $encString=[System.Convert]::ToBase64String($endcrypt)
-        #$encString=$encString.Replace("+","%2B")
+        $encString=$encString.Replace("+","%2B")
         Write-Verbose "RSA Encrypted: $encString"  
         return $encString                          
     }
@@ -167,9 +167,10 @@ function Print-IDCard
         $cell.Select()
             
         $rsaString = $student.getRSA($rsakey)
+        $rsaString="https://130.61.61.100:8082/validate?id="+$rsaString        
         $rsaString= $student.urlDecode($rsaString)
-        $rsaString="https://localhost/validate?id="+$rsaString        
         Write-Verbose "Get QR Code vor:$rsaString"
+        
         $qr = Get-QRCode $rsaString
         #$qr = "$env:TEMP/QRCode2.png"
         
