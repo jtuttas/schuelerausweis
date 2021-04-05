@@ -39,7 +39,7 @@ app.get("/validate", (req, res) => {
             let decrypted = key.decrypt(req.query.id.toString(), 'utf8');
             console.log("Decrypted:" + decrypted);
             let obj:ID = JSON.parse(decrypted);
-            let rs: string = fs.readFileSync('src/result.html', 'utf8');
+            let rs: string = fs.readFileSync('src/valid.html', 'utf8');
             rs = rs.replace("<!--nachname-->", obj.nn);
             rs = rs.replace("<!--vorname-->", obj.vn);
             rs = rs.replace("<!--klasse-->", obj.kl);
@@ -48,13 +48,16 @@ app.get("/validate", (req, res) => {
         }
         catch (error) {
             console.log(error);
-            
-            s = s.replace("<!--result-->", "<p style=\"color: red;\">Der Schülerausweis ist ungültig!</p><img src=\"invalid.png\">");
+            let rs: string = fs.readFileSync('src/invalid.html', 'utf8');
+            rs = rs.replace("<!--comment-->", "Der Schülerausweis ist ungültig!");
+            s = s.replace("<!--result-->", rs);
         }
     }
     else {
         console.log("No ID Parameter");
-        s = s.replace("<!--result-->","<p style=\"color: red;\">Der Schülerausweis ist ungültig (missing ID Parameter)</p><img src=\"invalid.png\">");
+        let rs: string = fs.readFileSync('src/invalid.html', 'utf8');
+        rs = rs.replace("<!--comment-->", "Der Schülerausweis ist ungültig! (missing id Parameter!)");
+        s = s.replace("<!--result-->", rs);
     }
     res.statusCode = 200;
     res.send(s);
