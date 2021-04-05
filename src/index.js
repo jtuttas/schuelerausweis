@@ -30,8 +30,12 @@ app.get("/validate", function (req, res) {
             var decrypted = key.decrypt(req.query.id.toString(), 'utf8');
             console.log("Decrypted:" + decrypted);
             var obj_1 = JSON.parse(decrypted);
-            s = s.replace("<!--result-->", "<p style=\"color: green;\">Der Schülerausweis ist gültig!</p>");
-            s = s.replace("<!--date-->", "Gültig bis " + obj_1.v);
+            var rs = fs_1.default.readFileSync('src/result.html', 'utf8');
+            rs = rs.replace("<!--nachname-->", obj_1.nn);
+            rs = rs.replace("<!--vorname-->", obj_1.vn);
+            rs = rs.replace("<!--klasse-->", obj_1.kl);
+            rs = rs.replace("<!--date-->", obj_1.v);
+            s = s.replace("<!--result-->", rs);
         }
         catch (error) {
             console.log(error);
