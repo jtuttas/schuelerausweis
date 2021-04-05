@@ -45,12 +45,12 @@ app.get("/validate", (req, res) => {
         catch (error) {
             console.log(error);
             
-            s = s.replace("<!--result-->", "<p style=\"color: red;\"Der Schülerausweis ist ungültig!</p>");
+            s = s.replace("<!--result-->", "<p style=\"color: red;\">Der Schülerausweis ist ungültig!</p>");
         }
     }
     else {
         console.log("No ID Parameter");
-        s = s.replace("<!--result-->","<p style=\"color: red;\"Der Schülerausweis ist ungültig (missing ID Parameter)</p>");
+        s = s.replace("<!--result-->","<p style=\"color: red;\">Der Schülerausweis ist ungültig (missing ID Parameter)</p>");
     }
     res.statusCode = 200;
     res.send(s);
