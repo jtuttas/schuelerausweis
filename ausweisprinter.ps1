@@ -1,4 +1,12 @@
-﻿# Klasse definieren
+﻿class execlRow {
+    [string] $nachname=""
+    [string] $vorname=""
+    [string] $klasse=""
+    [string] $gültigkeit=""
+    [string] $qr=""
+}
+
+# Klasse definieren
 class StudentId
 {
     [string] $nn=""
@@ -167,7 +175,7 @@ function Print-IDCard
         $cell.Select()
             
         $rsaString = $student.getRSA($rsakey)
-        $rsaString="https://130.61.61.100:8082/validate?id="+$rsaString        
+        $rsaString="http://ausweis.joerg-tuttas.de/validate?id="+$rsaString        
         $rsaString= $student.urlDecode($rsaString)
         Write-Verbose "Get QR Code vor:$rsaString"
         
@@ -197,7 +205,7 @@ function Print-IDCard
 
 
 
-
+<#
 $student=New-Object StudentId;
 $student.nn="Mustermann"
 $student.vn="Max"
@@ -218,3 +226,47 @@ $student2.v="2021-08-01"
 
 $student,$student2,$student2 | Print-IDCard -Verbose
 
+#>
+Import-Module diklabu
+Get-Keystore $HOME\diklabu-scharf.json
+
+
+$rsakey = Get-Content D:\Temp\Schülerausweis\config\ausweis.xml
+Login-Diklabu
+$courses = Get-Courses
+$rows=@()
+foreach ($course in $courses) {
+    #$members = Get-Coursemember -id $course.id 
+    $members = Get-Coursemember -id 3085
+    foreach($m in $members) {
+        if ($m.ABGANG -eq "N") {
+            
+            Write-Host $m
+
+            $student=New-Object StudentId;
+            $student.nn=$m.NNAME
+            $student.vn=$m.VNAME
+            $student.em=$m.EMAIL
+            $student.kl=$course.KNAME
+            $student.did=$m.id
+            $student.gd=$m.GEBDAT
+            $student.v="2021-08-01"
+
+            $row = New-Object execlRow
+            $row.gültigkeit=$student.v
+            $row.klasse=$student.kl
+            $row.nachname=$student.nn
+            $row.vorname=$student.vn
+            $rsaString = $student.getRSA($rsakey)
+            #$rsaString= $student.urlDecode($rsaString)
+            $rsaString="http://ausweis.joerg-tuttas.de/validate?id="+$rsaString        
+            $row.qr=$rsaString
+            $rows+=$row
+
+            
+        }
+    } 
+
+    break; 
+}
+$rows | Export-Excel

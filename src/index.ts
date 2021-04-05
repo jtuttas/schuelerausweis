@@ -39,20 +39,20 @@ app.get("/validate", (req, res) => {
             let decrypted = key.decrypt(req.query.id.toString(), 'utf8');
             console.log("Decrypted:" + decrypted);
             let obj:ID = JSON.parse(decrypted);
-            s = s.replace("<!--result-->", "Der Schülerausweis ist gültig!");
+            s = s.replace("<!--result-->", "<p style=\"color: green;\">Der Schülerausweis ist gültig!</p>");
             s=s.replace("<!--date-->","Gültig bis "+obj.v);
         }
         catch (error) {
             console.log(error);
             
-            s = s.replace("<!--result-->", "Der Schülerausweis ist ungültig!");
+            s = s.replace("<!--result-->", "<p style=\"color: red;\"Der Schülerausweis ist ungültig!</p>");
         }
     }
     else {
         console.log("No ID Parameter");
-        s=s.replace("<!--result-->","Der Schülerausweis ist ungültig (missing ID Parameter)");
+        s = s.replace("<!--result-->","<p style=\"color: red;\"Der Schülerausweis ist ungültig (missing ID Parameter)</p>");
     }
-    res.statusCode = 401;
+    res.statusCode = 200;
     res.send(s);
 });
 
