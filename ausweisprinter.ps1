@@ -15,7 +15,8 @@ class StudentId
     [string] $em=""
     [string] $v=""
     [string] $gd=""
-    [int] $did
+    [int] $did=0
+    [int] $bpid=0
 
     [string] getRSA([string]$xmlkey) {
         $rsa = New-Object -TypeName System.Security.Cryptography.RSACryptoServiceProvider
@@ -236,8 +237,8 @@ Login-Diklabu
 $courses = Get-Courses
 $rows=@()
 foreach ($course in $courses) {
-    #$members = Get-Coursemember -id $course.id 
-    $members = Get-Coursemember -id 3085
+    $members = Get-Coursemember -id $course.id 
+    #$members = Get-Coursemember -id 3085
     foreach($m in $members) {
         if ($m.ABGANG -eq "N") {
             
@@ -249,6 +250,7 @@ foreach ($course in $courses) {
             $student.em=$m.EMAIL
             $student.kl=$course.KNAME
             $student.did=$m.id
+            $student.bpid=$m.ID_MMBBS
             $student.gd=$m.GEBDAT
             $student.v="2021-08-01"
 
@@ -265,8 +267,6 @@ foreach ($course in $courses) {
 
             
         }
-    } 
-
-    break; 
+    }     
 }
 $rows | Export-Excel

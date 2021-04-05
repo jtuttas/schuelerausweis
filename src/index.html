@@ -70,10 +70,6 @@
                         <td id="klasse"></td>
                     </tr>
                     <tr>
-                        <th scope="row">EMail</th>
-                        <td id="email"></td>
-                    </tr>
-                    <tr>
                         <th scope="row">Geburtsdatum</th>
                         <td id="gebdat"></td>
                     </tr>
@@ -84,6 +80,10 @@
                     <tr>
                         <th scope="row">Diklabu ID</th>
                         <td id="did"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">BBS Planung ID</th>
+                        <td id="bpid"></td>
                     </tr>
                 </tbody>
             </table>
@@ -202,10 +202,11 @@
                                 $("#results").show();
                                 $("#name").text(e.vn + " " + e.nn);
                                 $("#klasse").text(e.kl);
-                                $("#email").text(e.em);
+                                //$("#email").text(e.em);
                                 $("#gebdat").text(e.gd);
                                 $("#gdat").text(e.v);
                                 $("#did").text(e.did);
+                                $("#bpid").text(e.bpid);
                             },
                             error: function (xhr, status, error) {
                                 var err = eval("(" + xhr.responseText + ")");

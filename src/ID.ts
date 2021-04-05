@@ -6,11 +6,13 @@ export class ID {
     // Klasse
     kl:string;
     // EMail
-    em:string;
+    //em:string;
     // Gültigkeitsdatum
     v:string;
     // Geburtsdatum
     gd:string;
     // Diklabuid
     did:number;
+    // BBS Planung ID
+    bpid: number;
 }
