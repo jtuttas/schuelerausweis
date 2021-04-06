@@ -205,6 +205,7 @@
                                 $("#klasse").text(e.kl);
                                 //$("#email").text(e.em);
                                 
+                                $("#gebdat").empty();
                                 if (underage(e.gd)) {
                                     $("#gebdat").append('<p style="color:red;">'+e.gd+' (minderjährig)</p>');
                                 }
@@ -213,11 +214,12 @@
 
                                 }
                                 
+                                $("#gdat").empty()
                                 if (expired(e.v)) {
                                     $("#gdat").append('<p style="color:red;">' + e.v + ' (abgelaufen)</p>');
                                 }
                                 else {
-                                    $("#gdat").text(e.v);
+                                    $("#gdat").append('<p style="color:green;">' + e.v + ' (gültig)</p>');
                                 }
                                 $("#did").text(e.did);
                                 $("#bpid").text(e.bpid);
