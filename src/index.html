@@ -10,6 +10,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="/js/jsQR.js"></script>
+    <script src="/js/service.js"></script>
     <style>
         .err {
             color: red;
@@ -203,8 +204,21 @@
                                 $("#name").text(e.vn + " " + e.nn);
                                 $("#klasse").text(e.kl);
                                 //$("#email").text(e.em);
-                                $("#gebdat").text(e.gd);
-                                $("#gdat").text(e.v);
+                                
+                                if (underage(e.gd)) {
+                                    $("#gebdat").append('<p style="color:red;">'+e.gd+' (minderjährig)</p>');
+                                }
+                                else {
+                                    $("#gebdat").append('<p style="color:green;">'+e.gd+' (volljährig)</p>');
+
+                                }
+                                
+                                if (expired(e.v)) {
+                                    $("#gdat").append('<p style="color:red;">' + e.v + ' (abgelaufen)</p>');
+                                }
+                                else {
+                                    $("#gdat").text(e.v);
+                                }
                                 $("#did").text(e.did);
                                 $("#bpid").text(e.bpid);
                             },

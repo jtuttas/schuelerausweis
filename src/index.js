@@ -20,6 +20,26 @@ app.use(express_1.default.static(__dirname + '/../web'));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 var obj;
+function underage(dateString) {
+    var d = new Date();
+    d.setFullYear(d.getFullYear() - 18);
+    d.setHours(0, 0, 0);
+    //console.log('Date:'+d);
+    if (d > new Date(dateString)) {
+        //console.log('Volljährig');
+        return false;
+    }
+    //console.log('Minderjährig');
+    return true;
+}
+function expired(dateString) {
+    if (new Date(dateString) > new Date()) {
+        //console.log("valid");
+        return false;
+    }
+    //console.log("expired");
+    return true;
+}
 app.get("/validate", function (req, res) {
     // render the index template
     var s = fs_1.default.readFileSync('src/validate.html', 'utf8');
@@ -30,12 +50,25 @@ app.get("/validate", function (req, res) {
             var decrypted = key.decrypt(req.query.id.toString(), 'utf8');
             console.log("Decrypted:" + decrypted);
             var obj_1 = JSON.parse(decrypted);
-            var rs = fs_1.default.readFileSync('src/valid.html', 'utf8');
-            rs = rs.replace("<!--nachname-->", obj_1.nn);
-            rs = rs.replace("<!--vorname-->", obj_1.vn);
-            rs = rs.replace("<!--klasse-->", obj_1.kl);
-            rs = rs.replace("<!--date-->", obj_1.v);
-            s = s.replace("<!--result-->", rs);
+            if (expired(obj_1.v)) {
+                var rs = fs_1.default.readFileSync('src/invalid.html', 'utf8');
+                rs = rs.replace("<!--comment-->", "Der Schülerausweis ist ungültig (Gültigkeitsdauer überschritten)!");
+                s = s.replace("<!--result-->", rs);
+            }
+            else {
+                var rs = fs_1.default.readFileSync('src/valid.html', 'utf8');
+                if (underage(obj_1.gd)) {
+                    rs = rs.replace("<!--underage-->", "<p style=\"color:red\">minderjährig</p>");
+                }
+                else {
+                    rs = rs.replace("<!--underage-->", "<p style=\"color:green\">volljährig</p>");
+                }
+                rs = rs.replace("<!--nachname-->", obj_1.nn);
+                rs = rs.replace("<!--vorname-->", obj_1.vn);
+                rs = rs.replace("<!--klasse-->", obj_1.kl);
+                rs = rs.replace("<!--date-->", obj_1.v);
+                s = s.replace("<!--result-->", rs);
+            }
         }
         catch (error) {
             console.log(error);
