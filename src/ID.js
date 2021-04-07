@@ -37,8 +37,12 @@ var ID = /** @class */ (function () {
                     var buffer = Buffer.from(d);
                     var str = iconv_lite_1.default.decode(buffer, 'iso-8859-1');
                     console.log("data:" + str);
-                    var obj = JSON.parse(str);
-                    resolve(JSON.parse(str));
+                    try {
+                        resolve(JSON.parse(str));
+                    }
+                    catch (_a) {
+                        resolve(JSON.parse("{}"));
+                    }
                 });
                 res.on('error', function (err) {
                     console.log("err:" + err);
