@@ -71,6 +71,10 @@
                         <td id="klasse"></td>
                     </tr>
                     <tr>
+                        <th scope="row">EMail</th>
+                        <td id="email"></td>
+                    </tr>
+                    <tr>
                         <th scope="row">Geburtsdatum</th>
                         <td id="gebdat"></td>
                     </tr>
@@ -86,6 +90,19 @@
                         <th scope="row">BBS Planung ID</th>
                         <td id="bpid"></td>
                     </tr>
+                    <tr>
+                        <th scope="row">Abgang</th>
+                        <td id="abgang"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Betrieb</th>
+                        <td id="betrieb"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Ausbilder</th>
+                        <td id="ausbilder"></td>
+                    </tr>
+
                 </tbody>
             </table>
 
@@ -179,11 +196,11 @@
                     console.log('QR read:' + code.data);
                     stopTicker = true;
                     $("#errorMessage").hide();
-                    rsaid = ""+code.data
-                    rsaid=rsaid.substring(rsaid.indexOf("?id=")+4);
+                    rsaid = "" + code.data
+                    rsaid = rsaid.substring(rsaid.indexOf("?id=") + 4);
                     rsaid = decodeURI(rsaid);
-                    rsaid=rsaid.replaceAll("%2B","+");
-                    console.log('RSAID:'+rsaid);
+                    rsaid = rsaid.replaceAll("%2B", "+");
+                    console.log('RSAID:' + rsaid);
                     data = {
                         id: rsaid
                     }
@@ -201,28 +218,50 @@
                             success: function (e) {
                                 canvasElement.hidden = true;
                                 $("#results").show();
-                                $("#name").text(e.vn + " " + e.nn);
-                                $("#klasse").text(e.kl);
-                                //$("#email").text(e.em);
-                                
+                                $("#name").text(e.idcard.vn + " " + e.idcard.nn);
+                                $("#klasse").text(e.idcard.kl);
+
+                                $("#email").empty();
+                                if (e.hasOwnProperty("email")) {
+                                    $("#email").append('<p><a href="mailto:' + e.email + '">' + e.email + '</a></p>');
+                                }
+
                                 $("#gebdat").empty();
-                                if (underage(e.gd)) {
-                                    $("#gebdat").append('<p style="color:red;">'+e.gd+' (minderjährig)</p>');
+                                if (underage(e.idcard.gd)) {
+                                    $("#gebdat").append('<p style="color:red;">' + e.idcard.gd + ' (minderjährig)</p>');
                                 }
                                 else {
-                                    $("#gebdat").append('<p style="color:green;">'+e.gd+' (volljährig)</p>');
+                                    $("#gebdat").append('<p style="color:green;">' + e.idcard.gd + ' (volljährig)</p>');
 
                                 }
-                                
+
                                 $("#gdat").empty()
-                                if (expired(e.v)) {
-                                    $("#gdat").append('<p style="color:red;">' + e.v + ' (abgelaufen)</p>');
+                                if (expired(e.idcard.v)) {
+                                    $("#gdat").append('<p style="color:red;">' + e.idcard.v + ' (abgelaufen)</p>');
                                 }
                                 else {
-                                    $("#gdat").append('<p style="color:green;">' + e.v + ' (gültig)</p>');
+                                    $("#gdat").append('<p style="color:green;">' + e.idcard.v + ' (gültig)</p>');
                                 }
-                                $("#did").text(e.did);
-                                $("#bpid").text(e.bpid);
+                                $("#did").text(e.idcard.did);
+                                $("#bpid").text(e.idcard.bpid);
+
+                                if (e.hasOwnProperty("abgang")) {
+                                    $("#abgang").text(e.abgang);
+                                }
+
+
+                                $("#betrieb").empty();
+                                if (e.hasOwnProperty("abgang")) {
+                                    $("#betrieb").append('<p>' + e.betrieb.NAME + '</p>');
+                                    $("#betrieb").append('<p>' + e.betrieb.STRASSE + '</p>');
+                                    $("#betrieb").append('<p>' + e.betrieb.PLZ + '&nbsp;' + e.betrieb.ORT + '</p>');
+                                }
+
+                                if (e.hasOwnProperty("ausbilder")) {
+                                    $("#ausbilder").empty();
+                                    $("#ausbilder").append('<p>' + e.ausbilder.NNAME + '</p>');
+                                    $("#ausbilder").append('<p><a href="mailto:' + e.ausbilder.EMAIL + '">' + e.ausbilder.EMAIL + '</p>');
+                                }
                             },
                             error: function (xhr, status, error) {
                                 var err = eval("(" + xhr.responseText + ")");

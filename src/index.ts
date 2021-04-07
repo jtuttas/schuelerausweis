@@ -5,6 +5,7 @@ import { ID } from "./ID";
 import fs from 'fs';
 import nodeRSA from 'node-rsa';
 import https from "https";
+import { Student } from "./Student";
 
 var keys=[];
 
@@ -182,8 +183,17 @@ app.post("/decode", (req, res) => {
             try {
                 res.statusCode = 200;
                 let decrypted = key.decrypt(req.body.id, 'utf8');
-                console.log("Decrypted:" + decrypted);
-                res.json(JSON.parse(decrypted));
+                console.log("Decrypted:"+decrypted);
+                
+                let idcard:ID=new ID(decrypted);                
+                idcard.getStudent(req.headers.key.toString()).then((s: Student) => {
+                    //console.log("Result Betrieb" + s.betrieb.NAME);
+                    s.idcard=idcard;
+                    res.json(s);
+                }).catch(err => {
+                    console.log("Error: " + err);
+                    res.json(err);
+                });
             }
             catch (error) {
                 console.log(error);

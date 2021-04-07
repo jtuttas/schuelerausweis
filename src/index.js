@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
+var ID_1 = require("./ID");
 var fs_1 = __importDefault(require("fs"));
 var node_rsa_1 = __importDefault(require("node-rsa"));
 var https_1 = __importDefault(require("https"));
@@ -158,7 +159,15 @@ app.post("/decode", function (req, res) {
                 res.statusCode = 200;
                 var decrypted = key.decrypt(req.body.id, 'utf8');
                 console.log("Decrypted:" + decrypted);
-                res.json(JSON.parse(decrypted));
+                var idcard_1 = new ID_1.ID(decrypted);
+                idcard_1.getStudent(req.headers.key.toString()).then(function (s) {
+                    //console.log("Result Betrieb" + s.betrieb.NAME);
+                    s.idcard = idcard_1;
+                    res.json(s);
+                }).catch(function (err) {
+                    console.log("Error: " + err);
+                    res.json(err);
+                });
             }
             catch (error) {
                 console.log(error);
