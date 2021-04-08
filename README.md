@@ -21,3 +21,5 @@ Der Docker Container arbeitet default auf Port 8080 über https. Der RSA Schlüs
 docker run --rm -v c:/config:/usr/src/app/config -it -p 8080:8080 service.joerg-tuttas.de:5555/root/schuelerausweis
 ```
 
+## Ideen
+- Upload / Download von einem Bild in der Schüleransicht

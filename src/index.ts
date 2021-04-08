@@ -49,6 +49,30 @@ function expired(dateString:string):boolean {
 }
 
 
+/**
+ * Endpunkt für die Schülerinnen und Schüler Überpfüfen des QR Codes
+ */
+app.post("/validate", (req, res) => {
+    console.log("Body:"+JSON.stringify(req.body));    
+    try {
+        let decrypted = key.decrypt(req.body.id, 'utf8');
+        console.log("Decrypted:" + decrypted);
+        let obj = JSON.parse(decrypted);
+        obj.valid=true;
+        res.send(JSON.stringify(obj));
+    }
+    catch {
+        let obj:any={};
+        obj.valid=false;
+        obj.msg="failed to decode QRCode!"
+        res.send(JSON.stringify(obj));
+    }
+
+}
+
+/**
+ * Endpunkt für die Schülerinnen und Schüler (Anzeige des Ausweises) 
+ */
 app.get("/validate", (req, res) => {
     
     // render the index template
@@ -107,7 +131,9 @@ app.get("/log", (req, res) => {
     res.send("");
 });
 
-
+/**
+ * Endpunkt zum Einloggen als Lehrer
+ */
 app.post("/log", (req, res) => {
     console.log("user:"+req.body.user);
     console.log("body:"+JSON.stringify(req.body));
@@ -174,6 +200,9 @@ app.post("/log", (req, res) => {
 
 });
 
+/**
+ * Dekodieren des QR Codes und Abfrage des Diklabus (nur möglich mit gültigem key im Header)
+ */
 app.post("/decode", (req, res) => {
     res.setHeader("content-type","application/json");
     if (req.headers.key) {

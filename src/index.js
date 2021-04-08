@@ -41,6 +41,32 @@ function expired(dateString) {
     //console.log("expired");
     return true;
 }
+/**
+ * Endpunkt für die Schülerinnen und Schüler Überpfüfen des QR Codes
+ */
+app.post("/validate", function (req, res) {
+    console.log("Body:" + JSON.stringify(req.body));
+    try {
+        var decrypted = key.decrypt(req.body.id, 'utf8');
+        console.log("Decrypted:" + decrypted);
+        var obj_1 = JSON.parse(decrypted);
+        obj_1.valid = true;
+        res.send(JSON.stringify(obj_1));
+    }
+    catch (_a) {
+        var obj_2 = {};
+        obj_2.valid = false;
+        obj_2.msg = "failed to decode QRCode!";
+        res.send(JSON.stringify(obj_2));
+    }
+}
+/**
+ * Endpunkt für die Schülerinnen und Schüler (Anzeige des Ausweises)
+ */
+, 
+/**
+ * Endpunkt für die Schülerinnen und Schüler (Anzeige des Ausweises)
+ */
 app.get("/validate", function (req, res) {
     // render the index template
     var s = fs_1.default.readFileSync('src/validate.html', 'utf8');
@@ -50,24 +76,24 @@ app.get("/validate", function (req, res) {
         try {
             var decrypted = key.decrypt(req.query.id.toString(), 'utf8');
             console.log("Decrypted:" + decrypted);
-            var obj_1 = JSON.parse(decrypted);
-            if (expired(obj_1.v)) {
+            var obj_3 = JSON.parse(decrypted);
+            if (expired(obj_3.v)) {
                 var rs = fs_1.default.readFileSync('src/invalid.html', 'utf8');
                 rs = rs.replace("<!--comment-->", "Der Schülerausweis ist ungültig (Gültigkeitsdauer überschritten)!");
                 s = s.replace("<!--result-->", rs);
             }
             else {
                 var rs = fs_1.default.readFileSync('src/valid.html', 'utf8');
-                if (underage(obj_1.gd)) {
+                if (underage(obj_3.gd)) {
                     rs = rs.replace("<!--underage-->", "<p style=\"color:red\">minderjährig</p>");
                 }
                 else {
                     rs = rs.replace("<!--underage-->", "<p style=\"color:green\">volljährig</p>");
                 }
-                rs = rs.replace("<!--nachname-->", obj_1.nn);
-                rs = rs.replace("<!--vorname-->", obj_1.vn);
-                rs = rs.replace("<!--klasse-->", obj_1.kl);
-                rs = rs.replace("<!--date-->", obj_1.v);
+                rs = rs.replace("<!--nachname-->", obj_3.nn);
+                rs = rs.replace("<!--vorname-->", obj_3.vn);
+                rs = rs.replace("<!--klasse-->", obj_3.kl);
+                rs = rs.replace("<!--date-->", obj_3.v);
                 s = s.replace("<!--result-->", rs);
             }
         }
@@ -86,13 +112,16 @@ app.get("/validate", function (req, res) {
     }
     res.statusCode = 200;
     res.send(s);
-});
+}));
 // define a route handler for the default home page
 app.get("/log", function (req, res) {
     // render the index template
     res.setHeader("key", obj.auth_token);
     res.send("");
 });
+/**
+ * Endpunkt zum Einloggen als Lehrer
+ */
 app.post("/log", function (req, res) {
     console.log("user:" + req.body.user);
     console.log("body:" + JSON.stringify(req.body));
@@ -149,6 +178,9 @@ app.post("/log", function (req, res) {
     request.write(JSON.stringify(data));
     request.end();
 });
+/**
+ * Dekodieren des QR Codes und Abfrage des Diklabus (nur möglich mit gültigem key im Header)
+ */
 app.post("/decode", function (req, res) {
     res.setHeader("content-type", "application/json");
     if (req.headers.key) {

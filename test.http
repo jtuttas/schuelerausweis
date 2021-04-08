@@ -20,12 +20,20 @@ content-type: application/json
 key: geheim
 
 {
-    "id":"I8WOESUgI3XLBaJ12uti2xfMCoYTztq2lnSVrGHUkatoXxngJBRDrGbTrz8vKLDHFaxoNIWrt4WAxYahFfPDPxMz3SKuNdf0Jk/6LRoIwBcKxIpvkPbJru6n0jcLctE15tKGfpspxjAeLT0IFZzHUzA5+tSgumCZRPFD4xwlOGR3ANU+hl7BWrm+qDc0qIbCsY9CdwQzhOA2wwYioijdoLgTBWOshgex7W/KCCPak/OdeDRJjeI20n+6PVUhPemn8K60cAzL/QKyKQvFAJmF3sFdoAhNH3Q+sKDpcbOVmVMGmacVi4E+fgqQEp9tH6y/6YEa3ZK05NdrD29WU3YCGQ=="
+    "id":"DmmGlsK7jUBw4n874BjtI4btyfBdtA8XBLRF3VGo2uUplkTCyPM0TTJjMzZDNH3xdGaYQKZRMJg6YjPn6+Q0/3enRwKUFZzfVbJiWbPjO4URaYmgG3MszJH3CKhmXh0tgJL0f0AQoV6TfVN72ihIoB5iFDKY09ycHbLalIH1T6VDA1hEUq4ONa6Tr2yzAo8s0aXd/Q2HES/ss2Ye2e483baqGa8MiJiOML2/dPRegACypb2UB3fZ6yZTMUJvVnlo1FF+y3dlTxaN8+c8w6tUD+u6aC6FImkEHBKUQCpFnQDgf2HxCBSOLg7ENim5Yh+J0t5k7un9NA4s0fvevG5nDQ=="
 }
 
 ### Validate id
 GET https://localhost:8080/validate?id=HVGbuC0WP8Dar62cI15Q9lt7467OtqyVhfm%2BJSsduMEv7hV/aZGx7tKGOleGbFVTx1yTtQ9e1NjaRRaQ2Y04I2pZXDSGUzubw1e3VcU5ADFIOuWY/giBldJZi5F3Ru8wntY%2Bm5sXNBSYQjn77YX95KWQ46IKo8ASYv%2BfMLXFZm9a/negue1JzGx4IBwiToemneIQluG8I8Ayyy04boQAbt2A96tOciiKRKggzjvgRLqG%2BjkvlqQry05OL5caR8LV9yIfTNiVh%2BMUnZ0xZxXBIHdgfh3GZ58BKlWb4KyvF47W31HxSjOqWkf1vE0tJehbbt1egAqCVqJb06C%2BtTTnLA== HTTP/1.1
 content-type: text/html
+
+### Validate id
+POST https://localhost:8080/validate HTTP/1.1
+content-type: application/json
+
+{
+    "id":"DmmGlsK7jUBw4n874BjtI4btyfBdtA8XBLRF3VGo2uUplkTCyPM0TTJjMzZDNH3xdGaYQKZRMJg6YjPn6+Q0/3enRwKUFZzfVbJiWbPjO4URaYmgG3MszJH3CKhmXh0tgJL0f0AQoV6TfVN72ihIoB5iFDKY09ycHbLalIH1T6VDA1hEUq4ONa6Tr2yzAo8s0aXd/Q2HES/ss2Ye2e483baqGa8MiJiOML2/dPRegACypb2UB3fZ6yZTMUJvVnlo1FF+y3dlTxaN8+c8w6tUD+u6aC6FImkEHBKUQCpFnQDgf2HxCBSOLg7ENim5Yh+J0t5k7un9NA4s0fvevG5nDQ=="
+}
 
 ### dibalu abfrage
 GET https://diklabu.mm-bbs.de:8080/Diklabu/api/v1/schueler/1234 HTTP/1.1
