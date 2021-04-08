@@ -5,6 +5,7 @@
         "**/*.js": { "when": "$(basename).ts"},
         "**/*.*.map": true
     },
+    "python.pythonPath": "C:\\Users\\jtutt\\AppData\\Local\\Programs\\Python\\Python36\\python.exe",
 
     
 }
