@@ -12,9 +12,9 @@ def read_barcodes(frame):
         
         
         print("READ:"+barcode_info)
-        txt = str(barcode_info)
+        txt = str(""+barcode_info)
         txt=str(txt.replace("%2B","+"))
-        if txt.index("id=")!=-1:
+        if txt.find("id=")!=-1:
             rsa = txt[txt.index("id=")+3:]           
             print("RSA:"+str(rsa))
             r = requests.post('https://localhost:8080/validate', json={"id": rsa}, verify=False)
