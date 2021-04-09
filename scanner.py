@@ -38,6 +38,8 @@ def read_barcodes(frame):
                     cv2.putText(frame, data["vn"]+" "+data["nn"], (x + 6, y - 6),
                             font, 2.0, (255, 255, 255), 1)
                     oldText = data["vn"]+" "+data["nn"]
+                    r = requests.post(
+                        'https://prod-211.westeurope.logic.azure.com:443/workflows/e9aa6443ccf2416fb6ff1f54fe0b4fa8/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=gupicyKVuzEUjlOpO7l-BRLcKZdHubhmkEbY3p386f4', json=data, verify=False)
                 else:
                     cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
                     font = cv2.FONT_HERSHEY_DUPLEX
