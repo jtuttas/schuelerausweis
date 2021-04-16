@@ -44,7 +44,7 @@ docker run --rm -v c:/config:/usr/src/app/config -it -p 8080:8080 service.joerg-
 ## Use Case 2 - Anwendung mit Anbindung an MS Powerautomate
 Über eine Anwendung (in Python) wird der QR Code gescannt und auf dem Server verifiziert. Bei erfolgreicher Verifikation werden die Daten über MS Power Automate (via HTTP POST) weiter verarbeitet.
 
-![powerAutomate](seqpowerautomate.png)
+![powerAutomate](seqPowerautomate.png)
 
 ![powerautomate](powerautomate.png) 
 
