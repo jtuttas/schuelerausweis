@@ -1,5 +1,7 @@
 # elektronisch lesbarer Schülerausweis
-Der Ausweis enthält als einen RSA verschlüsseltes JSON, welches die folgenden Daten beinhaltet. 
+Die Hauptentwicklungspunkte bei dieser Anwendung war es einen **elektronisch lesbaren** und **fälschungssicheren** Schülerausweis zu erzeugen!
+
+Der Ausweis enthält daher ein als RSA verschlüsseltes JSON, welches die folgenden Daten beinhaltet. 
 
 ```JSON
 {
