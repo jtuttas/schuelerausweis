@@ -5,6 +5,8 @@ from pyzbar import pyzbar
 oldbarcode_info=""
 oldText=""
 
+
+
 def read_barcodes(frame):
     barcodes = pyzbar.decode(frame)
     global oldbarcode_info

@@ -28,7 +28,7 @@ GET https://localhost:8080/validate?id=HVGbuC0WP8Dar62cI15Q9lt7467OtqyVhfm%2BJSs
 content-type: text/html
 
 ### Validate id
-POST https://localhost:8080/validate HTTP/1.1
+POST https://130.61.61.100:8082/validate HTTP/1.1
 content-type: application/json
 
 {
@@ -42,6 +42,21 @@ auth_token: geheim
 
 ### POwer Automate Test
 POST https://prod-211.westeurope.logic.azure.com:443/workflows/e9aa6443ccf2416fb6ff1f54fe0b4fa8/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=gupicyKVuzEUjlOpO7l-BRLcKZdHubhmkEbY3p386f4 HTTP/1.1
+Content-Type: application/json
+
+{
+  "nn": "Mustermann",
+  "vn": "Max",
+  "kl": "FIAE20J",
+  "em": "Mustermann@mm-bbs.de",
+  "v": "2021-08-01",
+  "gd": "1997-04-11",
+  "did": 1234,
+  "valid": true
+}
+
+### POwer Automate 2 Test
+POST https://prod-163.westeurope.logic.azure.com:443/workflows/ed5a7b85fb484e5fb07461fcb1ebd660/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=YOrcqZyS41k3ebhM6SaTOgGS9T0Z3ULCrVqVsK0-8U0 HTTP/1.1
 Content-Type: application/json
 
 {
