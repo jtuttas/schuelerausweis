@@ -46,6 +46,7 @@ function expired(dateString) {
  */
 app.post("/validate", function (req, res) {
     console.log("Body:" + JSON.stringify(req.body));
+    res.setHeader("content-type", "application/json");
     try {
         var decrypted = key.decrypt(req.body.id, 'utf8');
         console.log("Decrypted:" + decrypted);
@@ -59,11 +60,7 @@ app.post("/validate", function (req, res) {
         obj_2.msg = "failed to decode QRCode!";
         res.send(JSON.stringify(obj_2));
     }
-}
-/**
- * Endpunkt für die Schülerinnen und Schüler (Anzeige des Ausweises)
- */
-, 
+});
 /**
  * Endpunkt für die Schülerinnen und Schüler (Anzeige des Ausweises)
  */
@@ -112,7 +109,7 @@ app.get("/validate", function (req, res) {
     }
     res.statusCode = 200;
     res.send(s);
-}));
+});
 // define a route handler for the default home page
 app.get("/log", function (req, res) {
     // render the index template

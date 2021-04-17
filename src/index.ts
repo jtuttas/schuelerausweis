@@ -54,6 +54,7 @@ function expired(dateString:string):boolean {
  */
 app.post("/validate", (req, res) => {
     console.log("Body:"+JSON.stringify(req.body));    
+    res.setHeader("content-type", "application/json");
     try {
         let decrypted = key.decrypt(req.body.id, 'utf8');
         console.log("Decrypted:" + decrypted);
@@ -68,7 +69,7 @@ app.post("/validate", (req, res) => {
         res.send(JSON.stringify(obj));
     }
 
-}
+});
 
 /**
  * Endpunkt für die Schülerinnen und Schüler (Anzeige des Ausweises) 
