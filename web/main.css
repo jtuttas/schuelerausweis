@@ -11,7 +11,7 @@
 
 html,
 body {
-    height: 100%;
+    height: 100vh;
     margin: 0;
     padding: 0;
     border: 0;
@@ -32,7 +32,6 @@ body {
 .form-signin {
     width: 92%;
     padding: 15px;
-    margin: auto;
 }
 
 .form-signin .form-control {
@@ -59,8 +58,7 @@ body {
 .btn-primary:hover, 
 .btn-primary:focus,  
 .btn-primary.active, 
-.btn-primary.disabled, 
-.btn-primary:disabled,
+.btn-primary.disabled,
 .btn-primary.disabled:hover, 
 .btn-primary.disabled:focus,
 .btn-primary.disabled:active
