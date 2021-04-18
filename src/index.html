@@ -75,8 +75,9 @@
                 </p>
             </div>
         </header>
+        
+        <!-- Initialisierung der Webcam-->
         <div class="row space-l space-r">
-            <!-- Initialisierung der Webcam-->
             <div class="col-12 p-0">
                 <div class="dropdown">
                     <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Video Source
@@ -88,7 +89,7 @@
                     stream (please make sure you have a webcam enabled)
                 </div>
                 <canvas id="canvas" hidden></canvas>
-                <div id="errorMessage" class="alert alert-danger mt-1 mb-1" role="alert"></div>
+                <div id="errorMessage" class="alert alert-danger mt-1 mb-1" role="alert" hidden></div>
                     <p class="err" id="error"></p>
                 </div>
             </div>
