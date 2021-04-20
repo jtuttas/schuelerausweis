@@ -35,8 +35,8 @@
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
 </head>
-<body class="text-center">
-    <div class="form-signin bg-white rounded">
+<body class="text-center d-flex">
+    <div class="form-signin bg-white m-auto rounded">
         <header>
             <img class="mb-4 mt-2" src="img/mmbbs-logo.svg" height="80"
                 onerror="this.onerror=null; this.src='mmbbs-logo.svg'">
@@ -59,7 +59,10 @@
             </article>
             <div id="successSign" class="d-flex justify-content-center"></div>
         </section>
-        <div id="Msg" class="mt-3 d-flex justify-content-center"><!--error--></div>
+
+        <div class="alert alert-danger mt-3 d-flex justify-content-center" id="Msg" role="alert">
+            <!--error-->
+          </div>
         <footer>
             <p class="mt-3 text-muted">&copy; 2021 MMBbS Hannover</p>
         </footer>

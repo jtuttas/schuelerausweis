@@ -3,12 +3,38 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MMBBS Ausweis App</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Sitzplatzzuordnung an der MMBbS">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ausweisscanner App</title>
+    <!-- Favicons-->
+    <link rel="apple-touch-icon" sizes="57x57" href="img/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="img/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="img/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="img/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="img/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="img/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="img/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="img/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="img/apple-icon-180x180.png">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="192x192" href="img/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="img/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="img/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <!-- jQuery, Bootstrap und CSS einbinden-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
     <script src="/js/jsQR.js"></script>
     <script src="/js/service.js"></script>
     <style>
@@ -29,88 +55,119 @@
 
         var selectedDevice = "";
     </script>
-    <h1>MMBbS Schülerausweis Scanner</h1>
-    <h3>Angemeldet als
-        <!--name-->
-    </h3>
-    <div class="row">
 
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Video Source
-                    <span class="caret"></span></button>
-                <ul id="videosources" class="dropdown-menu">
-                </ul>
+    <section class="viewData bg-white m-auto p-3 rounded">
+        <button id="scan" type="button" class="btn btn-danger float-end me-sm-3"><svg xmlns="http://www.w3.org/2000/svg"
+                width="26" height="26" fill="currentColor" class="bi bi-upc-scan" viewBox="0 0 16 16">
+                <path
+                    d="M1.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 1-1 0v-3A1.5 1.5 0 0 1 1.5 0h3a.5.5 0 0 1 0 1h-3zM11 .5a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 1 16 1.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 1-.5-.5zM.5 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 1 0 1h-3A1.5 1.5 0 0 1 0 14.5v-3a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 .5-.5zM3 4.5a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7zm2 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7zm2 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7zm2 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-7zm3 0a.5.5 0 0 1 1 0v7a.5.5 0 0 1-1 0v-7z">
+                </path>
+            </svg> Ausweis scannen</button>
+        <header>
+            <img class="mb-sm-0 mb-3" src="img/Logo_blau.png" height="46"
+                onerror="this.onerror=null; this.src='img/Logo_blau.png'">
+
+            <div class="space-l headline">
+                <h1 class="fs-3 mb-0">MMBbS Schülerausweis Scanner </h1>
+
+                <p class="fw-light">Angemeldet als
+                    <!--name-->
+                </p>
+            </div>
+        </header>
+        
+        <!-- Initialisierung der Webcam-->
+        <div class="row space-l space-r">
+            <div class="col-12 p-0">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Video Source
+                        <span class="caret"></span></button>
+                    <ul id="videosources" class="dropdown-menu">
+                    </ul>
+                </div>
+                <div id="loadingMessage">🎥 Unable to access video
+                    stream (please make sure you have a webcam enabled)
+                </div>
+                <canvas id="canvas" hidden></canvas>
+                <div id="errorMessage" class="alert alert-danger mt-1 mb-1" role="alert" hidden></div>
+                    <p class="err" id="error"></p>
+                </div>
             </div>
         </div>
 
-    </div>
-    <div id="loadingMessage">🎥 Unable to access video stream (please make sure you have a webcam enabled)</div>
-    <canvas id="canvas" hidden></canvas>
-    <div id="errorMessage">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <p class="err" id="error"></p>
+        <!-- Ergebnis des QR-Scans-->
+        <div id="results" hidden>
+            <div class="row space-l space-r">
+                <div class="col-12 col-sm-8 ps-0">
+                    <div class="d-grid gap-4">
+                        <div>
+                            <p class="item fw-light lh-sm">Name</p>
+                            <p id="name" class="fs-4 fw-normal m-0 p-0 lh-1">Max Mustermann</p>
+                        </div>
+                        <div>
+                            <p class="item fw-light lh-sm">Klasse</p>
+                            <p id="klasse" class="fs-5 fw-light m-0 p-0 lh-1">FIAE20M</p>
+                        </div>
+                        <div>
+                            <p class="item fw-light lh-sm">E-Mail</p>
+                            <p id="email" class="fs-5 fw-light m-0 p-0 lh-1"><a
+                                    href="mustermann@mmbbs.de">mustermann@mmbbs.de</a></p>
+                        </div>
+                        <div>
+                            <p class="item fw-light lh-sm">Geburtsdatum</p>
+                            <p id="gebdat" class="fs-5 fw-light m-0 p-0 lh-1">15.10.2020 <span
+                                    style="color:red">(minderjährig)</span>
+                            </p>
+                        </div>
+                        <div>
+                            <p class="item fw-light lh-sm">Abgang</p>
+                            <p id="abgang" class="fs-5 m-0 fw-light p-0 lh-1">---</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-4 p-0 d-none d-sm-block">
+                    <img src="#" style="width: 200px; height: 250px; background: #efefef" class="rounded float-end"
+                        alt="Profilfoto">
+                </div>
+            </div>
+
+            <div class="row space-l space-r">
+                <div class="col-12 col-sm-8 ps-0">
+                    <div class="d-grid gap-4">
+                        <div class="position-relative">
+                            <p class="item fw-light lh-sm">Gültigkeitsdatum:</p>
+                            <p id="gdat" class="fs-4 fw-normal m-0 p-0 lh-1">31.08.2021</p>
+                            <span id="gdat-sign" class="position-absolute">
+                                <i class="bi bi-check-circle-fill" style="font-size: 2.3rem; color: green"></i></span>
+                            <p id="gdat-response" class="pt-3 pb-4" style="color: green">Der Ausweis ist gültig!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-4 pt-3 text-end border-top">
+                    <div id="betrieb">
+                        <p class="fw-normal m-0 p-0 lh-sm">Betriebnahme</p>
+                        <p class="fw-normal m-0 p-0 lh-sm">Betriebnahme</p>
+                        <br>
+                    </div>
+                    <div id="ausbilder"></div>
+                    <p class="fw-light m-0 p-0 lh-sm">Ausbilder</p>
+                    <p class="fw-light m-0 p-0 lh-sm"><a href="mustermann@mmbbs.de">mustermann@mmbbs.de</a></p>
+                </div>
+                <div class="float-start d">
+                    <p id="did" class="item fw-light lh-sm">Diklabu ID:</p>
+                    <p id="bpid" class="item fw-light lh-sm">BBS Planung ID:</p>
+                </div>
+            </div>
         </div>
-    </div>
-    <div id="results" class="row" hidden>
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">Attribut</th>
-                        <th scope="col">Wert</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th scope="row">Name</th>
-                        <td id="name"></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Klasse</th>
-                        <td id="klasse"></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">EMail</th>
-                        <td id="email"></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Geburtsdatum</th>
-                        <td id="gebdat"></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Gültigkeitsdatum</th>
-                        <td id="gdat"></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Diklabu ID</th>
-                        <td id="did"></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">BBS Planung ID</th>
-                        <td id="bpid"></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Abgang</th>
-                        <td id="abgang"></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Betrieb</th>
-                        <td id="betrieb"></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Ausbilder</th>
-                        <td id="ausbilder"></td>
-                    </tr>
+        <footer>
+            <p class="space-l mt-3 text-muted">&copy; 2021 MMBbS Hannover</p>
+        </footer>
 
-                </tbody>
-            </table>
+    </section>
 
-            <button id="scan" type="button" class="btn btn-danger">Scan</button>
 
-        </div>
-
-    </div>
     <script>
         var video = document.createElement("video");
         var canvasElement = document.getElementById("canvas");
@@ -223,27 +280,32 @@
 
                                 $("#email").empty();
                                 if (e.hasOwnProperty("email")) {
-                                    $("#email").append('<p><a href="mailto:' + e.email + '">' + e.email + '</a></p>');
+                                    $("#email").append('<a href="mailto:' + e.email + '">' + e.email + '</a>');
                                 }
 
                                 $("#gebdat").empty();
                                 if (underage(e.idcard.gd)) {
-                                    $("#gebdat").append('<p style="color:red;">' + e.idcard.gd + ' (minderjährig)</p>');
+                                    $("#gebdat").append(e.idcard.gd + ' <span style="color:red;">(minderjährig)</p>');
                                 }
                                 else {
-                                    $("#gebdat").append('<p style="color:green;">' + e.idcard.gd + ' (volljährig)</p>');
+                                    $("#gebdat").append(e.idcard.gd + ' <span style="color:green;">(volljährig)</p>');
 
                                 }
 
                                 $("#gdat").empty()
                                 if (expired(e.idcard.v)) {
-                                    $("#gdat").append('<p style="color:red;">' + e.idcard.v + ' (abgelaufen)</p>');
+                                    $("#gdat").text(e.idcard.v);
+                                    $("#gdat-sign").html('<i class="bi bi bi-x-circle-fill" style="font-size: 2.3rem; color: red"></i>')
+                                    $("#gdat-response").text("Der Ausweis ist ungültig!").css('color', 'red');
                                 }
                                 else {
-                                    $("#gdat").append('<p style="color:green;">' + e.idcard.v + ' (gültig)</p>');
+                                    $("#gdat").text(e.idcard.v);
+                                    $("#gdet-sign").html('<i class="bi bi-check-circle-fill" style="font-size: 2.3rem; color: green"></i>');
+                                    $("#gdat-response").text("Der Ausweis ist gültig!").css('color', 'green');
                                 }
-                                $("#did").text(e.idcard.did);
-                                $("#bpid").text(e.idcard.bpid);
+
+                                $("#did").text("Diklabu ID: " + e.idcard.did);
+                                $("#bpid").text("BBS Planung ID: " + e.idcard.bpid);
 
                                 if (e.hasOwnProperty("abgang")) {
                                     $("#abgang").text(e.abgang);
@@ -251,16 +313,15 @@
 
 
                                 $("#betrieb").empty();
-                                if (e.hasOwnProperty("abgang")) {
-                                    $("#betrieb").append('<p>' + e.betrieb.NAME + '</p>');
-                                    $("#betrieb").append('<p>' + e.betrieb.STRASSE + '</p>');
-                                    $("#betrieb").append('<p>' + e.betrieb.PLZ + '&nbsp;' + e.betrieb.ORT + '</p>');
+                                if (e.hasOwnProperty("betrieb")) {
+                                    $("#betrieb").append('<p class="fw-normal m-0 p-0 lh-sm">' + e.betrieb.NAME + '</p>');
+                                    $("#betrieb").append('<p class="fw-normal m-0 p-0 lh-sm">' + e.betrieb.STRASSE + '</p>');
+                                    $("#betrieb").append('<p class="fw-normal m-0 p-0 lh-sm">' + e.betrieb.PLZ + '&nbsp;' + e.betrieb.ORT + '</p><br>');
                                 }
-
                                 if (e.hasOwnProperty("ausbilder")) {
                                     $("#ausbilder").empty();
-                                    $("#ausbilder").append('<p>' + e.ausbilder.NNAME + '</p>');
-                                    $("#ausbilder").append('<p><a href="mailto:' + e.ausbilder.EMAIL + '">' + e.ausbilder.EMAIL + '</p>');
+                                    $("#ausbilder").append('<p class="fw-light m-0 p-0 lh-sm">' + e.ausbilder.NNAME + '</p>');
+                                    $("#ausbilder").append('<p class="fw-light m-0 p-0 lh-sm"><a href="mailto:' + e.ausbilder.EMAIL + '">' + e.ausbilder.EMAIL + '</a></p>');
                                 }
                             },
                             error: function (xhr, status, error) {
