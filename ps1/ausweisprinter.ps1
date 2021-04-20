@@ -12,11 +12,15 @@ class StudentId
     [string] $nn=""
     [string] $vn=""
     [string] $kl=""
-    [string] $em=""
+    #[string] $em=""
     [string] $v=""
     [string] $gd=""
     [int] $did=0
     [int] $bpid=0
+
+    [string] ToString() {
+        return ""+$this.vn+" "+$this.nn+ " ("+$this.gd+")"
+    }
 
     [string] getRSA([string]$xmlkey) {
         $rsa = New-Object -TypeName System.Security.Cryptography.RSACryptoServiceProvider
@@ -68,6 +72,7 @@ function Get-QRCode
     Begin
     {
         $number=1;
+        [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $null
     }
     Process
     {
@@ -103,7 +108,7 @@ function Print-IDCard
         [Parameter(Mandatory=$false,
                    Position=1)]
         [string]
-        $rsakey="$PSScriptRoot/config/ausweis.xml",
+        $rsakey="$PSScriptRoot/../config/ausweis.xml",
 
         # Vollständiger Pfad zur Word Vorlage
         [Parameter(Mandatory=$false,
@@ -115,7 +120,7 @@ function Print-IDCard
         [Parameter(Mandatory=$false,
                    Position=3)]
         [string]
-        $vorlage="$PSScriptRoot/Ausweis.doc"
+        $vorlage="$PSScriptRoot/../Ausweis.doc"
 
 
     )
@@ -193,13 +198,13 @@ function Print-IDCard
     }
     End
     {     
-        Write-Verbose "Save Word Document as $outfile"
-        $saveFormat = [Microsoft.Office.Interop.Word.WdSaveFormat]::wdFormatDocument
-        $wordDocument.SaveAs([ref]$outfile,[ref]$saveFormat)
-        $wordDocument.Close()
+        #Write-Verbose "Save Word Document as $outfile"
+        #$saveFormat = [Microsoft.Office.Interop.Word.WdSaveFormat]::wdFormatDocument
+        #$wordDocument.SaveAs([ref]$outfile,[ref]$saveFormat)
+        #$wordDocument.Close()
         #Cleanup the Word COM Object
-        $word.Quit()       
-        $null = [System.Runtime.InteropServices.Marshal]::ReleaseComObject([System.__ComObject]$word)
+        #$word.Quit()       
+        #$null = [System.Runtime.InteropServices.Marshal]::ReleaseComObject([System.__ComObject]$word)
         
     }
 }
@@ -228,45 +233,3 @@ $student2.v="2021-08-01"
 $student,$student2,$student2 | Print-IDCard -Verbose
 
 #>
-Import-Module diklabu
-Get-Keystore $HOME\diklabu-scharf.json
-
-
-$rsakey = Get-Content D:\Temp\Schülerausweis\config\ausweis.xml
-Login-Diklabu
-$courses = Get-Courses
-$rows=@()
-foreach ($course in $courses) {
-    $members = Get-Coursemember -id $course.id 
-    #$members = Get-Coursemember -id 3085
-    foreach($m in $members) {
-        if ($m.ABGANG -eq "N") {
-            
-            Write-Host $m
-
-            $student=New-Object StudentId;
-            $student.nn=$m.NNAME
-            $student.vn=$m.VNAME
-            $student.em=$m.EMAIL
-            $student.kl=$course.KNAME
-            $student.did=$m.id
-            $student.bpid=$m.ID_MMBBS
-            $student.gd=$m.GEBDAT
-            $student.v="2021-08-01"
-
-            $row = New-Object execlRow
-            $row.gültigkeit=$student.v
-            $row.klasse=$student.kl
-            $row.nachname=$student.nn
-            $row.vorname=$student.vn
-            $rsaString = $student.getRSA($rsakey)
-            #$rsaString= $student.urlDecode($rsaString)
-            $rsaString="http://ausweis.joerg-tuttas.de/validate?id="+$rsaString        
-            $row.qr=$rsaString
-            $rows+=$row
-
-            
-        }
-    }     
-}
-$rows | Export-Excel
