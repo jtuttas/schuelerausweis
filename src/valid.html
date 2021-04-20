@@ -1,15 +1,53 @@
-<p style="color: green;">Der Schülerausweis ist gültig!</p>
-<img src="valid.png">
-<p><!--underage--></p>
-<p>Nachname:
-    <!--nachname-->
-</p>
-<p>Vorname:
-    <!--vorname-->
-</p>
-<p>Klasse:
-    <!--klasse-->
-</p>
-<p>gültig bis:
-    <!--date-->
-</p>
+<body class="valid">
+
+    <section class="viewAusweis bg-white m-auto rounded shadow-lg">
+    <header>
+            <div class="space-l headline position-relative">
+                <h1 class="fs-4 fw-normal mb-0">Schülerausweis</h1><p class="fs-5 underage fw-light lh-1 position-absolute"><!--underage--></p>
+            </div>
+        </header>
+
+        <div>
+            <div class="row space-l space-r">
+                <div class="col-8 col-sm-8">
+                    <div class="d-grid gap-2">
+                        <div>
+                            <p class="item fw-light lh-sm">Nachname:</p>
+                            <p id="nachname" class="itemVal fs-4 fw-normal lh-1"><!--nachname--></p>
+                        </div>
+                        <div>
+                            <p class="item fw-light lh-sm">Vorname:</p>
+                            <p id="vorname" class="itemVal fs-5 fw-normal lh-1"><!--vorname--></p>
+                        </div>
+                        <div>
+                            <p class="item fw-light lh-sm">Klasse:</p>
+                            <p id="klasse" class="itemVal fs-5 fw-light lh-1"><!--klasse--></p>
+                        </div>
+                     
+                    </div>
+                </div>
+
+                <div class="col-4 col-sm-4 p-0">
+                    <img src="../web/img/anonym.png" style="width: 126px; height: 158px;" class="rounded float-end"
+                        alt="Profilfoto">
+                </div>
+            </div>
+
+            <div class="row space-l space-r pt-0">
+                <div class="col-12 col-sm-8">
+               
+                        <div class="position-relative">
+                            <p class="item fw-light lh-sm">Gültig bis:</p>
+                            <p id="gdat" class="fs-4 fw-normal m-0 p-0 lh-1"><!--date--></p>
+                            <span id="gdat-sign" class="position-absolute">
+                                <i class="bi bi-check-circle"></i></span>
+                            <p id="gdat-response" class="pt-2 mb-0">Der Ausweis ist gültig!</p>
+                        </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <p class="space-l item mt-2 mb-2 me-3 float-end text-muted">&copy; 2021 MMBbS Hannover</p>
+        </footer>
+    </section>
+</body>
