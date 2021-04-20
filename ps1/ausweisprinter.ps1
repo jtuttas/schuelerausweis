@@ -198,6 +198,7 @@ function Print-IDCard
     }
     End
     {     
+        Remove-Item "$env:TEMP/QRCode*"
         #Write-Verbose "Save Word Document as $outfile"
         #$saveFormat = [Microsoft.Office.Interop.Word.WdSaveFormat]::wdFormatDocument
         #$wordDocument.SaveAs([ref]$outfile,[ref]$saveFormat)
