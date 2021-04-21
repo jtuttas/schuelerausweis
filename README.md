@@ -15,7 +15,10 @@ Der Ausweis enthält daher ein als RSA verschlüsseltes JSON, welches die folgen
 }
 ```
 
-Der Schlüssel zum Entschlüsseln dieses JSON befindet sich auf dem Server. Über eine Anfrage https://IP-des-Servers/validate?id=geheim können die Daten durch den Server entschlüsselt werden.
+Der Schlüssel zum Entschlüsseln dieses JSON befindet sich auf dem Server. Über eine Anfrage https://IP-des-Servers/validate?id=geheim können die Daten durch den Server entschlüsselt werden. Das Ergebnis wird als HTLM Seite angezeigt.
+
+![valid](ScreenshotValid.png)
+![invalid](ScreenshotInvalid.png)
 
 ![seqSchueler](seqSchueler.png)
 
