@@ -1,0 +1,148 @@
+.error {
+    color: red;
+}
+
+.success {
+     color: green;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    height: 100vh;
+    width: 100%;
+}
+
+body {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    background-color: #fff;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+body.valid {
+    border: 8px solid #05b936;
+}
+
+body.invalid {
+    border: 8px solid #ff3131;
+}
+
+body.valid #gdat-response {
+    color: #05b936;
+}
+
+body.invalid #gdat-response {
+    color: #ff3131;
+}
+
+.underage {
+    top: 3px;
+    right: 20px;
+    text-transform: italic;
+}
+
+.viewAusweis {
+    width: 450px;
+    padding: 0px;
+    z-index:100;
+    background: url("img/Logo_blau.png") no-repeat top left;
+    background-size: 40px 40px;
+}
+
+.headline {
+    padding-bottom: 6px;
+    border-bottom: 4px solid #ededed;
+    margin-top: 16px;
+}
+
+.row {
+    padding-top: 1rem;
+    --bs-gutter-x: 0;
+}
+
+.headline h1 {
+    text-transform: uppercase
+}
+
+.item {
+    font-size: 13px;
+    margin:0;
+    margin-bottom: 2px;
+    padding:0;
+}
+
+.itemVal {
+    margin-bottom: 1px;
+}
+
+#gdat-sign {
+    top: -80px;
+    left: 180px;
+}
+
+body.valid #gdat-sign i.bi-check-circle {
+    font-size: 7rem; 
+    color: #05b936;
+}
+
+body.invalid #gdat-sign i.bi-x-circle {
+    font-size: 7rem; 
+    color: #ff3131;
+}
+
+div.d {
+    font-style: italic;
+}
+
+
+
+@media (min-width: 576px) {
+     body {
+        height: 100vh;
+     
+     }
+
+     body.invalid {
+         background: rgb(255,255,255);
+         background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,49,49,1) 95%);
+         border: 0 none;
+     }
+
+     body.valid {
+         background: rgb(255,255,255);
+        background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(5,185,54,0.427608543417367) 100%);
+        border: 0 none;
+     }
+
+     .space-l {
+         margin-left: 50px;
+     }
+
+     .space-r {
+         margin-right: 20px;
+     }
+}
+
+@media (max-width: 576px) {
+    .shadow-lg {
+        -webkit-box-shadow: none !important;
+        -moz-box-shadow: none !important;
+        box-shadow: none !important;
+    }
+
+    .viewAusweis {
+        border-radius: 0px !important;
+        margin: 15px !important;
+    }
+
+    .headline {
+        margin-top: 60px;
+    }
+}

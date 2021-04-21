@@ -169,7 +169,6 @@
         <footer>
             <p class="space-l mt-3 text-muted">&copy; 2021 MMBbS Hannover</p>
         </footer>
-
     </section>
 
 
@@ -238,6 +237,7 @@
         });
         */
         function tick() {
+            
             loadingMessage.innerText = "⌛ Loading video..."
             if (video.readyState === video.HAVE_ENOUGH_DATA) {
                 loadingMessage.hidden = true;
@@ -257,6 +257,7 @@
                     drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
                     console.log('QR read:' + code.data);
                     stopTicker = true;
+                    
                     $("#errorMessage").hide();
                     rsaid = "" + code.data
                     rsaid = rsaid.substring(rsaid.indexOf("?id=") + 4);
@@ -316,7 +317,6 @@
                                 if (e.hasOwnProperty("abgang")) {
                                     $("#abgang").text(e.abgang);
                                 }
-
 
                                 $("#betrieb").empty();
                                 if (e.hasOwnProperty("betrieb")) {
