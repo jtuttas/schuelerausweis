@@ -78,7 +78,7 @@ app.get("/validate", (req, res) => {
     
     // render the index template
     let s: string = fs.readFileSync('src/validate.html', 'utf8');
-    s = s.replace("<!--year-->", new Date()).getFullYear());
+    s = s.replace("<!--year-->", "" + new Date().getFullYear());
     
     if (req.query.id) {
         let sid: string = req.query.id.toString();
