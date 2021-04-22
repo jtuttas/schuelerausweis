@@ -4,10 +4,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
+var path_1 = __importDefault(require("path"));
 var ID_1 = require("./ID");
 var fs_1 = __importDefault(require("fs"));
 var node_rsa_1 = __importDefault(require("node-rsa"));
 var https_1 = __importDefault(require("https"));
+var express_fileupload_1 = __importDefault(require("express-fileupload"));
 var keys = [];
 // Für Testzwecke
 keys.push("geheim");
@@ -17,6 +19,7 @@ var key = new node_rsa_1.default(rsakey);
 var app = express_1.default();
 var port = 8080; // default port to listen
 console.log(__dirname);
+app.use(express_fileupload_1.default());
 app.use(express_1.default.static(__dirname + '/../web'));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
@@ -42,6 +45,86 @@ function expired(dateString) {
     return true;
 }
 /**
+ * Endpunkt zum Upload der Schülerbilder
+ */
+app.post('/image', function (req, res) {
+    res.setHeader("content-type", "application/json");
+    var sampleFile;
+    var uploadPath;
+    var result = {
+        sucess: false,
+        msg: null
+    };
+    if (!req.files || Object.keys(req.files).length === 0) {
+        result.msg = "No files were uploaded.";
+        return res.status(400).send(JSON.stringify(result));
+    }
+    try {
+        var decrypted = key.decrypt("" + req.headers.key, 'utf8');
+        console.log("Decrypted:" + decrypted);
+        var obj_1 = JSON.parse(decrypted);
+        // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+        sampleFile = req.files.image;
+        //console.log("Dir is: " + __dirname);
+        uploadPath = __dirname + '/../config/img' + obj_1.did + ".jpg";
+        // Use the mv() method to place the file somewhere on your server
+        sampleFile.mv(uploadPath, function (err) {
+            if (err) {
+                result.msg = err;
+                return res.status(500).send(JSON.stringify(result));
+            }
+            result.sucess = true;
+            result.msg = 'File uploaded!';
+            res.send(JSON.stringify(result));
+        });
+    }
+    catch (_a) {
+        result.sucess = false;
+        result.msg = 'Unknown or invalid Header key';
+        res.status(400).send(JSON.stringify(result));
+    }
+});
+/**
+ * Endpunkt zum Upload der Schülerbilder
+ */
+app.get('/image', function (req, res) {
+    var result = {
+        sucess: false,
+        msg: null
+    };
+    try {
+        var decrypted = key.decrypt("" + req.headers.key, 'utf8');
+        console.log("Decrypted:" + decrypted);
+        var obj_2 = JSON.parse(decrypted);
+        var downloadPath = __dirname + '/../config/img' + obj_2.did + ".jpg";
+        console.log("return Image:" + downloadPath);
+        try {
+            if (fs_1.default.existsSync(downloadPath)) {
+                res.setHeader("content-type", "image/png");
+                res.sendFile(path_1.default.resolve(downloadPath));
+            }
+            else {
+                res.setHeader("content-type", "application/json");
+                result.sucess = false;
+                result.msg = "File Not Found " + downloadPath;
+                res.status(404).send(JSON.stringify(result));
+            }
+        }
+        catch (err) {
+            res.setHeader("content-type", "application/json");
+            result.sucess = false;
+            result.msg = err;
+            res.status(400).send(JSON.stringify(result));
+        }
+    }
+    catch (_a) {
+        res.setHeader("content-type", "application/json");
+        result.sucess = false;
+        result.msg = 'Unknown or invalid Header key';
+        res.status(400).send(JSON.stringify(result));
+    }
+});
+/**
  * Endpunkt für die Schülerinnen und Schüler Überpfüfen des QR Codes
  */
 app.post("/validate", function (req, res) {
@@ -50,15 +133,15 @@ app.post("/validate", function (req, res) {
     try {
         var decrypted = key.decrypt(req.body.id, 'utf8');
         console.log("Decrypted:" + decrypted);
-        var obj_1 = JSON.parse(decrypted);
-        obj_1.valid = true;
-        res.send(JSON.stringify(obj_1));
+        var obj_3 = JSON.parse(decrypted);
+        obj_3.valid = true;
+        res.send(JSON.stringify(obj_3));
     }
     catch (_a) {
-        var obj_2 = {};
-        obj_2.valid = false;
-        obj_2.msg = "failed to decode QRCode!";
-        res.send(JSON.stringify(obj_2));
+        var obj_4 = {};
+        obj_4.valid = false;
+        obj_4.msg = "failed to decode QRCode!";
+        res.send(JSON.stringify(obj_4));
     }
 });
 /**
@@ -74,24 +157,24 @@ app.get("/validate", function (req, res) {
         try {
             var decrypted = key.decrypt(req.query.id.toString(), 'utf8');
             console.log("Decrypted:" + decrypted);
-            var obj_3 = JSON.parse(decrypted);
-            if (expired(obj_3.v)) {
+            var obj_5 = JSON.parse(decrypted);
+            if (expired(obj_5.v)) {
                 var rs = fs_1.default.readFileSync('src/invalid.html', 'utf8');
                 rs = rs.replace("<!--comment-->", "Der Schülerausweis ist ungültig (Gültigkeitsdauer überschritten)!");
                 s = s.replace("<!--result-->", rs);
             }
             else {
                 var rs = fs_1.default.readFileSync('src/valid.html', 'utf8');
-                if (underage(obj_3.gd)) {
+                if (underage(obj_5.gd)) {
                     rs = rs.replace("<!--underage-->", "<p class=\"col-12 col-sm-4 fs-5 underage fw-light\" style=\"color: #ff3131\">minderjährig</p>");
                 }
                 else {
                     rs = rs.replace("<!--underage-->", "<p class=\"col-12 col-sm-4 fs-5 underage fw-light\" style=\"color: #05b936\">volljährig</p>");
                 }
-                rs = rs.replace("<!--nachname-->", obj_3.nn);
-                rs = rs.replace("<!--vorname-->", obj_3.vn);
-                rs = rs.replace("<!--klasse-->", obj_3.kl);
-                rs = rs.replace("<!--date-->", obj_3.v);
+                rs = rs.replace("<!--nachname-->", obj_5.nn);
+                rs = rs.replace("<!--vorname-->", obj_5.vn);
+                rs = rs.replace("<!--klasse-->", obj_5.kl);
+                rs = rs.replace("<!--date-->", obj_5.v);
                 s = s.replace("<!--result-->", rs);
             }
         }

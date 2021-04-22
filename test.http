@@ -69,3 +69,22 @@ Content-Type: application/json
   "did": 1234,
   "valid": true
 }
+
+### Upload Image
+POST https://localhost:8080/image HTTP/1.1
+Accept: application/json
+Content-Type: multipart/form-data; boundary=MyBoundary
+key: "DmmGlsK7jUBw4n874BjtI4btyfBdtA8XBLRF3VGo2uUplkTCyPM0TTJjMzZDNH3xdGaYQKZRMJg6YjPn6+Q0/3enRwKUFZzfVbJiWbPjO4URaYmgG3MszJH3CKhmXh0tgJL0f0AQoV6TfVN72ihIoB5iFDKY09ycHbLalIH1T6VDA1hEUq4ONa6Tr2yzAo8s0aXd/Q2HES/ss2Ye2e483baqGa8MiJiOML2/dPRegACypb2UB3fZ6yZTMUJvVnlo1FF+y3dlTxaN8+c8w6tUD+u6aC6FImkEHBKUQCpFnQDgf2HxCBSOLg7ENim5Yh+J0t5k7un9NA4s0fvevG5nDQ=="
+
+--MyBoundary
+Content-Disposition: form-data; name="image"; filename="qrcode.png"
+Content-Type: image/png
+
+< ./qrcode.png
+--MyBoundary--
+
+
+### Download Image
+GET https://localhost:8080/image HTTP/1.1
+key: "DmmGlsK7jUBw4n874BjtI4btyfBdtA8XBLRF3VGo2uUplkTCyPM0TTJjMzZDNH3xdGaYQKZRMJg6YjPn6+Q0/3enRwKUFZzfVbJiWbPjO4URaYmgG3MszJH3CKhmXh0tgJL0f0AQoV6TfVN72ihIoB5iFDKY09ycHbLalIH1T6VDA1hEUq4ONa6Tr2yzAo8s0aXd/Q2HES/ss2Ye2e483baqGa8MiJiOML2/dPRegACypb2UB3fZ6yZTMUJvVnlo1FF+y3dlTxaN8+c8w6tUD+u6aC6FImkEHBKUQCpFnQDgf2HxCBSOLg7ENim5Yh+J0t5k7un9NA4s0fvevG5nDQ=="
+

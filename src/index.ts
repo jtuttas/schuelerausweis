@@ -6,8 +6,9 @@ import fs from 'fs';
 import nodeRSA from 'node-rsa';
 import https from "https";
 import { Student } from "./Student";
+import fileUpload from "express-fileupload"
 
-var keys=[];
+var keys = [];
 
 // Für Testzwecke
 keys.push("geheim");
@@ -21,13 +22,14 @@ const app = express();
 const port = 8080; // default port to listen
 console.log(__dirname);
 
+app.use(fileUpload());
 app.use(express.static(__dirname + '/../web'));
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
 
 let obj;
-function underage(dateString:string):boolean {
+function underage(dateString: string): boolean {
     var d = new Date();
     d.setFullYear(d.getFullYear() - 18);
     d.setHours(0, 0, 0);
@@ -39,7 +41,7 @@ function underage(dateString:string):boolean {
     //console.log('Minderjährig');
     return true;
 }
-function expired(dateString:string):boolean {
+function expired(dateString: string): boolean {
     if (new Date(dateString) > new Date()) {
         //console.log("valid");
         return false;
@@ -48,24 +50,118 @@ function expired(dateString:string):boolean {
     return true;
 }
 
+/**
+ * Endpunkt zum Upload der Schülerbilder
+ */
+app.post('/image', function (req, res) {
+    res.setHeader("content-type", "application/json");
+    let sampleFile;
+    let uploadPath;
+    let result = {
+        sucess:false,
+        msg:null
+    }
+    if (!req.files || Object.keys(req.files).length === 0) {
+        result.msg ="No files were uploaded."
+        return res.status(400).send(JSON.stringify(result));
+    }
+
+    try {
+        let decrypted = key.decrypt(""+req.headers.key, 'utf8');
+        console.log("Decrypted:" + decrypted);
+        let obj = JSON.parse(decrypted);
+
+        // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+        sampleFile = req.files.image;
+        //console.log("Dir is: " + __dirname);
+        
+        uploadPath = __dirname + '/../config/img' + obj.did+".jpg";
+
+        // Use the mv() method to place the file somewhere on your server
+        sampleFile.mv(uploadPath, function (err) {
+            if (err) {
+                result.msg=err
+                return res.status(500).send(JSON.stringify(result));
+            }
+
+            result.sucess=true
+            result.msg = 'File uploaded!'
+            res.send(JSON.stringify(result));
+        });
+    }
+    catch {
+        result.sucess = false
+        result.msg = 'Unknown or invalid Header key'
+        res.status(400).send(JSON.stringify(result));
+
+    }
+});
+
+/**
+ * Endpunkt zum Upload der Schülerbilder
+ */
+app.get('/image', function (req, res) {
+    let result = {
+        sucess: false,
+        msg: null
+    }
+    try {
+        let decrypted = key.decrypt("" + req.headers.key, 'utf8');
+        console.log("Decrypted:" + decrypted);
+        let obj = JSON.parse(decrypted);
+
+
+        let downloadPath = __dirname + '/../config/img' + obj.did + ".jpg";
+        console.log("return Image:"+downloadPath);
+        
+        try {
+            
+            if (fs.existsSync(downloadPath)) {
+                res.setHeader("content-type", "image/png");
+                res.sendFile(path.resolve(downloadPath));
+            }
+            else {
+                res.setHeader("content-type", "application/json");
+                result.sucess = false;
+                result.msg = "File Not Found "+downloadPath;
+                res.status(404).send(JSON.stringify(result));
+            }
+        } catch (err) {
+            res.setHeader("content-type", "application/json");
+            result.sucess = false;
+            result.msg = err;
+            res.status(400).send(JSON.stringify(result));
+        }
+        
+        
+    }
+    catch {
+        res.setHeader("content-type", "application/json");
+        result.sucess = false
+        result.msg = 'Unknown or invalid Header key'
+        res.status(400).send(JSON.stringify(result));
+
+    }
+});
+
 
 /**
  * Endpunkt für die Schülerinnen und Schüler Überpfüfen des QR Codes
  */
 app.post("/validate", (req, res) => {
-    console.log("Body:"+JSON.stringify(req.body));    
+    console.log("Body:" + JSON.stringify(req.body));
     res.setHeader("content-type", "application/json");
     try {
         let decrypted = key.decrypt(req.body.id, 'utf8');
         console.log("Decrypted:" + decrypted);
         let obj = JSON.parse(decrypted);
-        obj.valid=true;
+        obj.valid = true;
         res.send(JSON.stringify(obj));
     }
     catch {
-        let obj:any={};
-        obj.valid=false;
-        obj.msg="failed to decode QRCode!"
+        let obj: any = {};
+        obj.valid = false;
+        obj.msg = "failed to decode QRCode!"
         res.send(JSON.stringify(obj));
     }
 
@@ -75,18 +171,18 @@ app.post("/validate", (req, res) => {
  * Endpunkt für die Schülerinnen und Schüler (Anzeige des Ausweises) 
  */
 app.get("/validate", (req, res) => {
-    
+
     // render the index template
     let s: string = fs.readFileSync('src/validate.html', 'utf8');
     s = s.replace("<!--year-->", "" + new Date().getFullYear());
-    
+
     if (req.query.id) {
         let sid: string = req.query.id.toString();
-        console.log("ID="+sid);
+        console.log("ID=" + sid);
         try {
             let decrypted = key.decrypt(req.query.id.toString(), 'utf8');
             console.log("Decrypted:" + decrypted);
-            let obj:ID = JSON.parse(decrypted);
+            let obj: ID = JSON.parse(decrypted);
             if (expired(obj.v)) {
                 let rs: string = fs.readFileSync('src/invalid.html', 'utf8');
                 rs = rs.replace("<!--comment-->", "Der Schülerausweis ist ungültig (Gültigkeitsdauer überschritten)!");
@@ -105,7 +201,7 @@ app.get("/validate", (req, res) => {
                 rs = rs.replace("<!--vorname-->", obj.vn);
                 rs = rs.replace("<!--klasse-->", obj.kl);
                 rs = rs.replace("<!--date-->", obj.v);
-                s = s.replace("<!--result-->",rs);
+                s = s.replace("<!--result-->", rs);
             }
         }
         catch (error) {
@@ -137,12 +233,12 @@ app.get("/log", (req, res) => {
  * Endpunkt zum Einloggen als Lehrer
  */
 app.post("/log", (req, res) => {
-    console.log("user:"+req.body.user);
-    console.log("body:"+JSON.stringify(req.body));
-  
+    console.log("user:" + req.body.user);
+    console.log("body:" + JSON.stringify(req.body));
+
     let data = {
-        "benutzer":req.body.user,
-        "kennwort":req.body.pwd
+        "benutzer": req.body.user,
+        "kennwort": req.body.pwd
     }
 
     let options = {
@@ -160,14 +256,14 @@ app.post("/log", (req, res) => {
         console.log(`statusCode: ${result.statusCode}`)
 
         result.on('data', d => {
-            console.log("data:"+d);
+            console.log("data:" + d);
             obj = JSON.parse(d);
-            if (result.statusCode==200) {
-                if (obj.role!="Schueler") {
+            if (result.statusCode == 200) {
+                if (obj.role != "Schueler") {
                     let s: string = fs.readFileSync('src/index.html', 'utf8');
                     s = s.replace("<!--name-->", obj.ID);
-                    console.log("Auth-Token:"+obj.auth_token);
-                    
+                    console.log("Auth-Token:" + obj.auth_token);
+
                     keys.push(obj.auth_token);
                     res.setHeader("content-type", "text/html");
                     res.setHeader("key", obj.auth_token);
@@ -206,20 +302,20 @@ app.post("/log", (req, res) => {
  * Dekodieren des QR Codes und Abfrage des Diklabus (nur möglich mit gültigem key im Header)
  */
 app.post("/decode", (req, res) => {
-    res.setHeader("content-type","application/json");
+    res.setHeader("content-type", "application/json");
     if (req.headers.key) {
-        console.log("key="+req.headers.key);
-        if (keys.indexOf(req.headers.key)!=-1) {
+        console.log("key=" + req.headers.key);
+        if (keys.indexOf(req.headers.key) != -1) {
             console.log("ID:" + req.body.id);
             try {
                 res.statusCode = 200;
                 let decrypted = key.decrypt(req.body.id, 'utf8');
-                console.log("Decrypted:"+decrypted);
-                
-                let idcard:ID=new ID(decrypted);                
+                console.log("Decrypted:" + decrypted);
+
+                let idcard: ID = new ID(decrypted);
                 idcard.getStudent(req.headers.key.toString()).then((s: Student) => {
                     //console.log("Result Betrieb" + s.betrieb.NAME);
-                    s.idcard=idcard;
+                    s.idcard = idcard;
                     res.json(s);
                 }).catch(err => {
                     console.log("Error: " + err);
@@ -228,7 +324,7 @@ app.post("/decode", (req, res) => {
             }
             catch (error) {
                 console.log(error);
-                
+
                 res.statusCode = 401;
                 res.send('{"msg":"error decrypt key"}');
             }
@@ -239,7 +335,7 @@ app.post("/decode", (req, res) => {
         }
     }
     else {
-        res.statusCode=401;
+        res.statusCode = 401;
         res.send('{"msg":"no key"}');
     }
 });
@@ -250,5 +346,5 @@ https.createServer({
     key: fs.readFileSync('config/server.key'),
     cert: fs.readFileSync('config/server.cert')
 }, app).listen(port, function () {
-        console.log(`server started at https://localhost:${port}`);
-    });
+    console.log(`server started at https://localhost:${port}`);
+});
