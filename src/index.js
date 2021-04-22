@@ -67,6 +67,7 @@ app.post("/validate", function (req, res) {
 app.get("/validate", function (req, res) {
     // render the index template
     var s = fs_1.default.readFileSync('src/validate.html', 'utf8');
+    s = s.replace("<!--year-->", "" + new Date().getFullYear());
     if (req.query.id) {
         var sid = req.query.id.toString();
         console.log("ID=" + sid);
@@ -82,10 +83,10 @@ app.get("/validate", function (req, res) {
             else {
                 var rs = fs_1.default.readFileSync('src/valid.html', 'utf8');
                 if (underage(obj_3.gd)) {
-                    rs = rs.replace("<!--underage-->", "<p style=\"color:red\">minderjährig</p>");
+                    rs = rs.replace("<!--underage-->", "<p class=\"col-12 col-sm-4 fs-5 underage fw-light\" style=\"color: #ff3131\">minderjährig</p>");
                 }
                 else {
-                    rs = rs.replace("<!--underage-->", "<p style=\"color:green\">volljährig</p>");
+                    rs = rs.replace("<!--underage-->", "<p class=\"col-12 col-sm-4 fs-5 underage fw-light\" style=\"color: #05b936\">volljährig</p>");
                 }
                 rs = rs.replace("<!--nachname-->", obj_3.nn);
                 rs = rs.replace("<!--vorname-->", obj_3.vn);
