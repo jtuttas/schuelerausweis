@@ -8,6 +8,7 @@ var ID_1 = require("./ID");
 var fs_1 = __importDefault(require("fs"));
 var node_rsa_1 = __importDefault(require("node-rsa"));
 var https_1 = __importDefault(require("https"));
+var date_fns_1 = require("date-fns");
 var keys = [];
 // Für Testzwecke
 keys.push("geheim");
@@ -91,7 +92,7 @@ app.get("/validate", function (req, res) {
                 rs = rs.replace("<!--nachname-->", obj_3.nn);
                 rs = rs.replace("<!--vorname-->", obj_3.vn);
                 rs = rs.replace("<!--klasse-->", obj_3.kl);
-                rs = rs.replace("<!--date-->", obj_3.v);
+                rs = rs.replace("<!--date-->", date_fns_1.format(new Date(obj_3.v), "dd.MM.yyyy"));
                 s = s.replace("<!--result-->", rs);
             }
         }

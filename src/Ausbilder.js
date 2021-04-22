@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Ausbilder = void 0;
 var Ausbilder = /** @class */ (function () {
     function Ausbilder() {
         this.EMAIL = "";
