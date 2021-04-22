@@ -33,7 +33,7 @@ foreach ($course in $courses) {
             $row.vorname=$student.vn
             $rsaString = $student.getRSA($rsakey)
             #$rsaString= $student.urlDecode($rsaString)
-            $rsaString="http://ausweis.joerg-tuttas.de/validate?id="+$rsaString        
+            $rsaString="http://idcard.mmbbs.de/validate?id="+$rsaString        
             $row.qr=$rsaString
             $rows+=$row
 

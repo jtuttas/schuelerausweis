@@ -181,7 +181,7 @@ function Print-IDCard
         $cell.Select()
             
         $rsaString = $student.getRSA($rsakey)
-        $rsaString="http://ausweis.joerg-tuttas.de/validate?id="+$rsaString        
+        $rsaString="http://idcard.mmbbs.de/validate?id="+$rsaString        
         $rsaString= $student.urlDecode($rsaString)
         Write-Verbose "Get QR Code vor:$rsaString"
         
