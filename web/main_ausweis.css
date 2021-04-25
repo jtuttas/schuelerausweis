@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+  }
+
 .error {
     color: red;
 }
@@ -5,6 +9,8 @@
 .success {
      color: green;
 }
+
+
 
 html,
 body {
@@ -25,6 +31,8 @@ body {
     align-items: center;
     background-color: #fff;
     font-family: "Helvetica Neue", Arial, sans-serif;
+    overflow: hidden;
+
 }
 
 body.valid {

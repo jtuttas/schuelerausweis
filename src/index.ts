@@ -6,6 +6,8 @@ import fs from 'fs';
 import nodeRSA from 'node-rsa';
 import https from "https";
 import { Student } from "./Student";
+import {format, parse } from "date-fns";
+
 
 var keys=[];
 
@@ -104,7 +106,7 @@ app.get("/validate", (req, res) => {
                 rs = rs.replace("<!--nachname-->", obj.nn);
                 rs = rs.replace("<!--vorname-->", obj.vn);
                 rs = rs.replace("<!--klasse-->", obj.kl);
-                rs = rs.replace("<!--date-->", obj.v);
+                rs = rs.replace("<!--date-->", format(new Date(obj.v), "dd.MM.yyyy"));
                 s = s.replace("<!--result-->",rs);
             }
         }
