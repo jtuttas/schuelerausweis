@@ -2,7 +2,8 @@
     [string] $nachname=""
     [string] $vorname=""
     [string] $klasse=""
-    [string] $gültigkeit=""
+    [DateTime] $gebdat
+    [DateTime] $gültigkeit
     [string] $qr=""
 }
 
@@ -170,10 +171,15 @@ function Print-IDCard
         $Selection.Font.Name = "Arial"
         $Selection.Font.Size=10
         $Selection.TypeText("`r`n`r`n$($student.vn) $($student.nn)")
+        $d=get-Date $student.gd
+        $Selection.Font.Size=8
+        $Selection.TypeText("`r`n`Geb.: $($d.Day).$($d.Month).$($d.Year)")
+        $Selection.Font.Size=10
         $Selection.TypeText("`r`n`r`n$($student.kl)`r`n")
         $Selection.Font.Name = "Consolas"
-        $Selection.Font.Size=8            
-        $Selection.TypeText("`r`n`r`ngültig bis $($student.v)")
+        $Selection.Font.Size=8    
+        $v=Get-Date $student.v        
+        $Selection.TypeText("`r`ngültig bis $($v.Day).$($v.Month).$($v.Year)")
         $Selection.TypeParagraph()
 
   
@@ -221,16 +227,16 @@ $student.kl="FIAE20J"
 $student.did=1234
 $student.gd="1997-04-11"
 $student.v="2021-08-01"
-
+ 
 $student2=New-Object StudentId;
 $student2.nn="Musterfrau"
 $student2.vn="Simone"
-$student2.em="Musterfrau@mm-bbs.de"
+#$student2.em="Musterfrau@mm-bbs.de"
 $student2.kl="FIAE20J"
 $student2.did=1235
 $student2.gd="1998-05-12"
 $student2.v="2021-08-01"
 
-$student,$student2,$student2 | Print-IDCard -Verbose
-
+$student2,$student2 | Print-IDCard -Verbose
 #>
+
