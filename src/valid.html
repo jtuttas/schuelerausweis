@@ -33,8 +33,10 @@
                 </div>
 
                 <div class="col-4 col-sm-4 p-0 position-relative">
-                    <img src="img/anonym.png" style="width: 126px; height: 158px;" class="rounded float-end" alt="Profilfoto">
-                        <span id="gdat-sign" class="position-absolute"><i class="bi bi-check-circle"></i></span>
+                    <a id="qrcoderef" href="img/anonym.png" target="_blank">
+                    <img id="qrcode" src="img/anonym.png" style="width: 158px; height: 158px;" class="rounded float-end" alt="Profilfoto">
+                    </a>
+                    <span id="gdat-sign" class="position-absolute"><i class="bi bi-check-circle"></i></span>
                 </div>
             </div>
 
@@ -49,3 +51,7 @@
                 </div>
             </div>
         </div>
+        <script>
+            $("#qrcode").attr("src","https://chart.googleapis.com/chart?chs=158x158&cht=qr&chl="+ encodeURIComponent($(location).attr('href'))+"&chld=M|0");
+            $("#qrcoderef").attr("href","https://chart.googleapis.com/chart?chs=400x400&cht=qr&chl="+ encodeURIComponent($(location).attr('href'))+"&chld=M|0");
+        </script>
