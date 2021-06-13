@@ -9,6 +9,7 @@ var fs_1 = __importDefault(require("fs"));
 var node_rsa_1 = __importDefault(require("node-rsa"));
 var https_1 = __importDefault(require("https"));
 var date_fns_1 = require("date-fns");
+var walletBuilder_1 = require("./walletBuilder");
 var keys = [];
 // Für Testzwecke
 keys.push("geheim");
@@ -21,6 +22,7 @@ console.log(__dirname);
 app.use(express_1.default.static(__dirname + '/../web'));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
+var wb = new walletBuilder_1.WalletBuilder();
 var obj;
 function underage(dateString) {
     var d = new Date();
@@ -43,6 +45,35 @@ function expired(dateString) {
     return true;
 }
 /**
+ * Endpunkt Zum erzeugen eines Wallets
+ */
+app.get("/wallet", function (req, res) {
+    var obj = {};
+    if (req.query.id) {
+        var sid = req.query.id.toString();
+        console.log("ID=" + sid);
+        try {
+            var decrypted = key.decrypt(req.query.id.toString(), 'utf8');
+            console.log("Decrypted:" + decrypted);
+            var obj_1 = JSON.parse(decrypted);
+            wb.genit(res, sid, obj_1);
+        }
+        catch (_a) {
+            console.log("Failed to Decode!");
+            obj.valid = false;
+            obj.msg = "failed to decode id!";
+            res.setHeader("content-type", "application/json");
+            res.send(JSON.stringify(obj));
+        }
+    }
+    else {
+        res.setHeader("content-type", "application/json");
+        obj.valid = false;
+        obj.msg = "no id Param";
+        res.send(JSON.stringify(obj));
+    }
+});
+/**
  * Endpunkt für die Schülerinnen und Schüler Überpfüfen des QR Codes
  */
 app.post("/validate", function (req, res) {
@@ -51,15 +82,15 @@ app.post("/validate", function (req, res) {
     try {
         var decrypted = key.decrypt(req.body.id, 'utf8');
         console.log("Decrypted:" + decrypted);
-        var obj_1 = JSON.parse(decrypted);
-        obj_1.valid = true;
-        res.send(JSON.stringify(obj_1));
+        var obj_2 = JSON.parse(decrypted);
+        obj_2.valid = true;
+        res.send(JSON.stringify(obj_2));
     }
     catch (_a) {
-        var obj_2 = {};
-        obj_2.valid = false;
-        obj_2.msg = "failed to decode QRCode!";
-        res.send(JSON.stringify(obj_2));
+        var obj_3 = {};
+        obj_3.valid = false;
+        obj_3.msg = "failed to decode QRCode!";
+        res.send(JSON.stringify(obj_3));
     }
 });
 /**
@@ -75,24 +106,24 @@ app.get("/validate", function (req, res) {
         try {
             var decrypted = key.decrypt(req.query.id.toString(), 'utf8');
             console.log("Decrypted:" + decrypted);
-            var obj_3 = JSON.parse(decrypted);
-            if (expired(obj_3.v)) {
+            var obj_4 = JSON.parse(decrypted);
+            if (expired(obj_4.v)) {
                 var rs = fs_1.default.readFileSync('src/invalid.html', 'utf8');
                 rs = rs.replace("<!--comment-->", "Der Schülerausweis ist ungültig (Gültigkeitsdauer überschritten)!");
                 s = s.replace("<!--result-->", rs);
             }
             else {
                 var rs = fs_1.default.readFileSync('src/valid.html', 'utf8');
-                if (underage(obj_3.gd)) {
+                if (underage(obj_4.gd)) {
                     rs = rs.replace("<!--underage-->", "<p class=\"col-12 col-sm-4 fs-5 underage fw-light\" style=\"color: #ff3131\">minderjährig</p>");
                 }
                 else {
                     rs = rs.replace("<!--underage-->", "<p class=\"col-12 col-sm-4 fs-5 underage fw-light\" style=\"color: #05b936\">volljährig</p>");
                 }
-                rs = rs.replace("<!--nachname-->", obj_3.nn);
-                rs = rs.replace("<!--vorname-->", obj_3.vn);
-                rs = rs.replace("<!--klasse-->", obj_3.kl);
-                rs = rs.replace("<!--date-->", date_fns_1.format(new Date(obj_3.v), "dd.MM.yyyy"));
+                rs = rs.replace("<!--nachname-->", obj_4.nn);
+                rs = rs.replace("<!--vorname-->", obj_4.vn);
+                rs = rs.replace("<!--klasse-->", obj_4.kl);
+                rs = rs.replace("<!--date-->", date_fns_1.format(new Date(obj_4.v), "dd.MM.yyyy"));
                 s = s.replace("<!--result-->", rs);
             }
         }

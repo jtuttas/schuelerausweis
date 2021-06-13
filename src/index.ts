@@ -7,6 +7,7 @@ import nodeRSA from 'node-rsa';
 import https from "https";
 import { Student } from "./Student";
 import {format, parse } from "date-fns";
+import { WalletBuilder } from "./walletBuilder";
 
 
 var keys=[];
@@ -27,6 +28,7 @@ app.use(express.static(__dirname + '/../web'));
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
+var wb:WalletBuilder = new WalletBuilder();
 
 let obj;
 function underage(dateString:string):boolean {
@@ -50,6 +52,37 @@ function expired(dateString:string):boolean {
     return true;
 }
 
+/**
+ * Endpunkt Zum erzeugen eines Wallets
+ */
+app.get("/wallet", (req, res) => {
+    let obj: any = {};
+    if (req.query.id) {
+        let sid: string = req.query.id.toString();
+        console.log("ID=" + sid);
+        try {
+            let decrypted = key.decrypt(req.query.id.toString(), 'utf8');
+            console.log("Decrypted:" + decrypted);
+            let obj = JSON.parse(decrypted);
+            wb.genit(res,sid,obj);
+        }
+        catch {
+            console.log("Failed to Decode!");
+            
+            obj.valid = false;
+            obj.msg = "failed to decode id!"
+            res.setHeader("content-type", "application/json");
+            res.send(JSON.stringify(obj));
+        }
+    }
+    else {
+        res.setHeader("content-type", "application/json");
+        obj.valid=false;
+        obj.msg="no id Param"
+        res.send(JSON.stringify(obj));
+    }
+
+});
 
 /**
  * Endpunkt für die Schülerinnen und Schüler Überpfüfen des QR Codes

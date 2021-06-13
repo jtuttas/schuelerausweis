@@ -1,0 +1,81 @@
+{
+  "organizationName": "Multi Media Berufsbildenden Schulen Hannover",
+  "backgroundColor": "rgb(20,81,137)",
+  "foregroundColor": "rgb(255,255,255)",
+  "labelColor":"rgb(255,255,255)",
+  "logoText": "Schülerausweis MMBbS",
+  "locations": [
+    {
+      "latitude": 52.3710086,
+      "longitude": 9.7359298,
+      "relevantText": "Schülerausweis bei der Üstra vorzeigen"
+    }
+  ],
+  "barcode": {
+    "format": "PKBarcodeFormatQR",
+    "message": "http://idcard.mmbbs.de/validate?id=fWXnFXKO0rsG9PjoPyS/Z96U6HihNJvzgsLntb3a7uZQFNxI%2BYNp%2BHeFU3iTFEqF9CC02g/sAa2VMNXZ/Rbxu0vz2f%2BPyK8SG81MmiRDLTCfE5W1Jq/s22vSKS/f1LGi8x9MszEQ1wSMXzjICuHrDxesLwpxDbNhXebaYS%2BnqF%2B8Trl5vLI%2B1NbYbVtCeBJK/XJju9CSiD2lTyeWpai1Nyz2puxKU9NnNfnF7VonWSZ7gutaZpAjufK/pEn/FpOwL/krQFB77rs0g%2Btz2L0yg0jurwUIgxg46KjGGJTQ6ji2nyjkphXxZ09tr9iqQt9yzSVu6UNnc0EYGM50A60t0A==",
+    "messageEncoding": "iso-8859-1",
+    "altText": "QR-Code zum Prüfen der Gültigkeit des Ausweises"
+  },
+  "generic": {
+    "headerFields" : [
+      {
+        "key": "school-year",
+        "value": "20/21",
+        "changeMessage": "Schuljahr aktualisiert (neu: %@)"
+      }
+    ],
+    "primaryFields": [
+      { 
+        "key": "name",
+        "label": "Name",
+        "value": "Mustermann",
+        "changeMessage": "Geändert in %@."
+      }
+    ],
+    "secondaryFields": [
+      {
+        "key": "surname",
+        "label": "Vorname",
+        "value": "Max",
+        "changeMessage": "Geändert in %@."
+      },
+      {
+        "key": "class",
+        "label": "Klasse",
+        "value": "FIAE20J",
+        "changeMessage": "Klasse gewechselt (neu: %@)."
+      },
+      {
+        "key": "birthday",
+        "label": "Geburtsdatum",
+        "value": "01.01.1997",
+        "textAlignment": "PKTextAlignmentRight"
+      }
+    ],
+    "backFields": [
+      {
+        "key": "info",
+        "label": "Schülerausweis der Multi Media Berufsbildenden Schulen Hannover",
+        "value": "Der Ausweis kann durch das Scanner des QR Code auf seine Gültigkeit überprüft werden."
+      },
+      {
+        "key" : "terms",
+        "label" : "Nutzungsbedingungen",
+        "value" : "...\n\nMulti Media Berufsbildenden Schulen Hannover (MMBbS)\nExpo Plaza 3\n30539 Hannover\n\nTelefon: +49 (0)511-64619877\nE-Mail: info@mmbbs.de\n\nSchulleiter: OStD Joachim Maiß"
+      },
+      {
+        "key" : "website",
+        "label" : "Website",
+        "value" : "http://www.mmbbs.de"
+      }
+    ]
+  },
+  "serialNumber": "60bf9c4490bba",
+  "formatVersion": 1,
+  "description": "Schülerausweis der Multi Media Berufsbildenden Schulen Hannover",
+  "passTypeIdentifier": "pass.de.mm-bbs",
+  "teamIdentifier": "N84N4RRXYF",
+  "webServiceURL": "https://www.mmbbs.de",
+  "authenticationToken": "vxwxd7J8AlNNFPS8k0a0FfUFtq0ewzFdc"
+}
