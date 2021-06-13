@@ -68,7 +68,7 @@ var WalletBuilder = /** @class */ (function () {
                         // Adding some settings to be written inside pass.json
                         //examplePass.barcode("Test"); 
                         examplePass.barcodes({
-                            message: "http://idcard.mmbbs.de/validate?id=" + id,
+                            message: "http://idcard.mmbbs.de/validate?id=" + id.split("+").join("%2B"),
                             format: "PKBarcodeFormatQR",
                             altText: "your idCard",
                             messageEncoding: "iso-8859-1"

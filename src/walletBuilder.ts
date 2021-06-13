@@ -26,11 +26,12 @@ export class WalletBuilder {
             // Adding some settings to be written inside pass.json
             //examplePass.barcode("Test"); 
             examplePass.barcodes({
-                message: "http://idcard.mmbbs.de/validate?id=" + id,
+                message: "http://idcard.mmbbs.de/validate?id=" + id.split("+").join("%2B"),
                 format: "PKBarcodeFormatQR",
                 altText: "your idCard",
                 messageEncoding: "iso-8859-1"
             });
+
             examplePass.primaryFields.map(item => {
                 if (item.key=="name") {
                     console.log("Found Name and set it to "+s.nn);
