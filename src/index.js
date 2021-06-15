@@ -10,6 +10,7 @@ var node_rsa_1 = __importDefault(require("node-rsa"));
 var https_1 = __importDefault(require("https"));
 var date_fns_1 = require("date-fns");
 var walletBuilder_1 = require("./walletBuilder");
+var config_json_1 = __importDefault(require("../config/config.json"));
 var keys = [];
 // Für Testzwecke
 keys.push("geheim");
@@ -74,6 +75,99 @@ app.get("/wallet", function (req, res) {
     }
 });
 /**
+ * Endpunkt zum Einloggen als Schüler
+ */
+app.post("/wallet", function (req, res) {
+    console.log("user:" + req.body.user);
+    console.log("body:" + JSON.stringify(req.body));
+    var obj = {};
+    var obj2 = {};
+    var data = {
+        "benutzer": req.body.user,
+        "kennwort": req.body.pwd
+    };
+    var options = {
+        hostname: 'diklabu.mm-bbs.de',
+        port: 8080,
+        path: "/Diklabu/api/v1/auth/login",
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': JSON.stringify(data).length
+        }
+    };
+    var request = https_1.default.request(options, function (result) {
+        console.log("statusCode: " + result.statusCode);
+        result.on('data', function (d) {
+            console.log("data:" + d);
+            obj = JSON.parse(d);
+            if (result.statusCode == 200) {
+                if (obj.role == "Schueler") {
+                    console.log("Angemeldet als Schüler! ID=" + obj.ID);
+                    var options2 = {
+                        hostname: 'diklabu.mm-bbs.de',
+                        port: 8080,
+                        path: "/Diklabu/api/v1/sauth/" + obj.ID,
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'auth_token': obj.auth_token
+                        }
+                    };
+                    var request2 = https_1.default.request(options2, function (result2) {
+                        console.log("statusCode: " + result2.statusCode);
+                        result2.on('data', function (d2) {
+                            console.log("data2:" + d2);
+                            obj2 = JSON.parse(d2);
+                            var student = {};
+                            student.nn = obj.NNAME;
+                            student.vn = obj.VNAME;
+                            student.kl = obj.nameKlasse;
+                            student.v = config_json_1.default.validDate;
+                            student.gd = obj2.gebDatum;
+                            student.did = obj.idPlain;
+                            var id = key.encrypt(JSON.stringify(student), 'base64');
+                            console.log("id=" + id);
+                            id = id.split("+").join("%2B");
+                            var s = fs_1.default.readFileSync('src/idcards.html', 'utf8');
+                            s = s.replace("<!--wallet-->", "http://idcard.mmbbs.de/wallet?id=" + id);
+                            s = s.replace("<!--link-->", "http://idcard.mmbbs.de/validate?id=" + id);
+                            s = s.replace("<!--qrcode-->", "https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=" + encodeURIComponent("http://idcard.mmbbs.de/validate?id=" + id) + "&chld=M|0");
+                            res.setHeader("content-type", "text/html");
+                            res.send(s);
+                        });
+                    });
+                    request2.on('error', function (error) {
+                        console.error("Error" + error);
+                    });
+                    request2.write("");
+                    request2.end();
+                }
+                else {
+                    res.setHeader("content-type", "text/html");
+                    var s = fs_1.default.readFileSync('web/index.html', 'utf8');
+                    s = s.replace("<!--error-->", "Anmeldung nur als Schüler möglich");
+                    res.send(s);
+                }
+            }
+            else {
+                res.setHeader("content-type", "text/html");
+                var s = fs_1.default.readFileSync('web/index.html', 'utf8');
+                s = s.replace("<!--error-->", obj.message);
+                res.send(s);
+            }
+        });
+    });
+    request.on('error', function (error) {
+        console.error(error);
+        var s = fs_1.default.readFileSync('web/login.html', 'utf8');
+        s = s.replace("<!--error-->", error.message);
+        res.send(s);
+    });
+    request.write(JSON.stringify(data));
+    request.end();
+});
+/**
  * Endpunkt für die Schülerinnen und Schüler Überpfüfen des QR Codes
  */
 app.post("/validate", function (req, res) {
@@ -123,6 +217,7 @@ app.get("/validate", function (req, res) {
                 rs = rs.replace("<!--nachname-->", obj_4.nn);
                 rs = rs.replace("<!--vorname-->", obj_4.vn);
                 rs = rs.replace("<!--klasse-->", obj_4.kl);
+                rs = rs.replace("<!--birthday-->", obj_4.gd);
                 rs = rs.replace("<!--date-->", date_fns_1.format(new Date(obj_4.v), "dd.MM.yyyy"));
                 s = s.replace("<!--result-->", rs);
             }
@@ -252,5 +347,6 @@ https_1.default.createServer({
     cert: fs_1.default.readFileSync('config/server.cert')
 }, app).listen(port, function () {
     console.log("server started at https://localhost:" + port);
+    console.log("Gültigkeitsdatum des Ausweises ist " + config_json_1.default.validDate);
 });
 //# sourceMappingURL=index.js.map

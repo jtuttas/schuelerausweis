@@ -35,15 +35,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WalletBuilder = void 0;
 var passkit_generator_1 = require("passkit-generator");
+var config_json_1 = __importDefault(require("../config/config.json"));
 var WalletBuilder = /** @class */ (function () {
     function WalletBuilder() {
     }
     WalletBuilder.prototype.genit = function (res, id, s) {
         return __awaiter(this, void 0, void 0, function () {
             var examplePass, stream, err_1;
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -73,25 +78,14 @@ var WalletBuilder = /** @class */ (function () {
                             altText: "your idCard",
                             messageEncoding: "iso-8859-1"
                         });
+                        examplePass.headerFields.map(function (item) {
+                            _this.repaceVales(item, s);
+                        });
                         examplePass.primaryFields.map(function (item) {
-                            if (item.key == "name") {
-                                console.log("Found Name and set it to " + s.nn);
-                                item.value = s.nn;
-                            }
+                            _this.repaceVales(item, s);
                         });
                         examplePass.secondaryFields.map(function (item) {
-                            if (item.key == "surname") {
-                                console.log("Found Surname and set it to " + s.vn);
-                                item.value = s.vn;
-                            }
-                            if (item.key == "class") {
-                                console.log("Found class and set it to " + s.kl);
-                                item.value = s.kl;
-                            }
-                            if (item.key == "birthday") {
-                                console.log("Found birthday and set it to " + s.gd);
-                                item.value = s.gd;
-                            }
+                            _this.repaceVales(item, s);
                         });
                         stream = examplePass.generate();
                         res.set({
@@ -108,6 +102,28 @@ var WalletBuilder = /** @class */ (function () {
                 }
             });
         });
+    };
+    WalletBuilder.prototype.repaceVales = function (item, s) {
+        if (item.key == "valid") {
+            console.log("Found Valid and set it to " + config_json_1.default.schuljahr);
+            item.value = config_json_1.default.schuljahr;
+        }
+        if (item.key == "name") {
+            console.log("Found Name and set it to " + s.nn);
+            item.value = s.nn;
+        }
+        if (item.key == "surname") {
+            console.log("Found Surname and set it to " + s.vn);
+            item.value = s.vn;
+        }
+        if (item.key == "class") {
+            console.log("Found class and set it to " + s.kl);
+            item.value = s.kl;
+        }
+        if (item.key == "birthday") {
+            console.log("Found birthday and set it to " + s.gd);
+            item.value = s.gd;
+        }
     };
     return WalletBuilder;
 }());

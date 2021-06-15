@@ -1,5 +1,6 @@
 import { createPass, Pass } from "passkit-generator";
 import { Student } from "./Student";
+import config from '../config/config.json';
 
 export class WalletBuilder {
     constructor() {
@@ -32,25 +33,14 @@ export class WalletBuilder {
                 messageEncoding: "iso-8859-1"
             });
 
+            examplePass.headerFields.map(item => {
+                this.repaceVales(item,s);
+            });
             examplePass.primaryFields.map(item => {
-                if (item.key=="name") {
-                    console.log("Found Name and set it to "+s.nn);
-                    item.value=s.nn;
-                }
+                this.repaceVales(item,s);
             });
             examplePass.secondaryFields.map(item => {
-                if (item.key == "surname") {
-                    console.log("Found Surname and set it to " + s.vn);
-                    item.value = s.vn;
-                }
-                if (item.key == "class") {
-                    console.log("Found class and set it to " + s.kl);
-                    item.value = s.kl;
-                }
-                if (item.key == "birthday") {
-                    console.log("Found birthday and set it to " + s.gd);
-                    item.value = s.gd;
-                }
+                this.repaceVales(item,s);
             });
 
             // Generate the stream .pkpass file stream
@@ -63,6 +53,30 @@ export class WalletBuilder {
         } catch (err) {
             console.log('Error:' + err);
         }
+    }
+
+    private repaceVales(item,s) {
+        if (item.key == "valid") {
+            console.log("Found Valid and set it to " + config.schuljahr);
+            item.value = config.schuljahr;
+        }
+        if (item.key == "name") {
+            console.log("Found Name and set it to " + s.nn);
+            item.value = s.nn;
+        }
+        if (item.key == "surname") {
+            console.log("Found Surname and set it to " + s.vn);
+            item.value = s.vn;
+        }
+        if (item.key == "class") {
+            console.log("Found class and set it to " + s.kl);
+            item.value = s.kl;
+        }
+        if (item.key == "birthday") {
+            console.log("Found birthday and set it to " + s.gd);
+            item.value = s.gd;
+        }
+
     }
 }
 
