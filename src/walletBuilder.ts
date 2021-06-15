@@ -1,12 +1,60 @@
 import { createPass, Pass } from "passkit-generator";
 import { Student } from "./Student";
 import config from '../config/config.json';
+import PDFDocument = require('pdfkit');
+import https from "https";
+import request = require("request");
 
 export class WalletBuilder {
     constructor() {
     }
 
-    async genit(res:any,id:string,s:any) {
+
+    genpdf(res: any, id: string, s: any) {
+        console.log("Gen PDF");
+        id=id.split("+").join("%2B");
+        var doc = new PDFDocument({
+            size: "A4",
+            autoFirstPage: true,
+            margin: 25
+        });
+        request({
+            url: "https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=" + encodeURIComponent("http://idcard.mmbbs.de/validate?id=" + id) + "&chld=M|0",
+            // Prevents Request from converting response to string
+            encoding: null
+        }, function (err, response, body) {
+            console.log("Bild geladen...");
+
+            doc.image(body,120,48,{width: 130})
+            doc.image('web/img/ms-icon-70x70.png', 22, 22, { width: 30 });
+            doc.font('Helvetica-Bold').fontSize(16);
+            doc.text("Schülerausweis MMBbS", 60, 38);
+            doc.font('Helvetica-Bold').fontSize(8);
+            doc.text("Name:", 25, 60);
+            doc.text("Vorname:", 25, 82);
+            doc.text("Klasse:", 25, 104);
+            doc.text("Geb. Datum:", 25, 126);
+            doc.text("Gültigkeit:", 25, 148);
+            doc.font('Helvetica').fontSize(8).fillColor("0x888888");
+            doc.text(s.nn, 29, 70);
+            doc.text(s.vn, 29, 92);
+            doc.text(s.kl, 29, 114);
+            doc.text(s.gd, 29, 136);
+            doc.text("Schuljahr " + config.schuljahr, 29, 158);
+            doc.rect(20, 20, 238, 150);
+            doc.stroke();
+
+            doc.end();
+            res.set({
+                "Content-type": "application/pdf",
+                "Content-disposition": `attachment; filename=ausweis.pdf`,
+            });
+            doc.pipe(res);
+        })
+
+    }
+
+    async genit(res: any, id: string, s: any) {
         try {
             const examplePass = await createPass({
                 model: "./student.pass",
@@ -34,13 +82,13 @@ export class WalletBuilder {
             });
 
             examplePass.headerFields.map(item => {
-                this.repaceVales(item,s);
+                this.repaceVales(item, s);
             });
             examplePass.primaryFields.map(item => {
-                this.repaceVales(item,s);
+                this.repaceVales(item, s);
             });
             examplePass.secondaryFields.map(item => {
-                this.repaceVales(item,s);
+                this.repaceVales(item, s);
             });
 
             // Generate the stream .pkpass file stream
@@ -55,7 +103,7 @@ export class WalletBuilder {
         }
     }
 
-    private repaceVales(item,s) {
+    private repaceVales(item, s) {
         if (item.key == "valid") {
             console.log("Found Valid and set it to " + config.schuljahr);
             item.value = config.schuljahr;

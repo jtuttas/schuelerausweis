@@ -53,6 +53,37 @@ function expired(dateString: string): boolean {
 }
 
 /**
+ * Endpunkt Zum erzeugen eines Schülerausweises als pdf
+ */
+app.get("/pdf", (req, res) => {
+    let obj: any = {};
+    if (req.query.id) {
+        let sid: string = req.query.id.toString();
+        console.log("ID=" + sid);
+        try {
+            let decrypted = key.decrypt(req.query.id.toString(), 'utf8');
+            console.log("Decrypted:" + decrypted);
+            let obj = JSON.parse(decrypted);
+            wb.genpdf(res, sid, obj);
+        }
+        catch {
+            console.log("Failed to Decode!");
+
+            obj.valid = false;
+            obj.msg = "failed to decode id!"
+            res.setHeader("content-type", "application/json");
+            res.send(JSON.stringify(obj));
+        }
+    }
+    else {
+        res.setHeader("content-type", "application/json");
+        obj.valid = false;
+        obj.msg = "no id Param"
+        res.send(JSON.stringify(obj));
+    }
+});
+
+/**
  * Endpunkt Zum erzeugen eines Wallets
  */
 app.get("/wallet", (req, res) => {
@@ -148,6 +179,7 @@ app.post("/wallet", (req, res) => {
                             
                             let s: string = fs.readFileSync('src/idcards.html', 'utf8');
                             s = s.replace("<!--wallet-->", "http://idcard.mmbbs.de/wallet?id="+id);
+                            s = s.replace("<!--pdf-->", "http://idcard.mmbbs.de/pdf?id="+id);
                             s = s.replace("<!--link-->", "http://idcard.mmbbs.de/validate?id="+id);
                             s = s.replace("<!--qrcode-->", "https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=" + encodeURIComponent("http://idcard.mmbbs.de/validate?id=" + id)+"&chld=M|0");
 

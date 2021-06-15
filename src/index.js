@@ -46,6 +46,35 @@ function expired(dateString) {
     return true;
 }
 /**
+ * Endpunkt Zum erzeugen eines Schülerausweises als pdf
+ */
+app.get("/pdf", function (req, res) {
+    var obj = {};
+    if (req.query.id) {
+        var sid = req.query.id.toString();
+        console.log("ID=" + sid);
+        try {
+            var decrypted = key.decrypt(req.query.id.toString(), 'utf8');
+            console.log("Decrypted:" + decrypted);
+            var obj_1 = JSON.parse(decrypted);
+            wb.genpdf(res, sid, obj_1);
+        }
+        catch (_a) {
+            console.log("Failed to Decode!");
+            obj.valid = false;
+            obj.msg = "failed to decode id!";
+            res.setHeader("content-type", "application/json");
+            res.send(JSON.stringify(obj));
+        }
+    }
+    else {
+        res.setHeader("content-type", "application/json");
+        obj.valid = false;
+        obj.msg = "no id Param";
+        res.send(JSON.stringify(obj));
+    }
+});
+/**
  * Endpunkt Zum erzeugen eines Wallets
  */
 app.get("/wallet", function (req, res) {
@@ -56,8 +85,8 @@ app.get("/wallet", function (req, res) {
         try {
             var decrypted = key.decrypt(req.query.id.toString(), 'utf8');
             console.log("Decrypted:" + decrypted);
-            var obj_1 = JSON.parse(decrypted);
-            wb.genit(res, sid, obj_1);
+            var obj_2 = JSON.parse(decrypted);
+            wb.genit(res, sid, obj_2);
         }
         catch (_a) {
             console.log("Failed to Decode!");
@@ -131,6 +160,7 @@ app.post("/wallet", function (req, res) {
                             id = id.split("+").join("%2B");
                             var s = fs_1.default.readFileSync('src/idcards.html', 'utf8');
                             s = s.replace("<!--wallet-->", "http://idcard.mmbbs.de/wallet?id=" + id);
+                            s = s.replace("<!--pdf-->", "http://idcard.mmbbs.de/pdf?id=" + id);
                             s = s.replace("<!--link-->", "http://idcard.mmbbs.de/validate?id=" + id);
                             s = s.replace("<!--qrcode-->", "https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=" + encodeURIComponent("http://idcard.mmbbs.de/validate?id=" + id) + "&chld=M|0");
                             res.setHeader("content-type", "text/html");
@@ -176,15 +206,15 @@ app.post("/validate", function (req, res) {
     try {
         var decrypted = key.decrypt(req.body.id, 'utf8');
         console.log("Decrypted:" + decrypted);
-        var obj_2 = JSON.parse(decrypted);
-        obj_2.valid = true;
-        res.send(JSON.stringify(obj_2));
+        var obj_3 = JSON.parse(decrypted);
+        obj_3.valid = true;
+        res.send(JSON.stringify(obj_3));
     }
     catch (_a) {
-        var obj_3 = {};
-        obj_3.valid = false;
-        obj_3.msg = "failed to decode QRCode!";
-        res.send(JSON.stringify(obj_3));
+        var obj_4 = {};
+        obj_4.valid = false;
+        obj_4.msg = "failed to decode QRCode!";
+        res.send(JSON.stringify(obj_4));
     }
 });
 /**
@@ -200,25 +230,25 @@ app.get("/validate", function (req, res) {
         try {
             var decrypted = key.decrypt(req.query.id.toString(), 'utf8');
             console.log("Decrypted:" + decrypted);
-            var obj_4 = JSON.parse(decrypted);
-            if (expired(obj_4.v)) {
+            var obj_5 = JSON.parse(decrypted);
+            if (expired(obj_5.v)) {
                 var rs = fs_1.default.readFileSync('src/invalid.html', 'utf8');
                 rs = rs.replace("<!--comment-->", "Der Schülerausweis ist ungültig (Gültigkeitsdauer überschritten)!");
                 s = s.replace("<!--result-->", rs);
             }
             else {
                 var rs = fs_1.default.readFileSync('src/valid.html', 'utf8');
-                if (underage(obj_4.gd)) {
+                if (underage(obj_5.gd)) {
                     rs = rs.replace("<!--underage-->", "<p class=\"col-12 col-sm-4 fs-5 underage fw-light\" style=\"color: #ff3131\">minderjährig</p>");
                 }
                 else {
                     rs = rs.replace("<!--underage-->", "<p class=\"col-12 col-sm-4 fs-5 underage fw-light\" style=\"color: #05b936\">volljährig</p>");
                 }
-                rs = rs.replace("<!--nachname-->", obj_4.nn);
-                rs = rs.replace("<!--vorname-->", obj_4.vn);
-                rs = rs.replace("<!--klasse-->", obj_4.kl);
-                rs = rs.replace("<!--birthday-->", obj_4.gd);
-                rs = rs.replace("<!--date-->", date_fns_1.format(new Date(obj_4.v), "dd.MM.yyyy"));
+                rs = rs.replace("<!--nachname-->", obj_5.nn);
+                rs = rs.replace("<!--vorname-->", obj_5.vn);
+                rs = rs.replace("<!--klasse-->", obj_5.kl);
+                rs = rs.replace("<!--birthday-->", obj_5.gd);
+                rs = rs.replace("<!--date-->", date_fns_1.format(new Date(obj_5.v), "dd.MM.yyyy"));
                 s = s.replace("<!--result-->", rs);
             }
         }

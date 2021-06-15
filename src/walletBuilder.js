@@ -42,9 +42,51 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.WalletBuilder = void 0;
 var passkit_generator_1 = require("passkit-generator");
 var config_json_1 = __importDefault(require("../config/config.json"));
+var PDFDocument = require("pdfkit");
+var request = require("request");
 var WalletBuilder = /** @class */ (function () {
     function WalletBuilder() {
     }
+    WalletBuilder.prototype.genpdf = function (res, id, s) {
+        console.log("Gen PDF");
+        id = id.split("+").join("%2B");
+        var doc = new PDFDocument({
+            size: "A4",
+            autoFirstPage: true,
+            margin: 25
+        });
+        request({
+            url: "https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=" + encodeURIComponent("http://idcard.mmbbs.de/validate?id=" + id) + "&chld=M|0",
+            // Prevents Request from converting response to string
+            encoding: null
+        }, function (err, response, body) {
+            console.log("Bild geladen...");
+            doc.image(body, 120, 48, { width: 130 });
+            doc.image('web/img/ms-icon-70x70.png', 22, 22, { width: 30 });
+            doc.font('Helvetica-Bold').fontSize(16);
+            doc.text("Schülerausweis MMBbS", 60, 38);
+            doc.font('Helvetica-Bold').fontSize(8);
+            doc.text("Name:", 25, 60);
+            doc.text("Vorname:", 25, 82);
+            doc.text("Klasse:", 25, 104);
+            doc.text("Geb. Datum:", 25, 126);
+            doc.text("Gültigkeit:", 25, 148);
+            doc.font('Helvetica').fontSize(8).fillColor("0x888888");
+            doc.text(s.nn, 29, 70);
+            doc.text(s.vn, 29, 92);
+            doc.text(s.kl, 29, 114);
+            doc.text(s.gd, 29, 136);
+            doc.text("Schuljahr " + config_json_1.default.schuljahr, 29, 158);
+            doc.rect(20, 20, 238, 150);
+            doc.stroke();
+            doc.end();
+            res.set({
+                "Content-type": "application/pdf",
+                "Content-disposition": "attachment; filename=ausweis.pdf",
+            });
+            doc.pipe(res);
+        });
+    };
     WalletBuilder.prototype.genit = function (res, id, s) {
         return __awaiter(this, void 0, void 0, function () {
             var examplePass, stream, err_1;
