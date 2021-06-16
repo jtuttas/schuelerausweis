@@ -64,7 +64,10 @@ var WalletBuilder = /** @class */ (function () {
             doc.image(body, 120, 48, { width: 130 });
             doc.image('web/img/ms-icon-70x70.png', 22, 22, { width: 30 });
             doc.font('Helvetica-Bold').fontSize(16);
-            doc.text("Schülerausweis MMBbS", 60, 38);
+            doc.text("Schülerausweis MMBbS", 60, 22);
+            doc.font('Helvetica-Bold').fontSize(6);
+            doc.text("Multi-Media Berufsbildende Schulen, Expo Plaza 3", 60, 36);
+            doc.text("30539 Hannover, Tel.: 0511/64 61 98-11", 60, 42);
             doc.font('Helvetica-Bold').fontSize(8);
             doc.text("Name:", 25, 60);
             doc.text("Vorname:", 25, 82);
@@ -117,7 +120,7 @@ var WalletBuilder = /** @class */ (function () {
                         examplePass.barcodes({
                             message: "http://idcard.mmbbs.de/validate?id=" + id.split("+").join("%2B"),
                             format: "PKBarcodeFormatQR",
-                            altText: "your idCard",
+                            altText: "Gültigkeit prüfen",
                             messageEncoding: "iso-8859-1"
                         });
                         examplePass.headerFields.map(function (item) {
@@ -127,6 +130,9 @@ var WalletBuilder = /** @class */ (function () {
                             _this.repaceVales(item, s);
                         });
                         examplePass.secondaryFields.map(function (item) {
+                            _this.repaceVales(item, s);
+                        });
+                        examplePass.auxiliaryFields.map(function (item) {
                             _this.repaceVales(item, s);
                         });
                         stream = examplePass.generate();

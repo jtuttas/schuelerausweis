@@ -14,7 +14,7 @@
     "format": "PKBarcodeFormatQR",
     "message": "http://idcard.mmbbs.de/validate?id=fWXnFXKO0rsG9PjoPyS/Z96U6HihNJvzgsLntb3a7uZQFNxI%2BYNp%2BHeFU3iTFEqF9CC02g/sAa2VMNXZ/Rbxu0vz2f%2BPyK8SG81MmiRDLTCfE5W1Jq/s22vSKS/f1LGi8x9MszEQ1wSMXzjICuHrDxesLwpxDbNhXebaYS%2BnqF%2B8Trl5vLI%2B1NbYbVtCeBJK/XJju9CSiD2lTyeWpai1Nyz2puxKU9NnNfnF7VonWSZ7gutaZpAjufK/pEn/FpOwL/krQFB77rs0g%2Btz2L0yg0jurwUIgxg46KjGGJTQ6ji2nyjkphXxZ09tr9iqQt9yzSVu6UNnc0EYGM50A60t0A==",
     "messageEncoding": "iso-8859-1",
-    "altText": "QR-Code scannen"
+    "altText": "Gültigkeit prüfen"
   },
   "generic": {
     "headerFields" : [
@@ -32,6 +32,7 @@
     "primaryFields": [
       { 
         "key": "type",
+        "label": "Gültig mit Lichtbildausweis und QR-Code Scan!",
         "value": "Schülerausweis"
       }
     ],  
@@ -54,10 +55,6 @@
         "key": "birthday",
         "label": "Geburtsdatum",
         "value": "01.01.1997"
-      },
-      {
-        "key": "validation",
-        "value": "Nur gültig mit Lichtbildausweis und QR-Code Scan!"
       }
     ],
     "backFields": [
