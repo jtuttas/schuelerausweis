@@ -144,11 +144,12 @@ app.post("/wallet", (req, res) => {
 
         result.on('data', d => {
             console.log("data:" + d);
-            obj = JSON.parse(d);
+            
             if (result.statusCode == 200) {
+                obj = JSON.parse(d);
                 if (obj.role == "Schueler") {
-                    console.log("Angemeldet als Schüler! ID="+obj.ID);
-                    
+                    console.log("Angemeldet als Schüler! ID=" + obj.ID);
+
                     let options2 = {
                         hostname: 'diklabu.mm-bbs.de',
                         port: 8080,
@@ -159,7 +160,7 @@ app.post("/wallet", (req, res) => {
                             'auth_token': obj.auth_token
                         }
                     }
-                    let request2 = https.request(options2, result2 => {                                                
+                    let request2 = https.request(options2, result2 => {
                         console.log(`statusCode: ${result2.statusCode}`)
                         result2.on('data', d2 => {
                             console.log("data2:" + d2);
@@ -169,24 +170,24 @@ app.post("/wallet", (req, res) => {
                             student.nn = obj.NNAME;
                             student.vn = obj.VNAME;
                             student.kl = obj.nameKlasse;
-                            student.v =config.validDate;
-                            student.gd =obj2.gebDatum;
+                            student.v = config.validDate;
+                            student.gd = obj2.gebDatum;
                             student.did = obj.idPlain;
 
-                            let id = key.encrypt(JSON.stringify(student),'base64');
-                            console.log("id="+id);
-                            id=id.split("+").join("%2B");
-                            
+                            let id = key.encrypt(JSON.stringify(student), 'base64');
+                            console.log("id=" + id);
+                            id = id.split("+").join("%2B");
+
                             let s: string = fs.readFileSync('src/idcards.html', 'utf8');
-                            s = s.replace("<!--wallet-->", "/wallet?id="+id);
-                            s = s.replace("<!--pdf-->", "/pdf?id="+id);
-                            s = s.replace("<!--link-->", "/validate?id="+id);
-                            s = s.replace("<!--qrcode-->", "https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=" + encodeURIComponent("http://idcard.mmbbs.de/validate?id=" + id)+"&chld=M|0");
+                            s = s.replace("<!--wallet-->", "/wallet?id=" + id);
+                            s = s.replace("<!--pdf-->", "/pdf?id=" + id);
+                            s = s.replace("<!--link-->", "/validate?id=" + id);
+                            s = s.replace("<!--qrcode-->", "https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=" + encodeURIComponent("http://idcard.mmbbs.de/validate?id=" + id) + "&chld=M|0");
 
                             res.setHeader("content-type", "text/html");
                             res.send(s);
                         })
-                        
+
                     })
 
                     request2.on('error', error => {
@@ -203,7 +204,15 @@ app.post("/wallet", (req, res) => {
                     res.send(s);
                 }
             }
+            else if (result.statusCode == 400) {
+                res.setHeader("content-type", "text/html");
+                let s: string = fs.readFileSync('web/index.html', 'utf8');
+                s = s.replace("<!--error-->", "Error 400");
+                res.send(s);
+
+            }
             else {
+                obj = JSON.parse(d);
                 res.setHeader("content-type", "text/html");
                 let s: string = fs.readFileSync('web/index.html', 'utf8');
                 s = s.replace("<!--error-->", obj.message);
@@ -211,6 +220,7 @@ app.post("/wallet", (req, res) => {
             }
 
         })
+
     })
 
     request.on('error', error => {
@@ -428,6 +438,6 @@ https.createServer({
     cert: fs.readFileSync('config/server.cert')
 }, app).listen(port, function () {
     console.log(`server started at https://localhost:${port}`);
-    console.log("Gültigkeitsdatum des Ausweises ist "+config.validDate);
-    
+    console.log("Gültigkeitsdatum des Ausweises ist " + config.validDate);
+
 });

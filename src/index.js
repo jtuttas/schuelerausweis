@@ -129,8 +129,8 @@ app.post("/wallet", function (req, res) {
         console.log("statusCode: " + result.statusCode);
         result.on('data', function (d) {
             console.log("data:" + d);
-            obj = JSON.parse(d);
             if (result.statusCode == 200) {
+                obj = JSON.parse(d);
                 if (obj.role == "Schueler") {
                     console.log("Angemeldet als Schüler! ID=" + obj.ID);
                     var options2 = {
@@ -180,7 +180,14 @@ app.post("/wallet", function (req, res) {
                     res.send(s);
                 }
             }
+            else if (result.statusCode == 400) {
+                res.setHeader("content-type", "text/html");
+                var s = fs_1.default.readFileSync('web/index.html', 'utf8');
+                s = s.replace("<!--error-->", "Error 400");
+                res.send(s);
+            }
             else {
+                obj = JSON.parse(d);
                 res.setHeader("content-type", "text/html");
                 var s = fs_1.default.readFileSync('web/index.html', 'utf8');
                 s = s.replace("<!--error-->", obj.message);
