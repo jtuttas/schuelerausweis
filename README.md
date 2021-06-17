@@ -33,6 +33,19 @@ Die notwendigen Schlüssel befinden sich im Verzeichnis config.
 - **ausweis.private** RSA Key
 - **ausweis.xml** XML Version des RSA Keys (wird für die Powershell Scripte benötigt)
 - **server.cert** und **server.key** für die https-Verschlüsselung notwendig
+- **config.json** mit Parametern in Form einer JSON Datei
+
+Die Datei **config.json** hat dabei folgende Einträge.
+
+```JSON
+{
+    "validDate" : "2021-08-30",
+    "schuljahr": "20/21"
+}
+```
+
+-- **validDate**: Das Daten an dem der Ausweis abläuft.
+-- **schuljkahr**: Das Schuljahr in dem der Ausweis gültig ist
 
 ## Docker Container
 Der Docker Container arbeitet default auf Port 8080 über https. Der RSA Schlüssel **ausweis.private** und die SSH Schlüssel **server.cert** und **server.key** liegen außerhab des Docker Containers in einem Volume, welche die entsprechenden Dateien enthält. Daher muss der Container wie folgt gestartet werden.
