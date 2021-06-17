@@ -11,6 +11,7 @@ var https_1 = __importDefault(require("https"));
 var date_fns_1 = require("date-fns");
 var walletBuilder_1 = require("./walletBuilder");
 var config_json_1 = __importDefault(require("../config/config.json"));
+var qr_Image_1 = __importDefault(require("qr-Image"));
 var keys = [];
 // Für Testzwecke
 keys.push("geheim");
@@ -45,6 +46,20 @@ function expired(dateString) {
     //console.log("expired");
     return true;
 }
+/**
+Endpunkt zum Erzeugen von QR Codes als Image
+*/
+app.get('/qrcode', function (req, res) {
+    if (req.query.data) {
+        var code = qr_Image_1.default.image(req.query.data.toString(), { type: 'png' });
+        res.type('png');
+        code.pipe(res);
+    }
+    else {
+        res.statusCode = 406;
+        res.send("missing Data Parameter");
+    }
+});
 /**
  * Endpunkt Zum erzeugen eines Schülerausweises als pdf
  */
@@ -162,7 +177,7 @@ app.post("/wallet", function (req, res) {
                             s = s.replace("<!--wallet-->", "/wallet?id=" + id);
                             s = s.replace("<!--pdf-->", "/pdf?id=" + id);
                             s = s.replace("<!--link-->", "/validate?id=" + id);
-                            s = s.replace("<!--qrcode-->", "https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=" + encodeURIComponent("http://idcard.mmbbs.de/validate?id=" + id) + "&chld=M|0");
+                            s = s.replace("<!--qrcode-->", "/qrcode?data=" + encodeURIComponent("http://idcard.mmbbs.de/validate?id=" + id));
                             res.setHeader("content-type", "text/html");
                             res.send(s);
                         });
