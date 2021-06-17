@@ -11,7 +11,7 @@ var https_1 = __importDefault(require("https"));
 var date_fns_1 = require("date-fns");
 var walletBuilder_1 = require("./walletBuilder");
 var config_json_1 = __importDefault(require("../config/config.json"));
-var qr_Image_1 = __importDefault(require("qr-Image"));
+var qr_image_1 = __importDefault(require("qr-image"));
 var keys = [];
 // Für Testzwecke
 keys.push("geheim");
@@ -51,7 +51,7 @@ Endpunkt zum Erzeugen von QR Codes als Image
 */
 app.get('/qrcode', function (req, res) {
     if (req.query.data) {
-        var code = qr_Image_1.default.image(req.query.data.toString(), { type: 'png' });
+        var code = qr_image_1.default.image(req.query.data.toString(), { type: 'png' });
         res.type('png');
         code.pipe(res);
     }

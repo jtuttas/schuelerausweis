@@ -4,7 +4,7 @@ import config from '../config/config.json';
 import PDFDocument = require('pdfkit');
 import https from "https";
 import request = require("request");
-import qrImage from "qr-Image";
+import qrImage from "qr-image";
 
 export class WalletBuilder {
     constructor() {

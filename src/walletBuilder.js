@@ -43,7 +43,7 @@ exports.WalletBuilder = void 0;
 var passkit_generator_1 = require("passkit-generator");
 var config_json_1 = __importDefault(require("../config/config.json"));
 var PDFDocument = require("pdfkit");
-var qr_Image_1 = __importDefault(require("qr-Image"));
+var qr_image_1 = __importDefault(require("qr-image"));
 var WalletBuilder = /** @class */ (function () {
     function WalletBuilder() {
     }
@@ -56,7 +56,7 @@ var WalletBuilder = /** @class */ (function () {
             margin: 25
         });
         try {
-            var img = qr_Image_1.default.imageSync("http://idcard.mmbbs.de/validate?id=" + id, { type: 'png', size: 3 });
+            var img = qr_image_1.default.imageSync("http://idcard.mmbbs.de/validate?id=" + id, { type: 'png', size: 3 });
             doc.image(img, 120, 48, { width: 125 });
         }
         catch (err) {

@@ -9,7 +9,7 @@ import { Student } from "./Student";
 import { format, parse } from "date-fns";
 import { WalletBuilder } from "./walletBuilder";
 import config from '../config/config.json';
-import qrImage from "qr-Image";
+import qrImage from "qr-image";
 
 var keys = [];
 
