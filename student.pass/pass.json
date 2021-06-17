@@ -3,7 +3,7 @@
   "backgroundColor": "rgb(20,81,137)",
   "foregroundColor": "rgb(255,255,255)",
   "labelColor":"rgb(255,255,255)",
-  "sharingProhibited": false,
+  "sharingProhibited": true,
   "locations": [
     {
       "latitude": 52.3710086,
