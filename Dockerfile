@@ -6,4 +6,4 @@ RUN npm install --production --silent && mv node_modules ../
 COPY . .
 VOLUME ["/usr/src/app/config"]
 EXPOSE 8080
-CMD ["/bin/sh","-c","node src/index.js > /usr/src/app/config/server.log"]
+CMD ["/bin/sh","-c","node /usr/src/app/src/index.js"]
