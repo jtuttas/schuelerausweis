@@ -304,6 +304,7 @@ app.post("/wallet", function (req, res) {
                     var s = fs_1.default.readFileSync('web/index.html', 'utf8');
                     s = s.replace("<!--error-->", obj.msg);
                     res.send(s);
+                    return;
                 }
                 if (obj.role == "Schueler" && obj.success == true) {
                     console.log("Angemeldet als Schüler! ID=" + obj.ID);

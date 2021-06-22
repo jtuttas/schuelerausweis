@@ -340,6 +340,7 @@ app.post("/wallet", (req, res) => {
                     let s: string = fs.readFileSync('web/index.html', 'utf8');
                     s = s.replace("<!--error-->", obj.msg);
                     res.send(s);
+                    return;
                 }
                 if (obj.role == "Schueler" && obj.success==true) {
                     console.log("Angemeldet als Schüler! ID=" + obj.ID);
