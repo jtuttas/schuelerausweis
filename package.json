@@ -10,7 +10,8 @@
     "@types/pdfkit": "^0.11.0",
     "@types/qr-image": "^3.2.3",
     "@types/request": "^2.48.5",
-    "@types/uuid": "^8.3.0",
+    "@types/request-promise": "^4.1.47",
+    "@types/sqlite3": "^3.1.7",
     "bootstrap-icons": "^1.4.1",
     "date-fns": "^2.21.1",
     "express": "^4.17.1",
@@ -22,11 +23,14 @@
     "pdfkit": "^0.12.1",
     "qr-image": "^3.2.0",
     "request": "^2.88.2",
+    "request-promise": "^4.2.6",
+    "sqlite3": "^5.0.2",
     "typescript": "^4.2.4",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@types/node": "^12.7.11"
+    "@types/node": "^12.7.11",
+    "@types/uuid": "^8.3.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

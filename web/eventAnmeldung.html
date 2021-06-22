@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Anmeldung</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+    <div class="jumbotron">
+        <div class="container">
+            <h1 id="event">Anmeldung</h1>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <input type="text" name="name" id="name" placeholder="Name">
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <input type="text" name="vorname" id="vorname" placeholder="Vorname">
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <input type="email" name="email" id="email" placeholder="email">
+        </div>
+
+        <button id="senden" type="button" class="btn btn-primary">Absenden</button>
+
+
+    </div>
+
+    <script>
+        function GetURLParameter(sParam) {
+            var sPageURL = window.location.search.substring(1);
+            var sURLVariables = sPageURL.split('&');
+            for (var i = 0; i < sURLVariables.length; i++) {
+                var sParameterName = sURLVariables[i].split('=');
+                if (sParameterName[0] == sParam) {
+                    return sParameterName[1];
+                }
+            }
+        }
+
+        var eventName = GetURLParameter("event");
+        console.log('eventname=' + eventName);
+        var webhook = GetURLParameter("webhook");
+        console.log('webhook=' + webhook);
+        if (eventName != undefined) {
+            $("#event").text("Anmeldung " + eventName);
+        }
+        $("#senden").click(function (e) { 
+            var myJSObject={
+                name: $("#name").val(),
+                vorname: $("#vorname").val(),
+                email: $("#email").val()
+            }
+            if (eventName) {
+                myJSObject.eventName=eventName;
+            }
+            if (webhook) {
+                myJSObject.webhook=webhook;
+            }
+            console.log('Sende: '+JSON.stringify(myJSObject));
+            $.ajax("/event", {
+                data: JSON.stringify(myJSObject),
+                contentType: 'application/json',
+                type: 'POST'
+            });            
+        });
+    </script>
+
+</body>
+
+</html>
