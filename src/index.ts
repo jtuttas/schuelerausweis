@@ -59,15 +59,15 @@ function expired(dateString: string): boolean {
 }
 
 /**
- * Ankunft einer Anmeldung
+ * Ankunft Arrival
  */
 app.put("/event", (req, res) => {
     res.setHeader("content-type", "application/json");
     let result: any = {};
-    
+
     if (req.query.uuid) {
         let db = new sqlite3.Database('event.db', (err) => {
-            let sql = "UPDATE register SET arival=datetime('now','localtime') where uuid=\""+req.query.uuid+"\";"
+            let sql = "UPDATE register SET arival=datetime('now','localtime') where uuid=\"" + req.query.uuid + "\";";
             console.log("sql:" + sql);
 
             db.all(sql, [], (err) => {
@@ -77,15 +77,52 @@ app.put("/event", (req, res) => {
                     result.msg = "UPDATE Failed:" + err;
                     res.statusCode = 500;
                     res.send(JSON.stringify(result));
-
-                    //SENDEN des Webhooks
-
                     return;
                 }
+
+                sql = "SELECT * from register where uuid=\"" + req.query.uuid + "\";"
+                db.all(sql, [], (err, rows) => {
+                    if (err) {
+                        console.log("SELECT * caused Error");
+
+                    }
+                    console.log("read:" + JSON.stringify(rows));
+                    if (rows.length > 0) {
+                        result = rows[0];
+                        if (rows[0].webhook != undefined) {
+                            console.log("Sende Webhook....:" + rows[0].webhook);
+                            request.post(
+                                rows[0].webhook,
+                                { json: result },
+                                function (error, response, body) {
+                                    if (error) {
+                                        console.log("Webhook error:" + error);
+                                        result.webhookStatus = 404;
+                                        result.webhookErrormessage = error;
+                                        res.send(JSON.stringify(result));                                        
+                                        return;
+                                    }
+                                    else {
+                                        console.log("Webhook result" + response.statusCode);
+                                        result.webhookStatus = response.statusCode;
+                                        result.webhookBody = body;
+                                        console.log(body);
+                                        res.send(JSON.stringify(result));
+                                    }
+                                });
+                        }
+                        else {
+                            console.log("Sende:" + JSON.stringify(result));
+                            res.send(JSON.stringify(result));
+                        }
+                    }
+                    else {
+                        console.log("Sende:" + JSON.stringify(result));
+                        res.send(JSON.stringify(result));
+                    }
+                });
             });
-            res.statusCode=200;
-            result.success=true;
-            res.send(JSON.stringify(result));
+            db.close();
         });
     }
     else {
@@ -115,7 +152,7 @@ app.get("/event", (req, res) => {
                     result.msg = "SELECT Failed:" + err;
                 }
                 else {
-                    if (rows.length==0) {
+                    if (rows.length == 0) {
                         res.statusCode = 404;
                     }
                     else {
@@ -335,14 +372,14 @@ app.post("/wallet", (req, res) => {
 
             if (result.statusCode == 200) {
                 obj = JSON.parse(d);
-                if (obj.success==false) {
+                if (obj.success == false) {
                     res.setHeader("content-type", "text/html");
                     let s: string = fs.readFileSync('web/index.html', 'utf8');
                     s = s.replace("<!--error-->", obj.msg);
                     res.send(s);
                     return;
                 }
-                if (obj.role == "Schueler" && obj.success==true) {
+                if (obj.role == "Schueler" && obj.success == true) {
                     console.log("Angemeldet als Schüler! ID=" + obj.ID);
 
                     let options2 = {

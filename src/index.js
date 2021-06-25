@@ -50,7 +50,7 @@ function expired(dateString) {
     return true;
 }
 /**
- * Ankunft einer Anmeldung
+ * Ankunft Arrival
  */
 app.put("/event", function (req, res) {
     res.setHeader("content-type", "application/json");
@@ -66,13 +66,47 @@ app.put("/event", function (req, res) {
                     result.msg = "UPDATE Failed:" + err;
                     res.statusCode = 500;
                     res.send(JSON.stringify(result));
-                    //SENDEN des Webhooks
                     return;
                 }
+                sql = "SELECT * from register where uuid=\"" + req.query.uuid + "\";";
+                db_1.all(sql, [], function (err, rows) {
+                    if (err) {
+                        console.log("SELECT * caused Error");
+                    }
+                    console.log("read:" + JSON.stringify(rows));
+                    if (rows.length > 0) {
+                        result = rows[0];
+                        if (rows[0].webhook != undefined) {
+                            console.log("Sende Webhook....:" + rows[0].webhook);
+                            request_1.default.post(rows[0].webhook, { json: result }, function (error, response, body) {
+                                if (error) {
+                                    console.log("Webhook error:" + error);
+                                    result.webhookStatus = 404;
+                                    result.webhookErrormessage = error;
+                                    res.send(JSON.stringify(result));
+                                    return;
+                                }
+                                else {
+                                    console.log("Webhook result" + response.statusCode);
+                                    result.webhookStatus = response.statusCode;
+                                    result.webhookBody = body;
+                                    console.log(body);
+                                    res.send(JSON.stringify(result));
+                                }
+                            });
+                        }
+                        else {
+                            console.log("Sende:" + JSON.stringify(result));
+                            res.send(JSON.stringify(result));
+                        }
+                    }
+                    else {
+                        console.log("Sende:" + JSON.stringify(result));
+                        res.send(JSON.stringify(result));
+                    }
+                });
             });
-            res.statusCode = 200;
-            result.success = true;
-            res.send(JSON.stringify(result));
+            db_1.close();
         });
     }
     else {

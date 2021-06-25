@@ -71,7 +71,10 @@
             $.ajax("/event", {
                 data: JSON.stringify(myJSObject),
                 contentType: 'application/json',
-                type: 'POST'
+                type: 'POST',
+                success: function (data) { 
+                    console.log('Receive:'+JSON.stringify(data));
+                },
             });            
         });
     </script>
