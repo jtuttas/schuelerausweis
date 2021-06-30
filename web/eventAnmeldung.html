@@ -57,7 +57,7 @@
             }
         }
 
-        var eventName = GetURLParameter("event");
+        var eventName = decodeURIComponent(GetURLParameter("event"));
         console.log('eventname=' + eventName);
         var webhook = decodeURIComponent(GetURLParameter("webhook"));
         console.log('webhook=' + webhook);
