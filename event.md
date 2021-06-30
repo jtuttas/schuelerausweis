@@ -8,7 +8,7 @@ http://idcard.mmbbs.de/eventAnmeldung.html?event=eventname&webhook=url
 ```
 Die Parameter **event** und **webhook** sind zwar optional, deren Anwendung wird jedoch dringend empfohlen:
 - **event**: Name des Events, dieser erscheint sowohl auf der Anmeldeseite für den Event, also auch später auf dem Wallet.
-- **webhook*: Adresse eines Dienstes (z.B. MS Power Automate o.ä.) der ein JSON des Anmeldeprozesses enthält und genutzt werden kann für die Weiterverarbeitung der Anmeldung z.B. in O365.
+- **webhook**: Adresse eines Dienstes (z.B. MS Power Automate o.ä.) der ein JSON des Anmeldeprozesses enthält und genutzt werden kann für die Weiterverarbeitung der Anmeldung z.B. in O365. Achtung dabei muss die Adresse natürlich URLEncoded sein, z.B. über diesen Dienst hier: [URL Encoder Online](https://meyerweb.com/eric/tools/dencoder/)
 
 Hat der Teilnehmer das Anmeldeformuar ausgefüllt, so erhält er einen QR Code, der seine eindeutige UUID enthält, bzw. ein Wallet, welches neben seien Daten auch den QR Code mit der SSID enthält.
 

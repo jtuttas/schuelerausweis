@@ -1,11 +1,14 @@
+### Event Ticket als pdf
+GET https://localhost:8080/eventpdf?uuid=73dcf76c-f615-47f0-82c5-b2d46a14acfb HTTP/1.1
+
 ### Event Arrival
-PUT https://localhost:8080/event?uuid=aeb748a7-b36f-4e94-a1cb-21318018e23f HTTP/1.1
+PUT https://localhost:8080/event?uuid=73dcf76c-f615-47f0-82c5-b2d46a14acfb HTTP/1.1
 Content-type: application/json
 
 {}
 
 ### Event Anmeldung Abfragen
-GET https://localhost:8080/event?uuid=eeedd5e4-60a7-4720-b1ae-77d1a0c4aa7b HTTP/1.1
+GET https://localhost:8080/event?uuid=73dcf76c-f615-47f0-82c5-b2d46a14acfb HTTP/1.1
 
 ### Event Anmeldung
 POST https://localhost:8080/event HTTP/1.1
@@ -15,9 +18,8 @@ content-type: application/json
   "name":"Tuttas",
   "vorname":"Jörg",
   "email":"tuffgtftas@mmbbs.de",
-  "eventName": "Cisco",
-  "webhook":"https://google.de"
-
+  "eventName":"Ciso",
+  "webhook":"https://prod-140.westeurope.logic.azure.com:443/workflows/01acc4885c2a4075bbcc0f3a5b1ca97f/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=CLbmOOO1qehi_7SWRicP4ZgTAI7JG4RECuqBxVY1aO8"
 }
 
 ### Flow Test

@@ -12,9 +12,7 @@ var date_fns_1 = require("date-fns");
 var walletBuilder_1 = require("./walletBuilder");
 var config_json_1 = __importDefault(require("../config/config.json"));
 var qr_image_1 = __importDefault(require("qr-image"));
-var uuid_1 = require("uuid");
-var sqlite3_1 = __importDefault(require("sqlite3"));
-var request_1 = __importDefault(require("request"));
+var Event_1 = require("./Event");
 var keys = [];
 // Für Testzwecke
 keys.push("geheim");
@@ -50,189 +48,25 @@ function expired(dateString) {
     return true;
 }
 /**
+ * Event Ticket als Wallet
+ */
+app.get("/eventwallet", Event_1.genWalletTicket);
+/**
+ * Event Ticket als PDF
+ */
+app.get("/eventpdf", Event_1.genPDFTicket);
+/**
  * Ankunft Arrival
  */
-app.put("/event", function (req, res) {
-    res.setHeader("content-type", "application/json");
-    var result = {};
-    if (req.query.uuid) {
-        var db_1 = new sqlite3_1.default.Database('event.db', function (err) {
-            var sql = "UPDATE register SET arival=datetime('now','localtime') where uuid=\"" + req.query.uuid + "\";";
-            console.log("sql:" + sql);
-            db_1.all(sql, [], function (err) {
-                if (err) {
-                    res.statusCode = 500;
-                    console.log("Update Statement " + sql + " caused an Error:" + err);
-                    result.msg = "UPDATE Failed:" + err;
-                    res.statusCode = 500;
-                    res.send(JSON.stringify(result));
-                    return;
-                }
-                sql = "SELECT * from register where uuid=\"" + req.query.uuid + "\";";
-                db_1.all(sql, [], function (err, rows) {
-                    if (err) {
-                        console.log("SELECT * caused Error");
-                    }
-                    console.log("read:" + JSON.stringify(rows));
-                    if (rows.length > 0) {
-                        result = rows[0];
-                        if (rows[0].webhook != undefined) {
-                            console.log("Sende Webhook....:" + rows[0].webhook);
-                            request_1.default.post(rows[0].webhook, { json: result }, function (error, response, body) {
-                                if (error) {
-                                    console.log("Webhook error:" + error);
-                                    result.webhookStatus = 404;
-                                    result.webhookErrormessage = error;
-                                    res.send(JSON.stringify(result));
-                                    return;
-                                }
-                                else {
-                                    console.log("Webhook result" + response.statusCode);
-                                    result.webhookStatus = response.statusCode;
-                                    result.webhookBody = body;
-                                    console.log(body);
-                                    res.send(JSON.stringify(result));
-                                }
-                            });
-                        }
-                        else {
-                            console.log("Sende:" + JSON.stringify(result));
-                            res.send(JSON.stringify(result));
-                        }
-                    }
-                    else {
-                        console.log("Sende:" + JSON.stringify(result));
-                        res.send(JSON.stringify(result));
-                    }
-                });
-            });
-            db_1.close();
-        });
-    }
-    else {
-        res.statusCode = 400;
-        result.msg = "missing uuid Parameter";
-        res.send(JSON.stringify(result));
-    }
-});
+app.put("/event", Event_1.handlePut);
 /**
- * Abfragen einer Anmeldung
+ * Endpunkt Anmeldung zu einem Event abfragen
  */
-app.get("/event", function (req, res) {
-    res.setHeader("content-type", "application/json");
-    var result = {};
-    if (req.query.uuid) {
-        var db_2 = new sqlite3_1.default.Database('event.db', function (err) {
-            var sql = "SELECT * from register WHERE uuid=\"" + req.query.uuid + "\";";
-            console.log("sql:" + sql);
-            db_2.all(sql, [], function (err, rows) {
-                if (err) {
-                    res.statusCode = 500;
-                    console.log("Read Statement " + sql + " caused an Error:" + err);
-                    result.msg = "SELECT Failed:" + err;
-                }
-                else {
-                    if (rows.length == 0) {
-                        res.statusCode = 404;
-                    }
-                    else {
-                        console.log("Result:" + JSON.stringify(rows));
-                        result = rows[0];
-                        res.statusCode = 200;
-                    }
-                }
-                res.send(JSON.stringify(result));
-            });
-        });
-    }
-    else {
-        res.statusCode = 400;
-        result.msg = "missing uuid Parameter";
-        res.send(JSON.stringify(result));
-    }
-});
+app.get("/event", Event_1.handleGet);
 /**
  * Endpunkt Anmeldung zu einem Event
  */
-app.post("/event", function (req, res) {
-    res.setHeader("content-type", "application/json");
-    console.log("body:" + JSON.stringify(req.body));
-    var result = req.body;
-    if (req.body.name == undefined || req.body.vorname == undefined || req.body.email == undefined) {
-        result.success = false;
-        result.message = "Pflichtattribute name,vorname oder email fehlt!";
-        res.statusCode = 400;
-        res.send(JSON.stringify(result));
-        return;
-    }
-    var id = uuid_1.v4();
-    console.log("UUID=" + id);
-    var db = new sqlite3_1.default.Database('event.db', function (err) {
-        var sql = "SELECT * from register WHERE email = \"" + req.body.email + "\" AND event=\"" + req.body.eventName + "\";";
-        db.all(sql, [], function (err, rows) {
-            if (err) {
-                res.statusCode = 500;
-                console.log("Read Statement " + sql + " caused an Error:" + err);
-                result.success = false;
-                result.msg = "SELECT Failed:" + err;
-                res.send(JSON.stringify(result));
-                return;
-            }
-            else {
-                if (rows && rows.length > 0) {
-                    console.log("Datensatz existiert:" + JSON.stringify(rows));
-                    result.success = true;
-                    result.uuid = rows[0].uuid;
-                    result.msg = "Already registerer on " + rows[0].registered;
-                    res.statusCode = 200;
-                    res.send(JSON.stringify(result));
-                    db.close();
-                    return;
-                }
-                else {
-                    console.log("Datensatz wird eingefügt");
-                    sql = "INSERT INTO register(email, name, vorname, event, webhook,registered, uuid) VALUES (\"" + req.body.email + "\",\"" + req.body.name + "\",\"" + req.body.vorname + "\",\"" + req.body.eventName + "\",\"" + req.body.webhook + "\",datetime(\'now\',\'localtime\'),\"" + id + "\");";
-                    db.run(sql), function (err) {
-                        if (err) {
-                            console.log("Insert failed" + err);
-                            result.success = false;
-                            result.msg = "INSERT Failed:" + err;
-                            res.statusCode = 500;
-                            res.send(JSON.stringify(result));
-                            db.close();
-                            return;
-                        }
-                    };
-                    result.success = true;
-                    res.statusCode = 200;
-                    result.uuid = id;
-                    if (req.body.webhook != undefined) {
-                        console.log("Sende Webhook");
-                        request_1.default.post(req.body.webhook, { json: result }, function (error, response, body) {
-                            if (error) {
-                                console.log("Webhook error:" + error);
-                                result.webhookStatus = 404;
-                                result.webhookErrormessage = error;
-                                res.send(JSON.stringify(result));
-                            }
-                            else {
-                                console.log("Webhook result" + response.statusCode);
-                                result.webhookStatus = response.statusCode;
-                                result.webhookBody = body;
-                                console.log(body);
-                                res.send(JSON.stringify(result));
-                            }
-                        });
-                    }
-                    else {
-                        res.send(JSON.stringify(result));
-                    }
-                }
-            }
-            db.close();
-        });
-    });
-});
+app.post("/event", Event_1.handlePost);
 /**
 Endpunkt zum Erzeugen von QR Codes als Image
 */
