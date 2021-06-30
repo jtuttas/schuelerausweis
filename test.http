@@ -27,9 +27,15 @@ POST https://prod-140.westeurope.logic.azure.com:443/workflows/01acc4885c2a4075b
 content-type: application/json
 
 {
-
+  "name": "Mustermann",
+  "vorname": "Max",
+  "email": "tuttas@mmbbs.de",
+  "eventName": "Cisco",
+  "type": "registration",
+  "success": true,
+  "uuid": "eeedd5e4-60a7-4720-b1ae-77d1a0c4aa7b",
+  "msg": "ggf. eine Fehler und Warnmeldung"
 }
-
 
 ### pdf erzeugen
 GET https://localhost:8080/pdf?id=QRacGnmZnK0HHl1PD62DGcpZg1er%2B0bm6R8adPidRgFdMOco1K%2BVvCkkcYf7O1BXAq%2Bxyx7RoaWrwAR1Krl78A5CvMgdldd4GFHyeYi19lVe7DnPoTLrtqTqhCWf3s1tgdbIwZkJnPT4BwRdSOekuTIxMvvaHR8Y1RQlHEK1G/VrQFW49cDUBYFFrXAZTLivBp6VxiA45kWXT8op6NVKBHU6tKeaCpcdH8jsIOEXw5AvJjNW7V0Nq2ZcA6yRwwaOWZJMWtcYaaulDu45IQoqNhUR8/zem2G2YQyCVSJqWTkgnVNuTrCrZykaprUAcZGrHZTrQl0Ct1/zMebHmFD77g== HTTP/1.1

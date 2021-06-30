@@ -276,7 +276,7 @@ export function handlePut(req: express.Request, res: express.Response) {
                     e.webhook = ev2.webhook;
 
                     if (ev2.webhook) {
-                        e.type = "arrived";
+                        e.type = "arrival";
                         e.fireWebhook().then((ev3: Event) => {
                             res.statusCode = 200;
                             res.send(JSON.stringify(ev3));
@@ -380,7 +380,7 @@ export function handlePost(req: express.Request, res: express.Response) {
                 console.log("Event eingetragen: " + JSON.stringify(v1));
                 if (event.webhook) {
                     console.log("Webhook ausführen");
-                    event.type = "registered"
+                    event.type = "registration"
                     event.fireWebhook().then((v2: Event) => {
                         console.log("Webhook erfolgreich:" + JSON.stringify(v2));
                         res.send(JSON.stringify(v2));

@@ -284,7 +284,7 @@ function handlePut(req, res) {
                     e_1.arrival = ev2.arrival;
                     e_1.webhook = ev2.webhook;
                     if (ev2.webhook) {
-                        e_1.type = "arrived";
+                        e_1.type = "arrival";
                         e_1.fireWebhook().then(function (ev3) {
                             res.statusCode = 200;
                             res.send(JSON.stringify(ev3));
@@ -382,7 +382,7 @@ function handlePost(req, res) {
                 console.log("Event eingetragen: " + JSON.stringify(v1));
                 if (event.webhook) {
                     console.log("Webhook ausführen");
-                    event.type = "registered";
+                    event.type = "registration";
                     event.fireWebhook().then(function (v2) {
                         console.log("Webhook erfolgreich:" + JSON.stringify(v2));
                         res.send(JSON.stringify(v2));
