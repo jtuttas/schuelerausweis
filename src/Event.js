@@ -365,7 +365,7 @@ function handlePost(req, res) {
     event.eventName = req.body.eventName;
     event.webhook = req.body.webhook;
     req.body;
-    if (req.body.name == undefined || req.body.vorname == undefined || req.body.email == undefined) {
+    if (req.body.name == undefined || req.body.vorname == undefined || req.body.email == undefined || req.body.name == "" || req.body.vorname == "" || req.body.email == "") {
         event.success = false;
         event.msg = "Pflichtattribute name,vorname oder email fehlt!";
         res.statusCode = 400;
