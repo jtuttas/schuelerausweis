@@ -193,8 +193,7 @@ export function genWalletTicket(req: express.Request, res: express.Response) {
             event.email = e.email;
             event.eventName = e.eventName;
             event.registered = e.registered;
-
-
+            event.uuid=e.uuid
 
             res.set({
                 "Content-type": "application/vnd.apple.pkpass",
@@ -233,6 +232,7 @@ export function genPDFTicket(req: express.Request, res: express.Response) {
             event.email = e.email;
             event.eventName = e.eventName;
             event.registered = e.registered;
+            event.uuid=e.uuid
             res.set({
                 "Content-type": "application/pdf",
                 "Content-disposition": `attachment; filename=ticket.pdf`,

@@ -206,6 +206,7 @@ function genWalletTicket(req, res) {
             event_1.email = e.email;
             event_1.eventName = e.eventName;
             event_1.registered = e.registered;
+            event_1.uuid = e.uuid;
             res.set({
                 "Content-type": "application/vnd.apple.pkpass",
                 "Content-disposition": "attachment; filename=mmbbsevent.pkpass",
@@ -242,6 +243,7 @@ function genPDFTicket(req, res) {
             event_2.email = e.email;
             event_2.eventName = e.eventName;
             event_2.registered = e.registered;
+            event_2.uuid = e.uuid;
             res.set({
                 "Content-type": "application/pdf",
                 "Content-disposition": "attachment; filename=ticket.pdf",
