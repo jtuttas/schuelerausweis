@@ -6,6 +6,8 @@ import PDFDocument = require('pdfkit');
 import qrImage from "qr-image";
 import { Database } from "sqlite3";
 import { createPass, Pass } from "passkit-generator";
+import { getMinutes } from "date-fns/esm";
+import { throws } from "assert";
 
 
 export class Event {
@@ -115,29 +117,29 @@ export class Event {
     }
 
     private repaceValues(item) {
-        if (item.key == "name") {
+        if (item.key == "Name") {
             console.log("Found Name and set it to " + this.name);
             item.value = this.name;
         }
-        if (item.key == "surname") {
+        if (item.key == "Vorname") {
             console.log("Found Surname and set it to " + this.vorname);
             item.value = this.vorname;
         }
-        if (item.key == "eventName") {
+        if (item.key == "event") {
             if (this.eventName && this.eventName != "undefined") {
                 console.log("Found eventName and set it to " + this.eventName);
                 item.value = this.eventName;
             }
         }
-        if (item.key == "eventDate") {
+        if (item.key == "Date") {
             if (this.eventDate) {
                 console.log("Found eventDate and set it to " + this.eventDate);
-                item.value = this.eventDate;
+                item.value = this.eventDate.getDate()+"."+(this.eventDate.getMonth()+1)+"."+this.eventDate.getFullYear()+" "+this.eventDate.getHours()+":"+this.eventDate.getMinutes();
             }
         }
         if (item.key == "registered") {
             console.log("Found registered and set it to " + this.registered);
-            item.value = this.registered.getTime.toString();
+            item.value = this.registered.getDate()+"."+(this.registered.getMonth()+1)+"."+this.registered.getFullYear()+" "+this.registered.getHours()+":"+this.registered.getMinutes();
         }
 
     }
@@ -175,11 +177,11 @@ export class Event {
         doc.font('Helvetica').fontSize(8).fillColor("0x888888");
         doc.text(this.name, 29, 110);
         doc.text(this.vorname, 29, 132);
-        doc.text(this.registered.toString(), 29, 154);
+        doc.text(this.registered.getDate()+"."+(this.registered.getMonth()+1)+","+this.registered.getFullYear()+" "+this.registered.getHours()+":"+this.registered.getMinutes(), 29, 154);
         
         if (this.eventDate) {
             console.log("eventDate="+this.eventDate);            
-            doc.text(""+this.eventDate,30,80);
+            doc.text(this.eventDate.getDate() + "." + (this.eventDate.getMonth()+1)+"."+this.eventDate.getFullYear()+" um "+this.eventDate.getHours()+":"+this.eventDate.getMinutes(),30,80);
         }
         
         doc.roundedRect(20, 20, 240, 152, 5);

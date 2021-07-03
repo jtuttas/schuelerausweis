@@ -65,11 +65,11 @@ export class DBManager {
                         event.name = rows[0].name;
                         event.vorname = rows[0].vorname;
                         event.eventName = rows[0].event;
-                        event.eventDate = rows[0].eventDate;
+                        event.eventDate = new Date(rows[0].eventDate);
                         event.webhook = rows[0].webhook;
                         event.email = rows[0].email;
-                        event.registered = rows[0].registered;
-                        event.arrival = rows[0].arrival;
+                        event.registered = new Date(rows[0].registered);
+                        event.arrival = new Date(rows[0].arrival);
                         resolve(event);
                     }
                     else {
@@ -100,12 +100,12 @@ export class DBManager {
                         event.name = rows[0].name;
                         event.vorname = rows[0].vorname;
                         event.eventName = rows[0].event;
-                        event.eventDate = rows[0].eventDate;
+                        event.eventDate = new Date(rows[0].eventDate);
                         event.uuid = rows[0].uuid;
                         event.webhook = rows[0].webhook;
                         event.email = rows[0].email;
-                        event.registered = rows[0].registered;
-                        event.arrival = rows[0].arrival;
+                        event.registered = new Date(rows[0].registered);
+                        event.arrival = new Date(rows[0].arrival);
                         resolve(event);
                     }
                     else {

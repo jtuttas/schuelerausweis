@@ -70,7 +70,8 @@
             $("#event").text("Anmeldung " + eventName);
         }
         if (eventDate != "undefined") {
-            $("#eventdate").text(eventDate);
+            var d= new Date(eventDate)
+            $("#eventdate").text("Am "+d.getDate()+"."+(d.getMonth()+1)+"."+d.getFullYear()+" um "+d.getHours()+":"+d.getMinutes());
         }
         $("#senden").click(function (e) {
             var myJSObject = {
