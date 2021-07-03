@@ -16,6 +16,7 @@
 
     <div class="jumbotron">
         <h1 id="event">Anmeldung</h1>
+        <h3 id="eventdate"></h3>
     </div>
 
     <div class="container">
@@ -60,11 +61,16 @@
         }
 
         var eventName = decodeURIComponent(GetURLParameter("event"));
-        console.log('eventname=' + eventName);
+        console.log('eventName=' + eventName);
+        var eventDate = decodeURIComponent(GetURLParameter("date"));
+        console.log('eventDate=' + eventDate);
         var webhook = decodeURIComponent(GetURLParameter("webhook"));
         console.log('webhook=' + webhook);
         if (eventName != "undefined") {
             $("#event").text("Anmeldung " + eventName);
+        }
+        if (eventDate != "undefined") {
+            $("#eventdate").text(eventDate);
         }
         $("#senden").click(function (e) {
             var myJSObject = {
@@ -74,6 +80,9 @@
             }
             if (eventName && eventName!="undefined") {
                 myJSObject.eventName = eventName;
+            }
+            if (eventDate && eventDate != "undefined") {
+                myJSObject.eventDate = eventDate;
             }
             if (webhook && webhook!="undefined") {
                 myJSObject.webhook = webhook;

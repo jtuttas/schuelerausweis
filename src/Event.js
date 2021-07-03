@@ -149,6 +149,12 @@ var Event = /** @class */ (function () {
                 item.value = this.eventName;
             }
         }
+        if (item.key == "eventDate") {
+            if (this.eventDate) {
+                console.log("Found eventDate and set it to " + this.eventDate);
+                item.value = this.eventDate;
+            }
+        }
         if (item.key == "registered") {
             console.log("Found registered and set it to " + this.registered);
             item.value = this.registered.getTime.toString();
@@ -162,7 +168,7 @@ var Event = /** @class */ (function () {
         });
         try {
             var img = qr_image_1.default.imageSync("uuid=" + this.uuid, { type: 'png', size: 3 });
-            doc.image(img, 160, 68, { width: 90 });
+            doc.image(img, 160, 90, { width: 80 });
         }
         catch (err) {
             console.log("Exception:" + err);
@@ -177,13 +183,17 @@ var Event = /** @class */ (function () {
         doc.text("Multi-Media Berufsbildende Schulen, Expo Plaza 3", 60, 38);
         doc.text("30539 Hannover, Tel.: 0511/64 61 98-11", 60, 44);
         doc.font('Helvetica-Bold').fontSize(8);
-        doc.text("Name:", 25, 80);
-        doc.text("Vorname:", 25, 102);
-        doc.text("Registriert:", 25, 124);
+        doc.text("Name:", 25, 100);
+        doc.text("Vorname:", 25, 122);
+        doc.text("Registriert:", 25, 144);
         doc.font('Helvetica').fontSize(8).fillColor("0x888888");
-        doc.text(this.name, 29, 90);
-        doc.text(this.vorname, 29, 112);
-        doc.text(this.registered.toString(), 29, 134);
+        doc.text(this.name, 29, 110);
+        doc.text(this.vorname, 29, 132);
+        doc.text(this.registered.toString(), 29, 154);
+        if (this.eventDate) {
+            console.log("eventDate=" + this.eventDate);
+            doc.text("" + this.eventDate, 30, 80);
+        }
         doc.roundedRect(20, 20, 240, 152, 5);
         doc.stroke();
         doc.end();
@@ -207,6 +217,7 @@ function genWalletTicket(req, res) {
             event_1.vorname = e.vorname;
             event_1.email = e.email;
             event_1.eventName = e.eventName;
+            event_1.eventDate = e.eventDate;
             event_1.registered = e.registered;
             event_1.uuid = e.uuid;
             res.set({
@@ -244,6 +255,7 @@ function genPDFTicket(req, res) {
             event_2.vorname = e.vorname;
             event_2.email = e.email;
             event_2.eventName = e.eventName;
+            event_2.eventDate = e.eventDate;
             event_2.registered = e.registered;
             event_2.uuid = e.uuid;
             res.set({
@@ -284,6 +296,7 @@ function handlePut(req, res) {
                     e_1.vorname = ev2.vorname;
                     e_1.email = ev2.email;
                     e_1.eventName = ev2.eventName;
+                    e_1.eventDate = ev2.eventDate;
                     e_1.registered = ev2.registered;
                     e_1.arrival = ev2.arrival;
                     e_1.webhook = ev2.webhook;
@@ -367,6 +380,7 @@ function handlePost(req, res) {
     event.vorname = req.body.vorname;
     event.email = req.body.email;
     event.eventName = req.body.eventName;
+    event.eventDate = req.body.eventDate;
     event.webhook = req.body.webhook;
     req.body;
     if (req.body.name == undefined || req.body.vorname == undefined || req.body.email == undefined || req.body.name == "" || req.body.vorname == "" || req.body.email == "") {

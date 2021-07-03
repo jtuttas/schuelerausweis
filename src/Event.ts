@@ -20,6 +20,7 @@ export class Event {
     uuid: string;
     registered: Date;
     arrival: Date;
+    eventDate: Date;
     webhookStatus: number;
     webhookErrormessage: string;
     webhookBody: string;
@@ -128,6 +129,12 @@ export class Event {
                 item.value = this.eventName;
             }
         }
+        if (item.key == "eventDate") {
+            if (this.eventDate) {
+                console.log("Found eventDate and set it to " + this.eventDate);
+                item.value = this.eventDate;
+            }
+        }
         if (item.key == "registered") {
             console.log("Found registered and set it to " + this.registered);
             item.value = this.registered.getTime.toString();
@@ -145,7 +152,7 @@ export class Event {
         });
         try {
             let img = qrImage.imageSync("uuid=" + this.uuid, { type: 'png', size: 3 });
-            doc.image(img, 160, 68, { width: 90 })
+            doc.image(img, 160, 90, { width: 80 })
 
         }
         catch (err) {
@@ -162,13 +169,19 @@ export class Event {
         doc.text("Multi-Media Berufsbildende Schulen, Expo Plaza 3", 60, 38);
         doc.text("30539 Hannover, Tel.: 0511/64 61 98-11", 60, 44);
         doc.font('Helvetica-Bold').fontSize(8);
-        doc.text("Name:", 25, 80);
-        doc.text("Vorname:", 25, 102);
-        doc.text("Registriert:", 25, 124);
+        doc.text("Name:", 25, 100);
+        doc.text("Vorname:", 25, 122);
+        doc.text("Registriert:", 25, 144);
         doc.font('Helvetica').fontSize(8).fillColor("0x888888");
-        doc.text(this.name, 29, 90);
-        doc.text(this.vorname, 29, 112);
-        doc.text(this.registered.toString(), 29, 134);
+        doc.text(this.name, 29, 110);
+        doc.text(this.vorname, 29, 132);
+        doc.text(this.registered.toString(), 29, 154);
+        
+        if (this.eventDate) {
+            console.log("eventDate="+this.eventDate);            
+            doc.text(""+this.eventDate,30,80);
+        }
+        
         doc.roundedRect(20, 20, 240, 152, 5);
         doc.stroke();
 
@@ -194,6 +207,7 @@ export function genWalletTicket(req: express.Request, res: express.Response) {
             event.vorname = e.vorname;
             event.email = e.email;
             event.eventName = e.eventName;
+            event.eventDate = e.eventDate;
             event.registered = e.registered;
             event.uuid = e.uuid
 
@@ -233,6 +247,7 @@ export function genPDFTicket(req: express.Request, res: express.Response) {
             event.vorname = e.vorname;
             event.email = e.email;
             event.eventName = e.eventName;
+            event.eventDate = e.eventDate;
             event.registered = e.registered;
             event.uuid = e.uuid
             res.set({
@@ -273,6 +288,7 @@ export function handlePut(req: express.Request, res: express.Response) {
                     e.vorname = ev2.vorname;
                     e.email = ev2.email;
                     e.eventName = ev2.eventName;
+                    e.eventDate = ev2.eventDate;
                     e.registered = ev2.registered;
                     e.arrival = ev2.arrival;
                     e.webhook = ev2.webhook;
@@ -360,6 +376,7 @@ export function handlePost(req: express.Request, res: express.Response) {
     event.vorname = req.body.vorname
     event.email = req.body.email
     event.eventName = req.body.eventName
+    event.eventDate = req.body.eventDate
     event.webhook = req.body.webhook
 
     req.body;

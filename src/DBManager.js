@@ -32,7 +32,7 @@ var DBManager = /** @class */ (function () {
                 if (err) {
                     reject(err);
                 }
-                var sql = "INSERT INTO register(email, name, vorname, event, webhook,registered, uuid) VALUES (\"" + event.email + "\",\"" + event.name + "\",\"" + event.vorname + "\"," + ((event.eventName == undefined) ? null : "\"" + event.eventName + "\"") + "," + ((event.webhook == undefined) ? null : "\"" + event.webhook + "\"") + ",datetime(\'now\',\'localtime\'),\"" + event.uuid + "\");";
+                var sql = "INSERT INTO register(email, name, vorname, event, webhook,registered, uuid,eventDate) VALUES (\"" + event.email + "\",\"" + event.name + "\",\"" + event.vorname + "\"," + ((event.eventName == undefined) ? null : "\"" + event.eventName + "\"") + "," + ((event.webhook == undefined) ? null : "\"" + event.webhook + "\"") + ",datetime(\'now\',\'localtime\'),\"" + event.uuid + "\"," + ((event.eventDate == undefined) ? null : "\"" + event.eventDate + "\"") + ");";
                 console.log("SQL=" + sql);
                 db.run(sql, function (err) {
                     if (err) {
@@ -66,6 +66,7 @@ var DBManager = /** @class */ (function () {
                         event.name = rows[0].name;
                         event.vorname = rows[0].vorname;
                         event.eventName = rows[0].event;
+                        event.eventDate = rows[0].eventDate;
                         event.webhook = rows[0].webhook;
                         event.email = rows[0].email;
                         event.registered = rows[0].registered;
@@ -99,6 +100,7 @@ var DBManager = /** @class */ (function () {
                         event.name = rows[0].name;
                         event.vorname = rows[0].vorname;
                         event.eventName = rows[0].event;
+                        event.eventDate = rows[0].eventDate;
                         event.uuid = rows[0].uuid;
                         event.webhook = rows[0].webhook;
                         event.email = rows[0].email;
