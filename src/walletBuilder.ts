@@ -98,6 +98,10 @@ export class WalletBuilder {
                 this.repaceVales(item, s);
             });
 
+            let d:Date = new Date(config.validDate);
+            console.log("Set Wallet expiration Date to "+d);            
+            examplePass.expiration(d)
+
             // Generate the stream .pkpass file stream
             const stream = examplePass.generate();
             res.set({

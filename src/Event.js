@@ -144,8 +144,10 @@ var Event = /** @class */ (function () {
             item.value = this.vorname;
         }
         if (item.key == "eventName") {
-            console.log("Found eventName and set it to " + this.eventName);
-            item.value = this.eventName;
+            if (this.eventName && this.eventName != "undefined") {
+                console.log("Found eventName and set it to " + this.eventName);
+                item.value = this.eventName;
+            }
         }
         if (item.key == "registered") {
             console.log("Found registered and set it to " + this.registered);
@@ -168,7 +170,7 @@ var Event = /** @class */ (function () {
         doc.image('web/img/ms-icon-70x70.png', 22, 22, { width: 30 });
         doc.font('Helvetica-Bold').fontSize(16);
         doc.text("Event Ticket", 60, 22);
-        if (this.eventName) {
+        if (this.eventName && this.eventName != "undefined") {
             doc.text(this.eventName, 25, 60);
         }
         doc.font('Helvetica-Bold').fontSize(6);

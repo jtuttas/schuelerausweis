@@ -91,7 +91,7 @@ var WalletBuilder = /** @class */ (function () {
     };
     WalletBuilder.prototype.genit = function (res, id, s) {
         return __awaiter(this, void 0, void 0, function () {
-            var examplePass, stream, err_1;
+            var examplePass, d, stream, err_1;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -134,6 +134,9 @@ var WalletBuilder = /** @class */ (function () {
                         examplePass.auxiliaryFields.map(function (item) {
                             _this.repaceVales(item, s);
                         });
+                        d = new Date(config_json_1.default.validDate);
+                        console.log("Set Wallet expiration Date to " + d);
+                        examplePass.expiration(d);
                         stream = examplePass.generate();
                         res.set({
                             "Content-type": "application/vnd.apple.pkpass",

@@ -13,36 +13,38 @@
 
 <body>
 
+
     <div class="jumbotron">
-        <div class="container">
-            <h1 id="event">Anmeldung</h1>
-        </div>
+        <h1 id="event">Anmeldung</h1>
     </div>
 
+    <div class="container">
+        <div id="anmeldung" class="row">
+            <div class="form-group">
+                <label for="name">Nachname:</label>
+                <input type="text" class="form-control" name="name" id="name" placeholder="Mustermann" required>
+            </div>
+            <div class="form-group">
+                <label for="vorname">Vorname:</label>
+                <input type="text" class="form-control" name="vorname" id="vorname" placeholder="Max" required>
+            </div>
+            <div class="form-group">
+                <label for="email">eMail:</label>
+                <input type="email" class="form-control" name="email" id="email" placeholder="mustermann@test.de" required>
+            </div>
 
-    <div id="anmeldung" class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <input type="text" name="name" id="name" placeholder="Name">
+            <button id="senden" type="button" class="btn btn-primary">Absenden</button>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <input type="text" name="vorname" id="vorname" placeholder="Vorname">
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <input type="email" name="email" id="email" placeholder="email">
-        </div>
+        <div id="tickets" class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <a href="#" id="walletlink"><img src="img/wallet.png"></a>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <a href="#" id="pdflink"><img src="img/pdf.png"></a>
+            </div>
 
-        <button id="senden" type="button" class="btn btn-primary">Absenden</button>
+        </div>
     </div>
-    <div id="tickets" class="row" >
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <a href="#" id="walletlink"><img src="img/wallet.png"></a>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <a href="#" id="pdflink"><img src="img/pdf.png"></a>
-        </div>
-
-    </div>
-
     <script>
         $("#tickets").hide();
 
@@ -61,34 +63,35 @@
         console.log('eventname=' + eventName);
         var webhook = decodeURIComponent(GetURLParameter("webhook"));
         console.log('webhook=' + webhook);
-        if (eventName != undefined) {
+        if (eventName != "undefined") {
             $("#event").text("Anmeldung " + eventName);
         }
-        $("#senden").click(function (e) { 
-            var myJSObject={
+        $("#senden").click(function (e) {
+            var myJSObject = {
                 name: $("#name").val(),
                 vorname: $("#vorname").val(),
                 email: $("#email").val()
             }
-            if (eventName) {
-                myJSObject.eventName=eventName;
+            if (eventName && eventName!="undefined") {
+                myJSObject.eventName = eventName;
             }
-            if (webhook) {
-                myJSObject.webhook=webhook;
+            if (webhook && webhook!="undefined") {
+                myJSObject.webhook = webhook;
             }
-            console.log('Sende: '+JSON.stringify(myJSObject));
+            console.log('Sende: ' + JSON.stringify(myJSObject));
             $.ajax("/event", {
                 data: JSON.stringify(myJSObject),
                 contentType: 'application/json',
                 type: 'POST',
-                success: function (data) { 
-                    console.log('Receive:'+JSON.stringify(data));
+                success: function (data) {
+                    console.log('Receive:' + JSON.stringify(data));
+                    $("#event").text("Ihre Tickets")
                     $("#anmeldung").hide();
                     $("#tickets").show();
-                    $("#walletlink").attr("href","https:/eventwallet?uuid="+data.uuid)
-                    $("#pdflink").attr("href","https:/eventpdf?uuid="+data.uuid)
+                    $("#walletlink").attr("href", "https:/eventwallet?uuid=" + data.uuid)
+                    $("#pdflink").attr("href", "https:/eventpdf?uuid=" + data.uuid)
                 },
-            });            
+            });
         });
     </script>
 

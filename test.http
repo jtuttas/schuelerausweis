@@ -1,14 +1,13 @@
 ### Event Ticket als pdf
-GET https://localhost:8080/eventpdf?uuid=73dcf76c-f615-47f0-82c5-b2d46a14acfb HTTP/1.1
+GET https://localhost:8080/eventpdf?uuid=49e7fd96-c60f-407f-b97a-3ca6f8e659c4 HTTP/1.1
 
 ### Event Arrival
-PUT https://localhost:8080/event?uuid=73dcf76c-f615-47f0-82c5-b2d46a14acfb HTTP/1.1
+PUT https://localhost:8080/event?uuid=ffadb63b-bdff-4f89-ac1a-b2e9ff9da5cc HTTP/1.1
 Content-type: application/json
 
-{}
 
 ### Event Anmeldung Abfragen
-GET https://localhost:8080/event?uuid=49e7fd96-c60f-407f-b97a-3ca6f8e659c4 HTTP/1.1
+GET https://idcard.mmbbs.de/event?uuid=49e7fd96-c60f-407f-b97a-3ca6f8e659c4 HTTP/1.1
 
 ### Event Anmeldung
 POST https://localhost:8080/event HTTP/1.1

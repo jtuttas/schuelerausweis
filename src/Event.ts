@@ -123,8 +123,10 @@ export class Event {
             item.value = this.vorname;
         }
         if (item.key == "eventName") {
-            console.log("Found eventName and set it to " + this.eventName);
-            item.value = this.eventName;
+            if (this.eventName && this.eventName != "undefined") {
+                console.log("Found eventName and set it to " + this.eventName);
+                item.value = this.eventName;
+            }
         }
         if (item.key == "registered") {
             console.log("Found registered and set it to " + this.registered);
@@ -153,7 +155,7 @@ export class Event {
         doc.image('web/img/ms-icon-70x70.png', 22, 22, { width: 30 });
         doc.font('Helvetica-Bold').fontSize(16);
         doc.text("Event Ticket", 60, 22);
-        if (this.eventName) {
+        if (this.eventName && this.eventName != "undefined") {
             doc.text(this.eventName, 25, 60);
         }
         doc.font('Helvetica-Bold').fontSize(6);
@@ -193,7 +195,7 @@ export function genWalletTicket(req: express.Request, res: express.Response) {
             event.email = e.email;
             event.eventName = e.eventName;
             event.registered = e.registered;
-            event.uuid=e.uuid
+            event.uuid = e.uuid
 
             res.set({
                 "Content-type": "application/vnd.apple.pkpass",
@@ -232,7 +234,7 @@ export function genPDFTicket(req: express.Request, res: express.Response) {
             event.email = e.email;
             event.eventName = e.eventName;
             event.registered = e.registered;
-            event.uuid=e.uuid
+            event.uuid = e.uuid
             res.set({
                 "Content-type": "application/pdf",
                 "Content-disposition": `attachment; filename=ticket.pdf`,
@@ -373,7 +375,7 @@ export function handlePost(req: express.Request, res: express.Response) {
     event.uuid = v4();
     console.log("UUID=" + event.uuid);
     let dbm: DBManager = new DBManager();
-    dbm.readEvent(event.name, event.vorname, event.email,event.eventName).then((v: Event) => {
+    dbm.readEvent(event.name, event.vorname, event.email, event.eventName).then((v: Event) => {
         console.log("gelesen:" + JSON.stringify(v));
         if (v == null) {
             dbm.setEvent(event).then((v1: Event) => {
