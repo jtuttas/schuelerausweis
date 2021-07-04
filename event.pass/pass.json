@@ -1,12 +1,5 @@
 {
-  "associatedStoreIdentifiers": [578661564],
-  "associatedApps": [{ "idGooglePlay": "io.walletpasses.android" }],
-  "barcode": {
-    "format": "PKBarcodeFormatQR",
-    "messageEncoding": "iso-8859-1",
-    "altText": "www.PassSlot.com",
-    "message": "$1$PSd$4McxnGOGTDyY_2WNkcAHbQ$fLoNDTF4ZbysXg=="
-  },
+  "sharingProhibited": true,
   "foregroundColor": "rgb(0,0,0)",
   "backgroundColor": "rgb(0,0,0)",
   "eventTicket": {
@@ -43,9 +36,8 @@
   "logoText": "",
   "labelColor": "rgb(0,0,0)",
   "beacons": [],
-  "associatedPlayIdentifiers": ["io.walletpasses.android"],
   "serialNumber": "e0c7319c-6386-4c3c-98ff-658d91c0076d",
-  "passTypeIdentifier": "pass.de.event.mm-bbs",
+  "passTypeIdentifier": "pass.de.mm-bbs",
   "formatVersion": 1,
   "description": "Elektronische Eintrittskarte für ihren Event",
   "organizationName": "MMBbS",

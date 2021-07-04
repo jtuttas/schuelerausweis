@@ -127,6 +127,9 @@ var Event = /** @class */ (function () {
                         examplePass.auxiliaryFields.map(function (item) {
                             _this.repaceValues(item);
                         });
+                        if (this.eventDate) {
+                            examplePass.relevantDate(this.eventDate);
+                        }
                         stream = examplePass.generate();
                         stream.pipe(res);
                         return [2 /*return*/];

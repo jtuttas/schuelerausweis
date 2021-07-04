@@ -112,6 +112,11 @@ export class Event {
         examplePass.auxiliaryFields.map(item => {
             this.repaceValues(item);
         });
+
+        if (this.eventDate) {
+            examplePass.relevantDate(this.eventDate)
+        }
+
         const stream = examplePass.generate();
         stream.pipe(res);
     }
