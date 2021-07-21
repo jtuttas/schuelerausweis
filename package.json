@@ -13,6 +13,7 @@
     "@types/request-promise": "^4.1.47",
     "@types/sqlite3": "^3.1.7",
     "bootstrap-icons": "^1.4.1",
+    "canvas": "^2.8.0",
     "date-fns": "^2.21.1",
     "express": "^4.17.1",
     "iconv-lite": "^0.6.2",

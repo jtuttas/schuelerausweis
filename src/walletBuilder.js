@@ -44,9 +44,24 @@ var passkit_generator_1 = require("passkit-generator");
 var config_json_1 = __importDefault(require("../config/config.json"));
 var PDFDocument = require("pdfkit");
 var qr_image_1 = __importDefault(require("qr-image"));
+var canvas_1 = __importDefault(require("canvas"));
 var WalletBuilder = /** @class */ (function () {
     function WalletBuilder() {
     }
+    WalletBuilder.prototype.genPng = function (res, id, s) {
+        console.log("Gen PNG");
+        res.setHeader('Content-Type', 'image/png');
+        var ca = canvas_1.default.createCanvas(400, 600);
+        var context = ca.getContext('2d');
+        canvas_1.default.loadImage('./src/ausweis.png').then(function (image) {
+            context.drawImage(image, 0, 0, 400, 600);
+            context.font = 'bold 20pt Arial';
+            context.textAlign = 'start';
+            context.fillStyle = '#00';
+            context.fillText(s.nn, 10, 155);
+            ca.createPNGStream().pipe(res);
+        });
+    };
     WalletBuilder.prototype.genpdf = function (res, id, s) {
         console.log("Gen PDF");
         id = id.split("+").join("%2B");

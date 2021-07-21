@@ -99,6 +99,37 @@ app.get('/qrcode', function (req, res) {
 });
 
 /**
+ * Endpunkt Zum erzeugen eines Schülerausweises als png
+ */
+app.get("/png", (req, res) => {
+    let obj: any = {};
+    if (req.query.id) {
+        let sid: string = req.query.id.toString();
+        console.log("ID=" + sid);
+        try {
+            let decrypted = key.decrypt(req.query.id.toString(), 'utf8');
+            console.log("Decrypted:" + decrypted);
+            let obj = JSON.parse(decrypted);
+            wb.genPng(res, sid, obj);
+        }
+        catch {
+            console.log("Failed to Decode!");
+
+            obj.valid = false;
+            obj.msg = "failed to decode id!"
+            res.setHeader("content-type", "application/json");
+            res.send(JSON.stringify(obj));
+        }
+    }
+    else {
+        res.setHeader("content-type", "application/json");
+        obj.valid = false;
+        obj.msg = "no id Param"
+        res.send(JSON.stringify(obj));
+    }
+});
+
+/**
  * Endpunkt Zum erzeugen eines Schülerausweises als pdf
  */
 app.get("/pdf", (req, res) => {

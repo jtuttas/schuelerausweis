@@ -5,11 +5,30 @@ import PDFDocument = require('pdfkit');
 import https from "https";
 import request = require("request");
 import qrImage from "qr-image";
+import canvas from 'canvas'
+import fs from 'fs'
 
 export class WalletBuilder {
     constructor() {
     }
 
+
+    genPng(res: any, id: string, s: any) {
+        console.log("Gen PNG");
+
+        res.setHeader('Content-Type', 'image/png');
+        const ca = canvas.createCanvas(400, 600)
+        const context = ca.getContext('2d')
+        canvas.loadImage('./src/ausweis.png').then(image => {
+            context.drawImage(image, 0, 0, 400, 600)
+            context.font = 'bold 20pt Arial'
+            context.textAlign = 'start'
+            context.fillStyle = '#00'
+            context.fillText(s.nn, 10, 155)
+    
+            ca.createPNGStream().pipe(res);
+        })
+    }
 
     genpdf(res: any, id: string, s: any) {
         console.log("Gen PDF");
@@ -21,12 +40,12 @@ export class WalletBuilder {
         });
 
         try {
-            let img = qrImage.imageSync("http://idcard.mmbbs.de/validate?id=" + id, { type: 'png',size: 3 });
+            let img = qrImage.imageSync("http://idcard.mmbbs.de/validate?id=" + id, { type: 'png', size: 3 });
             doc.image(img, 120, 48, { width: 125 })
         }
-        catch(err) {
-            console.log("Exception:"+err);
-            
+        catch (err) {
+            console.log("Exception:" + err);
+
         }
 
         doc.image('web/img/ms-icon-70x70.png', 22, 22, { width: 30 });
@@ -98,8 +117,8 @@ export class WalletBuilder {
                 this.repaceVales(item, s);
             });
 
-            let d:Date = new Date(config.validDate);
-            console.log("Set Wallet expiration Date to "+d);            
+            let d: Date = new Date(config.validDate);
+            console.log("Set Wallet expiration Date to " + d);
             examplePass.expiration(d)
 
             // Generate the stream .pkpass file stream
