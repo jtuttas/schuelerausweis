@@ -3,7 +3,7 @@ ENV NODE_ENV=production
 WORKDIR /usr/src/app
 COPY ["package.json", "npm-shrinkwrap.json*", "./"]
 RUN echo "los!"
-RUN npm install node-gyp
+RUN sudo apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
 RUN npm install --production && mv node_modules ../
 COPY . .
 VOLUME ["/usr/src/app/config"]
