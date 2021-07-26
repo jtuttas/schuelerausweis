@@ -33,7 +33,7 @@ export class WalletBuilder {
 
     genpdf(res: any, id: string, s: any) {
         console.log("Gen PDF");
-        //id = id.split("+").join("%2B");
+        id = id.split("+").join("%2B");
         var doc = new PDFDocument({
             size: "A4",
             autoFirstPage: true,
@@ -46,8 +46,8 @@ export class WalletBuilder {
         doc.fillColor("#16538C").text(s.vn, 32, 126);
         doc.fillColor("#16538C").text(s.nn, 32, 138);
         doc.font('Helvetica').fontSize(8);
-        doc.text(this.formatDate(new Date(s.gd)), 252, 41);
-        doc.text(this.formatDate(new Date(s.v)), 163, 141);
+        doc.text(this.formatDate(new Date(s.gd)), 252, 39);
+        doc.text(this.formatDate(new Date(s.v)), 163, 139);
         doc.font('Helvetica').fontSize(10);
         doc.fillColor("#FFFFFF").text(s.kl, 190, 35);
         try {
