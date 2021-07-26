@@ -1,9 +1,9 @@
-FROM node:12.18-alpine
+FROM node:latest
 ENV NODE_ENV=production
 WORKDIR /usr/src/app
-COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
+COPY ["package.json", "npm-shrinkwrap.json*", "./"]
 RUN echo "los!"
-RUN npm install --production --silent && mv node_modules ../
+RUN npm install --production && mv node_modules ../
 COPY . .
 VOLUME ["/usr/src/app/config"]
 EXPOSE 8080
