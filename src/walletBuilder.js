@@ -64,45 +64,41 @@ var WalletBuilder = /** @class */ (function () {
     };
     WalletBuilder.prototype.genpdf = function (res, id, s) {
         console.log("Gen PDF");
-        id = id.split("+").join("%2B");
+        //id = id.split("+").join("%2B");
         var doc = new PDFDocument({
             size: "A4",
             autoFirstPage: true,
             margin: 25
         });
+        //console.log(dateFormat(new Date(s.v), "dd.mm.yyyy"));
+        doc.image('src/Blanko_gesamt.jpg', 20, 20, { width: 440 });
+        doc.font('Helvetica-Bold').fontSize(12);
+        doc.fillColor("#16538C").text(s.vn, 32, 126);
+        doc.fillColor("#16538C").text(s.nn, 32, 138);
+        doc.font('Helvetica').fontSize(8);
+        doc.text(this.formatDate(new Date(s.gd)), 252, 41);
+        doc.text(this.formatDate(new Date(s.v)), 163, 141);
+        doc.font('Helvetica').fontSize(10);
+        doc.fillColor("#FFFFFF").text(s.kl, 190, 35);
         try {
             var img = qr_image_1.default.imageSync("http://idcard.mmbbs.de/validate?id=" + id, { type: 'png', size: 3 });
-            doc.image(img, 120, 48, { width: 125 });
+            doc.image(img, 360, 27, { width: 90 });
         }
         catch (err) {
             console.log("Exception:" + err);
         }
-        doc.image('web/img/ms-icon-70x70.png', 22, 22, { width: 30 });
-        doc.font('Helvetica-Bold').fontSize(16);
-        doc.text("Schülerausweis MMBbS", 60, 22);
-        doc.font('Helvetica-Bold').fontSize(6);
-        doc.text("Multi-Media Berufsbildende Schulen, Expo Plaza 3", 60, 38);
-        doc.text("30539 Hannover, Tel.: 0511/64 61 98-11", 60, 44);
-        doc.font('Helvetica-Bold').fontSize(8);
-        doc.text("Name:", 25, 60);
-        doc.text("Vorname:", 25, 82);
-        doc.text("Klasse:", 25, 104);
-        doc.text("Geb. Datum:", 25, 126);
-        doc.text("Gültigkeit:", 25, 148);
-        doc.font('Helvetica').fontSize(8).fillColor("0x888888");
-        doc.text(s.nn, 29, 70);
-        doc.text(s.vn, 29, 92);
-        doc.text(s.kl, 29, 114);
-        doc.text(s.gd, 29, 136);
-        doc.text("Schuljahr " + config_json_1.default.schuljahr, 29, 158);
-        doc.roundedRect(20, 20, 240, 152, 5);
-        doc.stroke();
+        //doc.text("Schuljahr " + config.schuljahr, 29, 158);
+        //doc.roundedRect(20, 20, 240, 152, 5);
+        //doc.stroke();
         doc.end();
         res.set({
             "Content-type": "application/pdf",
             "Content-disposition": "attachment; filename=ausweis.pdf",
         });
         doc.pipe(res);
+    };
+    WalletBuilder.prototype.formatDate = function (v) {
+        return "" + v.getDate() + "." + (v.getMonth() + 1) + "." + v.getFullYear();
     };
     WalletBuilder.prototype.genit = function (res, id, s) {
         return __awaiter(this, void 0, void 0, function () {
