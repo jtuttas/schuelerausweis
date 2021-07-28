@@ -7,6 +7,7 @@ import request = require("request");
 import qrImage from "qr-image";
 import canvas from 'canvas'
 import fs from 'fs'
+import qrcode from 'qrcode'
 
 export class WalletBuilder {
  
@@ -16,17 +17,31 @@ export class WalletBuilder {
 
     genPng(res: any, id: string, s: any) {
         console.log("Gen PNG");
-
+        id = id.split("+").join("%2B");
         res.setHeader('Content-Type', 'image/png');
+        canvas.registerFont('./src/HelveticaNeue-Medium-11.ttf', { family: 'Comic Sans' })
         const ca = canvas.createCanvas(400, 600)
         const context = ca.getContext('2d')
         canvas.loadImage('./src/ausweis.png').then(image => {
             context.drawImage(image, 0, 0, 400, 600)
-            context.font = 'bold 20pt Arial'
+            context.font = 'bold 12pt Comic Sans'
             context.textAlign = 'start'
-            context.fillStyle = '#00'
-            context.fillText(s.nn, 10, 155)
-    
+            context.fillStyle = '#16538C'
+            
+            context.fillText(s.vn.toUpperCase(), 10, 155)
+            context.fillText(s.nn.toUpperCase(), 10, 175)
+            context.fillText(s.kl, 10, 195)
+            context.fillText(this.formatDate(new Date(s.v)), 10, 205)
+            context.fillText(this.formatDate(new Date(s.gd)), 10, 215)
+
+            const caqr = canvas.createCanvas(100, 100)
+            qrcode.toCanvas(caqr, "https://idcard.mmbbs.de/validate?id=" + id,{width:200},err => {
+                if (err) {
+                    console.log("Error:"+err);
+                }
+                console.log("success width="+caqr.width);
+                context.drawImage(caqr, 20, 250);
+            })
             ca.createPNGStream().pipe(res);
         })
     }
@@ -42,16 +57,17 @@ export class WalletBuilder {
         //console.log(dateFormat(new Date(s.v), "dd.mm.yyyy"));
 
         doc.image('src/Blanko_gesamt.jpg', 20, 20, { width: 440 });
-        doc.font('Helvetica-Bold').fontSize(12);
-        doc.fillColor("#16538C").text(s.vn, 32, 126);
-        doc.fillColor("#16538C").text(s.nn, 32, 138);
-        doc.font('Helvetica').fontSize(8);
+        doc.font('./src/HelveticaNeue-Medium-11.ttf').fontSize(12);
+        doc.fillColor("#16538C").text(s.vn.toUpperCase(), 32, 126);
+        doc.fillColor("#16538C").text(s.nn.toUpperCase(), 32, 138);
+        doc.font('Helvetica').fontSize(6);
         doc.text(this.formatDate(new Date(s.gd)), 252, 39);
+        doc.font('Helvetica').fontSize(8);
         doc.text(this.formatDate(new Date(s.v)), 163, 139);
         doc.font('Helvetica').fontSize(10);
         doc.fillColor("#FFFFFF").text(s.kl, 190, 35);
         try {
-            let img = qrImage.imageSync("http://idcard.mmbbs.de/validate?id=" + id, { type: 'png', size: 3 });
+            let img = qrImage.imageSync("https://idcard.mmbbs.de/validate?id=" + id, { type: 'png', size: 3 });
             doc.image(img, 360, 27, { width: 90 })
         }
         catch (err) {
