@@ -36,6 +36,11 @@ content-type: application/json
   "msg": "ggf. eine Fehler und Warnmeldung"
 }
 
+### png QR Code zum Download des Wallets
+GET https://localhost:8080/qrcode?id=QRacGnmZnK0HHl1PD62DGcpZg1er%2B0bm6R8adPidRgFdMOco1K%2BVvCkkcYf7O1BXAq%2Bxyx7RoaWrwAR1Krl78A5CvMgdldd4GFHyeYi19lVe7DnPoTLrtqTqhCWf3s1tgdbIwZkJnPT4BwRdSOekuTIxMvvaHR8Y1RQlHEK1G/VrQFW49cDUBYFFrXAZTLivBp6VxiA45kWXT8op6NVKBHU6tKeaCpcdH8jsIOEXw5AvJjNW7V0Nq2ZcA6yRwwaOWZJMWtcYaaulDu45IQoqNhUR8/zem2G2YQyCVSJqWTkgnVNuTrCrZykaprUAcZGrHZTrQl0Ct1/zMebHmFD77g== HTTP/1.1
+
+
+
 ### png erzeugen
 GET https://localhost:8080/png?id=QRacGnmZnK0HHl1PD62DGcpZg1er%2B0bm6R8adPidRgFdMOco1K%2BVvCkkcYf7O1BXAq%2Bxyx7RoaWrwAR1Krl78A5CvMgdldd4GFHyeYi19lVe7DnPoTLrtqTqhCWf3s1tgdbIwZkJnPT4BwRdSOekuTIxMvvaHR8Y1RQlHEK1G/VrQFW49cDUBYFFrXAZTLivBp6VxiA45kWXT8op6NVKBHU6tKeaCpcdH8jsIOEXw5AvJjNW7V0Nq2ZcA6yRwwaOWZJMWtcYaaulDu45IQoqNhUR8/zem2G2YQyCVSJqWTkgnVNuTrCrZykaprUAcZGrHZTrQl0Ct1/zMebHmFD77g== HTTP/1.1
 

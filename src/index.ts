@@ -84,7 +84,7 @@ app.get("/event", handleGet);
 app.post("/event", handlePost);
 
 /**
-Endpunkt zum Erzeugen von QR Codes als Image
+Endpunkt zum Erzeugen des QR Codes zum Download des Wallets
 */
 app.get('/qrcode', function (req, res) {
     //console.log("URL:"+req.baseUrl.toString());
