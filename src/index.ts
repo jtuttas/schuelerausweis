@@ -142,6 +142,7 @@ app.get("/pdf", (req, res) => {
             console.log("Decrypted:" + decrypted);
             let obj = JSON.parse(decrypted);
             wb.genpdf(res, sid, obj);
+            
         }
         catch {
             console.log("Failed to Decode!");
