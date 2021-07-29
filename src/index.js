@@ -71,14 +71,17 @@ app.post("/event", Event_1.handlePost);
 Endpunkt zum Erzeugen von QR Codes als Image
 */
 app.get('/qrcode', function (req, res) {
-    if (req.query.data) {
-        var code = qr_image_1.default.image(req.query.data.toString(), { type: 'png' });
+    //console.log("URL:"+req.baseUrl.toString());
+    if (req.query.id) {
+        var id = req.query.id.toString();
+        id = id.split("+").join("%2B");
+        var code = qr_image_1.default.image("https://idcard.mmbbs.de/wallet?id=" + id, { type: 'png' });
         res.type('png');
         code.pipe(res);
     }
     else {
         res.statusCode = 406;
-        res.send("missing Data Parameter");
+        res.send("missing ID Parameter");
     }
 });
 /**
