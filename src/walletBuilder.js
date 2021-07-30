@@ -55,25 +55,30 @@ var WalletBuilder = /** @class */ (function () {
         id = id.split("+").join("%2B");
         res.setHeader('Content-Type', 'image/png');
         canvas_1.default.registerFont('./src/HelveticaNeue-Medium-11.ttf', { family: 'Comic Sans' });
-        var ca = canvas_1.default.createCanvas(400, 600);
+        var ca = canvas_1.default.createCanvas(800, 1005);
         var context = ca.getContext('2d');
-        canvas_1.default.loadImage('./src/ausweis.png').then(function (image) {
-            context.drawImage(image, 0, 0, 400, 600);
-            context.font = 'bold 12pt Comic Sans';
+        canvas_1.default.loadImage('./src/Ausweis_PNG.png').then(function (image) {
+            context.drawImage(image, 0, 0, 800, 1005);
+            context.font = 'bold 28pt Comic Sans';
             context.textAlign = 'start';
             context.fillStyle = '#16538C';
-            context.fillText(s.vn.toUpperCase(), 10, 155);
-            context.fillText(s.nn.toUpperCase(), 10, 175);
-            context.fillText(s.kl, 10, 195);
-            context.fillText(_this.formatDate(new Date(s.v)), 10, 205);
-            context.fillText(_this.formatDate(new Date(s.gd)), 10, 215);
-            var caqr = canvas_1.default.createCanvas(100, 100);
-            qrcode_1.default.toCanvas(caqr, "https://idcard.mmbbs.de/validate?id=" + id, { width: 200 }, function (err) {
+            context.fillText(s.vn.toUpperCase(), 46, 412);
+            context.fillText(s.nn.toUpperCase(), 46, 450);
+            context.font = 'bold 22pt Comic Sans';
+            context.textAlign = "right";
+            context.fillText(_this.formatDate(new Date(s.v)), 753, 450);
+            context.textAlign = "left";
+            context.fillText(_this.formatDate(new Date(s.gd)), 46, 595);
+            context.fillStyle = '#FFFFFF';
+            context.font = 'bold 28pt Comic Sans';
+            context.fillText(s.kl, 600, 85);
+            var caqr = canvas_1.default.createCanvas(300, 300);
+            qrcode_1.default.toCanvas(caqr, "https://idcard.mmbbs.de/validate?id=" + id, { width: 350 }, function (err) {
                 if (err) {
                     console.log("Error:" + err);
                 }
                 console.log("success width=" + caqr.width);
-                context.drawImage(caqr, 20, 250);
+                context.drawImage(caqr, 440, 540);
             });
             ca.createPNGStream().pipe(res);
         });
@@ -87,15 +92,17 @@ var WalletBuilder = /** @class */ (function () {
             margin: 25
         });
         //console.log(dateFormat(new Date(s.v), "dd.mm.yyyy"));
-        doc.image('src/Blanko_gesamt.jpg', 20, 20, { width: 440 });
-        doc.font('./src/HelveticaNeue-Medium-11.ttf').fontSize(12);
-        doc.fillColor("#16538C").text(s.vn.toUpperCase(), 32, 126);
-        doc.fillColor("#16538C").text(s.nn.toUpperCase(), 32, 138);
-        doc.font('Helvetica').fontSize(6);
+        doc.image('src/Ausweis_PDF.png', 20, 20, { width: 440 });
+        doc.font('./src/HelveticaNeue-Medium-11.ttf').fontSize(11);
+        doc.fillColor("#16538C").text(s.vn.toUpperCase(), 32, 123);
+        doc.fillColor("#16538C").text(s.nn.toUpperCase(), 32, 136);
+        doc.font('./src/HelveticaNeue-Medium-11.ttf').fontSize(6);
         doc.text(this.formatDate(new Date(s.gd)), 252, 39);
-        doc.font('Helvetica').fontSize(8);
-        doc.text(this.formatDate(new Date(s.v)), 163, 139);
-        doc.font('Helvetica').fontSize(10);
+        doc.text(this.formatDate(new Date(s.v)), 163, 137, {
+            width: 65,
+            align: 'right'
+        });
+        doc.font('./src/HelveticaNeue-Medium-11.ttf').fontSize(10);
         doc.fillColor("#FFFFFF").text(s.kl, 190, 35);
         try {
             var img = qr_image_1.default.imageSync("https://idcard.mmbbs.de/validate?id=" + id, { type: 'png', size: 3 });
