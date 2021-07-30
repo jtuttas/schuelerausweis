@@ -53,7 +53,11 @@ var WalletBuilder = /** @class */ (function () {
         var _this = this;
         console.log("Gen PNG");
         id = id.split("+").join("%2B");
-        res.setHeader('Content-Type', 'image/png');
+        res.set({
+            "Content-type": "image/png",
+            "Content-disposition": "attachment; filename=ausweis.png",
+        });
+        //res.setHeader('Content-Type', 'image/png');
         canvas_1.default.registerFont('./src/HelveticaNeue-Medium-11.ttf', { family: 'Comic Sans' });
         var ca = canvas_1.default.createCanvas(800, 1005);
         var context = ca.getContext('2d');

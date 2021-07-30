@@ -18,7 +18,12 @@ export class WalletBuilder {
     genPng(res: any, id: string, s: any) {
         console.log("Gen PNG");
         id = id.split("+").join("%2B");
-        res.setHeader('Content-Type', 'image/png');
+        res.set({
+            "Content-type": "image/png",
+            "Content-disposition": `attachment; filename=ausweis.png`,
+        });
+        //res.setHeader('Content-Type', 'image/png');
+        
         canvas.registerFont('./src/HelveticaNeue-Medium-11.ttf', { family: 'Comic Sans' })
         const ca = canvas.createCanvas(800, 1005)
         const context = ca.getContext('2d')
