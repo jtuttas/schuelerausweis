@@ -1,0 +1,28 @@
+.id-card {
+  margin-top: -90px;
+}
+
+.qr-code {
+  width: 166px;
+  background: white;
+}
+
+.sec {
+  background: #145189;
+}
+
+.btn-primary {
+  background: #145189;
+  border: none;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary.active,
+.btn-primary.disabled,
+.btn-primary.disabled:hover,
+.btn-primary.disabled:focus,
+.btn-primary.disabled:active {
+  background: #2970a5;
+  border: none;
+}
