@@ -84,21 +84,17 @@ app.get("/event", handleGet);
 app.post("/event", handlePost);
 
 /**
-Endpunkt zum Erzeugen des QR Codes zum Download des Wallets
+Endpunkt zum Erzeugen eines QR Codes 
 */
 app.get('/qrcode', function (req, res) {
-    //console.log("URL:"+req.baseUrl.toString());
-    
-    if (req.query.id) {
-        let id:string = req.query.id.toString()
-        id = id.split("+").join("%2B");
-        var code = qrImage.image("https://idcard.mmbbs.de/wallet?id="+id, { type: 'png' });
+    if (req.query.data) {
+        var code = qrImage.image(req.query.data.toString(), { type: 'png' });
         res.type('png');
         code.pipe(res);
     }
     else {
         res.statusCode = 406;
-        res.send("missing ID Parameter");
+        res.send("missing data Parameter");
     }
 });
 
