@@ -1,10 +1,37 @@
 .id-card {
-  margin-top: -90px;
+  margin-top: -80px;
+  position: relative;
+}
+
+#d-png {
+  position: absolute;
+  top: -50px;
+  right: 0px;
+  color: #145189;
+}
+
+#d-pdf {
+  position: absolute;
+  top: -50px;
+  right: 35px;
+  color: #145189;
 }
 
 .qr-code {
-  width: 166px;
   background: white;
+}
+
+#qco {
+  width: auto;
+}
+
+.anleitung {
+  margin-left: 10px;
+}
+
+.anleitung ol {
+  margin: none;
+  padding-left: 1rem;
 }
 
 .sec {
@@ -25,4 +52,9 @@
 .btn-primary.disabled:active {
   background: #2970a5;
   border: none;
+}
+
+footer p a {
+  color: grey;
+  text-decoration: none;
 }
