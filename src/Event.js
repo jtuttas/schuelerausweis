@@ -8,64 +8,36 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handlePost = exports.handleGet = exports.handlePut = exports.genPDFTicket = exports.genWalletTicket = exports.Event = void 0;
-var DBManager_1 = require("./DBManager");
-var uuid_1 = require("uuid");
-var request_1 = __importDefault(require("request"));
-var PDFDocument = require("pdfkit");
-var qr_image_1 = __importDefault(require("qr-image"));
-var passkit_generator_1 = require("passkit-generator");
-var Event = /** @class */ (function () {
-    function Event(name, vorname, email) {
+const DBManager_1 = require("./DBManager");
+const uuid_1 = require("uuid");
+const request_1 = __importDefault(require("request"));
+const PDFDocument = require("pdfkit");
+const qr_image_1 = __importDefault(require("qr-image"));
+const passkit_generator_1 = require("passkit-generator");
+class Event {
+    constructor(name, vorname, email) {
         this.name = name;
         this.vorname = vorname;
         this.email = email;
         this.uuid = uuid_1.v4();
     }
-    Event.prototype.arrived = function (dbm) {
-        dbm.updateEvent(this).then(function (value) {
-        }).catch(function (err) {
+    arrived(dbm) {
+        dbm.updateEvent(this).then((value) => {
+        }).catch(err => {
             console.log("arrived Error:" + err);
         });
-    };
-    Event.prototype.fireWebhook = function () {
-        var _this = this;
-        return new Promise(function (resolve, reject) {
-            var that = _this;
-            console.log("Sende Webhook....:" + _this.webhook);
-            console.log("Sende Body....:" + JSON.stringify(_this));
-            request_1.default.post(_this.webhook, { json: _this }, function (error, response, body) {
+    }
+    fireWebhook() {
+        return new Promise((resolve, reject) => {
+            let that = this;
+            console.log("Sende Webhook....:" + this.webhook);
+            console.log("Sende Body....:" + JSON.stringify(this));
+            request_1.default.post(this.webhook, { json: this }, function (error, response, body) {
                 if (error) {
                     console.log("Webhook error:" + error);
                     that.webhookStatus = 404;
@@ -83,61 +55,52 @@ var Event = /** @class */ (function () {
                 }
             });
         });
-    };
-    Event.prototype.toWallet = function (res) {
-        return __awaiter(this, void 0, void 0, function () {
-            var examplePass, stream;
-            var _this = this;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, passkit_generator_1.createPass({
-                            model: "./event.pass",
-                            certificates: {
-                                wwdr: "./config/AppleWWDRCA.pem",
-                                signerCert: "./config/signerCert.pem",
-                                signerKey: {
-                                    keyFile: "./config/passkey.pem",
-                                    passphrase: "123456"
-                                }
-                            },
-                            overrides: {
-                                // keys to be added or overridden
-                                serialNumber: "AAGH44625236dddaffbda"
-                            }
-                        })];
-                    case 1:
-                        examplePass = _a.sent();
-                        // Adding some settings to be written inside pass.json
-                        //examplePass.barcode("Test"); 
-                        examplePass.barcodes({
-                            message: "uuid=" + this.uuid,
-                            format: "PKBarcodeFormatQR",
-                            altText: "Check in",
-                            messageEncoding: "iso-8859-1"
-                        });
-                        examplePass.headerFields.map(function (item) {
-                            _this.repaceValues(item);
-                        });
-                        examplePass.primaryFields.map(function (item) {
-                            _this.repaceValues(item);
-                        });
-                        examplePass.secondaryFields.map(function (item) {
-                            _this.repaceValues(item);
-                        });
-                        examplePass.auxiliaryFields.map(function (item) {
-                            _this.repaceValues(item);
-                        });
-                        if (this.eventDate) {
-                            examplePass.relevantDate(this.eventDate);
-                        }
-                        stream = examplePass.generate();
-                        stream.pipe(res);
-                        return [2 /*return*/];
+    }
+    toWallet(res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const examplePass = yield passkit_generator_1.createPass({
+                model: "./event.pass",
+                certificates: {
+                    wwdr: "./config/AppleWWDRCA.pem",
+                    signerCert: "./config/signerCert.pem",
+                    signerKey: {
+                        keyFile: "./config/passkey.pem",
+                        passphrase: "123456"
+                    }
+                },
+                overrides: {
+                    // keys to be added or overridden
+                    serialNumber: "AAGH44625236dddaffbda"
                 }
             });
+            // Adding some settings to be written inside pass.json
+            //examplePass.barcode("Test"); 
+            examplePass.barcodes({
+                message: "uuid=" + this.uuid,
+                format: "PKBarcodeFormatQR",
+                altText: "Check in",
+                messageEncoding: "iso-8859-1"
+            });
+            examplePass.headerFields.map(item => {
+                this.repaceValues(item);
+            });
+            examplePass.primaryFields.map(item => {
+                this.repaceValues(item);
+            });
+            examplePass.secondaryFields.map(item => {
+                this.repaceValues(item);
+            });
+            examplePass.auxiliaryFields.map(item => {
+                this.repaceValues(item);
+            });
+            if (this.eventDate) {
+                examplePass.relevantDate(this.eventDate);
+            }
+            const stream = examplePass.generate();
+            stream.pipe(res);
         });
-    };
-    Event.prototype.repaceValues = function (item) {
+    }
+    repaceValues(item) {
         if (item.key == "Name") {
             console.log("Found Name and set it to " + this.name);
             item.value = this.name;
@@ -162,15 +125,15 @@ var Event = /** @class */ (function () {
             console.log("Found registered and set it to " + this.registered);
             item.value = this.registered.getDate() + "." + (this.registered.getMonth() + 1) + "." + this.registered.getFullYear() + " " + this.registered.getHours() + ":" + this.registered.getMinutes();
         }
-    };
-    Event.prototype.toPDF = function () {
+    }
+    toPDF() {
         var doc = new PDFDocument({
             size: "A4",
             autoFirstPage: true,
             margin: 25
         });
         try {
-            var img = qr_image_1.default.imageSync("uuid=" + this.uuid, { type: 'png', size: 3 });
+            let img = qr_image_1.default.imageSync("uuid=" + this.uuid, { type: 'png', size: 3 });
             doc.image(img, 160, 90, { width: 80 });
         }
         catch (err) {
@@ -202,33 +165,32 @@ var Event = /** @class */ (function () {
         doc.end();
         console.log("PDF erzeugt");
         return doc;
-    };
-    return Event;
-}());
+    }
+}
 exports.Event = Event;
 /**
  * Ein event Ticket als wallet!
  */
 function genWalletTicket(req, res) {
     console.log("Gen Wallet");
-    var result = {};
+    let result = {};
     if (req.query.uuid) {
-        var dbm = new DBManager_1.DBManager();
-        var event_1 = new Event();
-        dbm.getEvent(req.query.uuid.toString()).then(function (e) {
-            event_1.name = e.name;
-            event_1.vorname = e.vorname;
-            event_1.email = e.email;
-            event_1.eventName = e.eventName;
-            event_1.eventDate = e.eventDate;
-            event_1.registered = e.registered;
-            event_1.uuid = e.uuid;
+        let dbm = new DBManager_1.DBManager();
+        let event = new Event();
+        dbm.getEvent(req.query.uuid.toString()).then((e) => {
+            event.name = e.name;
+            event.vorname = e.vorname;
+            event.email = e.email;
+            event.eventName = e.eventName;
+            event.eventDate = e.eventDate;
+            event.registered = e.registered;
+            event.uuid = e.uuid;
             res.set({
                 "Content-type": "application/vnd.apple.pkpass",
-                "Content-disposition": "attachment; filename=mmbbsevent.pkpass",
+                "Content-disposition": `attachment; filename=mmbbsevent.pkpass`,
             });
-            event_1.toWallet(res);
-        }).catch(function (err) {
+            event.toWallet(res);
+        }).catch(err => {
             res.set({
                 "Content-type": "application/json",
             });
@@ -249,24 +211,24 @@ exports.genWalletTicket = genWalletTicket;
  */
 function genPDFTicket(req, res) {
     console.log("Gen PDF");
-    var result = {};
+    let result = {};
     if (req.query.uuid) {
-        var dbm = new DBManager_1.DBManager();
-        var event_2 = new Event();
-        dbm.getEvent(req.query.uuid.toString()).then(function (e) {
-            event_2.name = e.name;
-            event_2.vorname = e.vorname;
-            event_2.email = e.email;
-            event_2.eventName = e.eventName;
-            event_2.eventDate = e.eventDate;
-            event_2.registered = e.registered;
-            event_2.uuid = e.uuid;
+        let dbm = new DBManager_1.DBManager();
+        let event = new Event();
+        dbm.getEvent(req.query.uuid.toString()).then((e) => {
+            event.name = e.name;
+            event.vorname = e.vorname;
+            event.email = e.email;
+            event.eventName = e.eventName;
+            event.eventDate = e.eventDate;
+            event.registered = e.registered;
+            event.uuid = e.uuid;
             res.set({
                 "Content-type": "application/pdf",
-                "Content-disposition": "attachment; filename=ticket.pdf",
+                "Content-disposition": `attachment; filename=ticket.pdf`,
             });
-            event_2.toPDF().pipe(res);
-        }).catch(function (err) {
+            event.toPDF().pipe(res);
+        }).catch(err => {
             res.set({
                 "Content-type": "application/json",
             });
@@ -287,49 +249,49 @@ exports.genPDFTicket = genPDFTicket;
  */
 function handlePut(req, res) {
     res.setHeader("content-type", "application/json");
-    var result = {};
+    let result = {};
     if (req.query.uuid) {
-        var dbm_1 = new DBManager_1.DBManager();
-        var e_1 = new Event();
-        e_1.uuid = req.query.uuid.toString();
-        dbm_1.updateEvent(e_1).then(function (ev) {
-            dbm_1.getEvent(e_1.uuid).then(function (ev2) {
+        let dbm = new DBManager_1.DBManager();
+        let e = new Event();
+        e.uuid = req.query.uuid.toString();
+        dbm.updateEvent(e).then((ev) => {
+            dbm.getEvent(e.uuid).then((ev2) => {
                 if (ev2 != null) {
-                    e_1.name = ev2.name;
-                    e_1.vorname = ev2.vorname;
-                    e_1.email = ev2.email;
-                    e_1.eventName = ev2.eventName;
-                    e_1.eventDate = ev2.eventDate;
-                    e_1.registered = ev2.registered;
-                    e_1.arrival = ev2.arrival;
-                    e_1.webhook = ev2.webhook;
+                    e.name = ev2.name;
+                    e.vorname = ev2.vorname;
+                    e.email = ev2.email;
+                    e.eventName = ev2.eventName;
+                    e.eventDate = ev2.eventDate;
+                    e.registered = ev2.registered;
+                    e.arrival = ev2.arrival;
+                    e.webhook = ev2.webhook;
                     if (ev2.webhook) {
-                        e_1.type = "arrival";
-                        e_1.fireWebhook().then(function (ev3) {
+                        e.type = "arrival";
+                        e.fireWebhook().then((ev3) => {
                             res.statusCode = 200;
                             res.send(JSON.stringify(ev3));
-                        }).catch(function (err) {
-                            e_1.success = false;
-                            e_1.msg = err;
+                        }).catch(err => {
+                            e.success = false;
+                            e.msg = err;
                             res.statusCode = 500;
-                            res.send(JSON.stringify(e_1));
+                            res.send(JSON.stringify(e));
                         });
                     }
                     else {
                         res.statusCode = 200;
-                        res.send(JSON.stringify(e_1));
+                        res.send(JSON.stringify(e));
                     }
                 }
                 else {
                     res.statusCode = 404;
                     res.send(JSON.stringify(ev2));
                 }
-            }).catch(function (err) {
+            }).catch(err => {
                 res.statusCode = 500;
                 result.msg = "SELECT Failed:" + err;
                 res.send(JSON.stringify(result));
             });
-        }).catch(function (err) {
+        }).catch(err => {
             res.statusCode = 500;
             result.msg = "UPDATE Failed:" + err;
             res.send(JSON.stringify(result));
@@ -347,10 +309,10 @@ exports.handlePut = handlePut;
  */
 function handleGet(req, res) {
     res.setHeader("content-type", "application/json");
-    var result = {};
+    let result = {};
     if (req.query.uuid) {
-        var dbm = new DBManager_1.DBManager();
-        dbm.getEvent(req.query.uuid.toString()).then(function (e) {
+        let dbm = new DBManager_1.DBManager();
+        dbm.getEvent(req.query.uuid.toString()).then((e) => {
             if (e == null) {
                 res.statusCode = 404;
             }
@@ -358,7 +320,7 @@ function handleGet(req, res) {
                 res.statusCode = 200;
             }
             res.send(JSON.stringify(e));
-        }).catch(function (err) {
+        }).catch(err => {
             res.statusCode = 500;
             result.msg = "SELECT Failed:" + err;
             res.send(JSON.stringify(result));
@@ -378,7 +340,7 @@ exports.handleGet = handleGet;
 function handlePost(req, res) {
     res.setHeader("content-type", "application/json");
     console.log("body:" + JSON.stringify(req.body));
-    var event = new Event();
+    let event = new Event();
     event.name = req.body.name;
     event.vorname = req.body.vorname;
     event.email = req.body.email;
@@ -395,19 +357,19 @@ function handlePost(req, res) {
     }
     event.uuid = uuid_1.v4();
     console.log("UUID=" + event.uuid);
-    var dbm = new DBManager_1.DBManager();
-    dbm.readEvent(event.name, event.vorname, event.email, event.eventName).then(function (v) {
+    let dbm = new DBManager_1.DBManager();
+    dbm.readEvent(event.name, event.vorname, event.email, event.eventName).then((v) => {
         console.log("gelesen:" + JSON.stringify(v));
         if (v == null) {
-            dbm.setEvent(event).then(function (v1) {
+            dbm.setEvent(event).then((v1) => {
                 console.log("Event eingetragen: " + JSON.stringify(v1));
                 if (event.webhook) {
                     console.log("Webhook ausführen");
                     event.type = "registration";
-                    event.fireWebhook().then(function (v2) {
+                    event.fireWebhook().then((v2) => {
                         console.log("Webhook erfolgreich:" + JSON.stringify(v2));
                         res.send(JSON.stringify(v2));
-                    }).catch(function (err) {
+                    }).catch(err => {
                         console.log("Webhook fehlgeschlagen:" + err);
                         event.success = false;
                         event.msg = JSON.stringify(err);
@@ -417,7 +379,7 @@ function handlePost(req, res) {
                 else {
                     res.send(JSON.stringify(v1));
                 }
-            }).catch(function (err) {
+            }).catch(err => {
                 event.success = false;
                 event.msg = err;
                 res.send(JSON.stringify(event));
@@ -427,7 +389,7 @@ function handlePost(req, res) {
             console.log("Datensatz existiert bereits");
             res.send(JSON.stringify(v));
         }
-    }).catch(function (err) {
+    }).catch(err => {
         console.log("Fehler:" + err);
         res.send(JSON.stringify(event));
     });

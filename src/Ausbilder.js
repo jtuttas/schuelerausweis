@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Ausbilder = void 0;
-var Ausbilder = /** @class */ (function () {
-    function Ausbilder() {
+class Ausbilder {
+    constructor() {
         this.EMAIL = "";
         this.FAX = "";
         this.ID = 0;
@@ -10,7 +10,6 @@ var Ausbilder = /** @class */ (function () {
         this.NNAME = "";
         this.TELEFON = "";
     }
-    return Ausbilder;
-}());
+}
 exports.Ausbilder = Ausbilder;
 //# sourceMappingURL=Ausbilder.js.map

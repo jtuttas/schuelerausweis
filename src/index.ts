@@ -264,11 +264,13 @@ app.post("/wallet", (req, res) => {
 
                             let s: string = fs.readFileSync('src/idcards.html', 'utf8');
                             //s = s.replace("<!--wallet-->", "/wallet?id=" + id);
+                            s = s.replace("<!--sj-->", config.schuljahr);
                             s = s.replace("<!--pdf-->", "/pdf?id=" + id);
                             s = s.replace("<!--png-->", "/png?id=" + id);
+                            s = s.replace("<!--wallet-->", "/wallet?id=" + id);
                             s = s.replace("<!--username-->", student.vn+"&nbsp;"+student.nn);
                             //s = s.replace("<!--link-->", "/validate?id=" + id);
-                            s = s.replace("<!--qrcode-->", "/qrcode?data=" + encodeURIComponent("http://idcard.mmbbs.de/wallet?id=" + id));
+                            s = s.replace("<!--qrcode-->", "/qrcode?data=" + encodeURIComponent("https://idcard.mmbbs.de/wallet?id=" + id));
 
                             res.setHeader("content-type", "text/html");
                             res.send(s);

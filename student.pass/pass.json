@@ -4,13 +4,6 @@
   "foregroundColor": "rgb(255,255,255)",
   "labelColor":"rgb(255,255,255)",
   "sharingProhibited": true,
-  "locations": [
-    {
-      "latitude": 52.3710086,
-      "longitude": 9.7359298,
-      "relevantText": "Schülerausweis bei der Üstra vorzeigen"
-    }
-  ],
   "barcodes": {
     "format": "PKBarcodeFormatQR",
     "message": "http://idcard.mmbbs.de/validate?id=fWXnFXKO0rsG9PjoPyS/Z96U6HihNJvzgsLntb3a7uZQFNxI%2BYNp%2BHeFU3iTFEqF9CC02g/sAa2VMNXZ/Rbxu0vz2f%2BPyK8SG81MmiRDLTCfE5W1Jq/s22vSKS/f1LGi8x9MszEQ1wSMXzjICuHrDxesLwpxDbNhXebaYS%2BnqF%2B8Trl5vLI%2B1NbYbVtCeBJK/XJju9CSiD2lTyeWpai1Nyz2puxKU9NnNfnF7VonWSZ7gutaZpAjufK/pEn/FpOwL/krQFB77rs0g%2Btz2L0yg0jurwUIgxg46KjGGJTQ6ji2nyjkphXxZ09tr9iqQt9yzSVu6UNnc0EYGM50A60t0A==",
@@ -67,7 +60,7 @@
       {
         "key" : "terms",
         "label" : "Nutzungsbedingungen",
-        "value" : "Digitaler Schülerausweis der Multi Media Berufsbildenden Schulen Hannover. Ein bestehender physischer Schülerausweis wird durch den digitalen Ausweis ersetzt.\n\nMulti Media Berufsbildenden Schulen Hannover (MMBbS)\nExpo Plaza 3\n30539 Hannover\n\nTelefon: +49 (0)511-64619877\nE-Mail: info@mmbbs.de\n\nSchulleiter: OStD Joachim Maiß"
+        "value" : "Digitaler Schülerausweis der Multi Media Berufsbildenden Schulen Hannover. Ein bestehender physischer Schülerausweis wird durch den digitalen Ausweis ersetzt.\n\nMulti Media Berufsbildenden Schulen Hannover (MMBbS)\nExpo Plaza 3\n30539 Hannover\n\nTelefon: +49 (0)511-64619877\nE-Mail: info@mmbbs.de\n\nStändige Vertretung des Schulleiters StD Dr. Martin Opitz"
       },
       {
         "key" : "website",

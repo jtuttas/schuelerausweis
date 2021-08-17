@@ -218,7 +218,7 @@ function Print-IDCard
 
 
 
-<#
+
 $student=New-Object StudentId;
 $student.nn="Mustermann"
 $student.vn="Max"
@@ -226,8 +226,8 @@ $student.em="Mustermann@mm-bbs.de"
 $student.kl="FIAE20J"
 $student.did=1234
 $student.gd="1997-04-11"
-$student.v="2021-08-01"
- 
+$student.v="2022-08-01"
+<# 
 $student2=New-Object StudentId;
 $student2.nn="Musterfrau"
 $student2.vn="Simone"
@@ -237,6 +237,6 @@ $student2.did=1235
 $student2.gd="1998-05-12"
 $student2.v="2021-08-01"
 
-$student2,$student2 | Print-IDCard -Verbose
 #>
+$student | Print-IDCard -Verbose
 

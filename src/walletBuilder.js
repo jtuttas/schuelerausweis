@@ -8,60 +8,33 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WalletBuilder = void 0;
-var passkit_generator_1 = require("passkit-generator");
-var config_json_1 = __importDefault(require("../config/config.json"));
-var PDFDocument = require("pdfkit");
-var qr_image_1 = __importDefault(require("qr-image"));
-var canvas_1 = __importDefault(require("canvas"));
-var qrcode_1 = __importDefault(require("qrcode"));
-var WalletBuilder = /** @class */ (function () {
-    function WalletBuilder() {
+const passkit_generator_1 = require("passkit-generator");
+const config_json_1 = __importDefault(require("../config/config.json"));
+const PDFDocument = require("pdfkit");
+const qr_image_1 = __importDefault(require("qr-image"));
+const canvas_1 = __importDefault(require("canvas"));
+const qrcode_1 = __importDefault(require("qrcode"));
+class WalletBuilder {
+    constructor() {
     }
-    WalletBuilder.prototype.genPng = function (res, id, s) {
-        var _this = this;
-        console.log("Gen PNG");
+    genPng(res, id, s) {
+        console.log("Gen PNG!");
         id = id.split("+").join("%2B");
         res.set({
             "Content-type": "image/png",
-            "Content-disposition": "attachment; filename=ausweis.png",
+            "Content-disposition": `attachment; filename=ausweis.png`,
         });
         //res.setHeader('Content-Type', 'image/png');
         canvas_1.default.registerFont('./src/HelveticaNeue-Medium-11.ttf', { family: 'Comic Sans' });
-        var ca = canvas_1.default.createCanvas(800, 1005);
-        var context = ca.getContext('2d');
-        canvas_1.default.loadImage('./src/Ausweis_PNG.png').then(function (image) {
+        console.log("Load Font");
+        const ca = canvas_1.default.createCanvas(800, 1005);
+        const context = ca.getContext('2d');
+        canvas_1.default.loadImage('./src/Ausweis_PNG.png').then(image => {
             context.drawImage(image, 0, 0, 800, 1005);
             context.font = 'bold 28pt Comic Sans';
             context.textAlign = 'start';
@@ -70,14 +43,14 @@ var WalletBuilder = /** @class */ (function () {
             context.fillText(s.nn.toUpperCase(), 46, 450);
             context.font = 'bold 22pt Comic Sans';
             context.textAlign = "right";
-            context.fillText(_this.formatDate(new Date(s.v)), 753, 450);
+            context.fillText(this.formatDate(new Date(s.v)), 753, 450);
             context.textAlign = "left";
-            context.fillText(_this.formatDate(new Date(s.gd)), 46, 595);
+            context.fillText(this.formatDate(new Date(s.gd)), 46, 595);
             context.fillStyle = '#FFFFFF';
             context.font = 'bold 28pt Comic Sans';
             context.fillText(s.kl, 600, 85);
-            var caqr = canvas_1.default.createCanvas(300, 300);
-            qrcode_1.default.toCanvas(caqr, "https://idcard.mmbbs.de/validate?id=" + id, { width: 350 }, function (err) {
+            const caqr = canvas_1.default.createCanvas(300, 300);
+            qrcode_1.default.toCanvas(caqr, "https://idcard.mmbbs.de/validate?id=" + id, { width: 350 }, err => {
                 if (err) {
                     console.log("Error:" + err);
                 }
@@ -86,8 +59,8 @@ var WalletBuilder = /** @class */ (function () {
             });
             ca.createPNGStream().pipe(res);
         });
-    };
-    WalletBuilder.prototype.genpdf = function (res, id, s) {
+    }
+    genpdf(res, id, s) {
         console.log("Gen PDF");
         id = id.split("+").join("%2B");
         var doc = new PDFDocument({
@@ -109,7 +82,7 @@ var WalletBuilder = /** @class */ (function () {
         doc.font('./src/HelveticaNeue-Medium-11.ttf').fontSize(10);
         doc.fillColor("#FFFFFF").text(s.kl, 190, 35);
         try {
-            var img = qr_image_1.default.imageSync("https://idcard.mmbbs.de/validate?id=" + id, { type: 'png', size: 3 });
+            let img = qr_image_1.default.imageSync("https://idcard.mmbbs.de/validate?id=" + id, { type: 'png', size: 3 });
             doc.image(img, 360, 27, { width: 90 });
         }
         catch (err) {
@@ -121,78 +94,68 @@ var WalletBuilder = /** @class */ (function () {
         doc.end();
         res.set({
             "Content-type": "application/pdf",
-            "Content-disposition": "attachment; filename=ausweis.pdf",
+            "Content-disposition": `attachment; filename=ausweis.pdf`,
         });
         doc.pipe(res);
-    };
-    WalletBuilder.prototype.formatDate = function (v) {
+    }
+    formatDate(v) {
         return "" + v.getDate() + "." + (v.getMonth() + 1) + "." + v.getFullYear();
-    };
-    WalletBuilder.prototype.genit = function (res, id, s) {
-        return __awaiter(this, void 0, void 0, function () {
-            var examplePass, d, stream, err_1;
-            var _this = this;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, passkit_generator_1.createPass({
-                                model: "./student.pass",
-                                certificates: {
-                                    wwdr: "./config/AppleWWDRCA.pem",
-                                    signerCert: "./config/signerCert.pem",
-                                    signerKey: {
-                                        keyFile: "./config/passkey.pem",
-                                        passphrase: "123456"
-                                    }
-                                },
-                                overrides: {
-                                    // keys to be added or overridden
-                                    serialNumber: "AAGH44625236dddaffbda"
-                                }
-                            })];
-                    case 1:
-                        examplePass = _a.sent();
-                        // Adding some settings to be written inside pass.json
-                        //examplePass.barcode("Test"); 
-                        examplePass.barcodes({
-                            message: "http://idcard.mmbbs.de/validate?id=" + id.split("+").join("%2B"),
-                            format: "PKBarcodeFormatQR",
-                            altText: "Gültigkeit prüfen",
-                            messageEncoding: "iso-8859-1"
-                        });
-                        examplePass.headerFields.map(function (item) {
-                            _this.repaceVales(item, s);
-                        });
-                        examplePass.primaryFields.map(function (item) {
-                            _this.repaceVales(item, s);
-                        });
-                        examplePass.secondaryFields.map(function (item) {
-                            _this.repaceVales(item, s);
-                        });
-                        examplePass.auxiliaryFields.map(function (item) {
-                            _this.repaceVales(item, s);
-                        });
-                        d = new Date(config_json_1.default.validDate);
-                        console.log("Set Wallet expiration Date to " + d);
-                        examplePass.expiration(d);
-                        stream = examplePass.generate();
-                        res.set({
-                            "Content-type": "application/vnd.apple.pkpass",
-                            "Content-disposition": "attachment; filename=mmbbs.pkpass",
-                        });
-                        stream.pipe(res);
-                        return [3 /*break*/, 3];
-                    case 2:
-                        err_1 = _a.sent();
-                        console.log('Error:' + err_1);
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
-                }
-            });
+    }
+    genit(res, id, s) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const examplePass = yield passkit_generator_1.createPass({
+                    model: "./student.pass",
+                    certificates: {
+                        wwdr: "./config/AppleWWDRCA.pem",
+                        signerCert: "./config/signerCert.pem",
+                        signerKey: {
+                            keyFile: "./config/passkey.pem",
+                            passphrase: "123456"
+                        }
+                    },
+                    overrides: {
+                        // keys to be added or overridden
+                        serialNumber: "AAGH44625236dddaffbda"
+                    }
+                });
+                // Adding some settings to be written inside pass.json
+                //examplePass.barcode("Test"); 
+                examplePass.barcodes({
+                    message: "http://idcard.mmbbs.de/validate?id=" + id.split("+").join("%2B"),
+                    format: "PKBarcodeFormatQR",
+                    altText: "Gültigkeit prüfen",
+                    messageEncoding: "iso-8859-1"
+                });
+                examplePass.headerFields.map(item => {
+                    this.repaceVales(item, s);
+                });
+                examplePass.primaryFields.map(item => {
+                    this.repaceVales(item, s);
+                });
+                examplePass.secondaryFields.map(item => {
+                    this.repaceVales(item, s);
+                });
+                examplePass.auxiliaryFields.map(item => {
+                    this.repaceVales(item, s);
+                });
+                let d = new Date(config_json_1.default.validDate);
+                console.log("Set Wallet expiration Date to " + d);
+                examplePass.expiration(d);
+                // Generate the stream .pkpass file stream
+                const stream = examplePass.generate();
+                res.set({
+                    "Content-type": "application/vnd.apple.pkpass",
+                    "Content-disposition": `attachment; filename=mmbbs.pkpass`,
+                });
+                stream.pipe(res);
+            }
+            catch (err) {
+                console.log('Error:' + err);
+            }
         });
-    };
-    WalletBuilder.prototype.repaceVales = function (item, s) {
+    }
+    repaceVales(item, s) {
         if (item.key == "valid") {
             console.log("Found Valid and set it to " + config_json_1.default.schuljahr);
             item.value = config_json_1.default.schuljahr;
@@ -213,8 +176,7 @@ var WalletBuilder = /** @class */ (function () {
             console.log("Found birthday and set it to " + s.gd);
             item.value = s.gd;
         }
-    };
-    return WalletBuilder;
-}());
+    }
+}
 exports.WalletBuilder = WalletBuilder;
 //# sourceMappingURL=walletBuilder.js.map

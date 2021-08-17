@@ -4,11 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ID = void 0;
-var https_1 = require("https");
-var iconv_lite_1 = __importDefault(require("iconv-lite"));
-var ID = /** @class */ (function () {
-    function ID(json) {
-        var obj = JSON.parse(json);
+const https_1 = require("https");
+const iconv_lite_1 = __importDefault(require("iconv-lite"));
+class ID {
+    constructor(json) {
+        let obj = JSON.parse(json);
         this.bpid = obj.bpid;
         this.did = obj.did;
         this.gd = obj.gd;
@@ -17,9 +17,9 @@ var ID = /** @class */ (function () {
         this.v = obj.v;
         this.vn = obj.vn;
     }
-    ID.prototype.getStudent = function (key) {
+    getStudent(key) {
         console.log("get Student id " + this.did);
-        var options = {
+        let options = {
             hostname: 'diklabu.mm-bbs.de',
             port: 8080,
             path: "/Diklabu/api/v1/schueler/" + this.did,
@@ -29,12 +29,12 @@ var ID = /** @class */ (function () {
                 'auth_token': key
             }
         };
-        return new Promise(function (resolve, reject) {
-            https_1.request(options, function (res) {
+        return new Promise((resolve, reject) => {
+            https_1.request(options, (res) => {
                 if (res.statusCode == 204) {
                     resolve(JSON.parse("{}"));
                 }
-                res.on('data', function (d) {
+                res.on('data', d => {
                     var buffer = Buffer.from(d);
                     var str = iconv_lite_1.default.decode(buffer, 'iso-8859-1');
                     console.log("data:" + str);
@@ -45,15 +45,14 @@ var ID = /** @class */ (function () {
                         resolve(JSON.parse("{}"));
                     }
                 });
-                res.on('error', function (err) {
+                res.on('error', err => {
                     console.log("err:" + err);
                     reject(err);
                 });
             }).end();
         });
-    };
-    return ID;
-}());
+    }
+}
 exports.ID = ID;
 /*
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';

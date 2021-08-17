@@ -1,12 +1,12 @@
 {
     "compilerOptions": {
-        "target": "es5",
+        "target": "es6",
         "module": "commonjs",
         "resolveJsonModule": true,
         "sourceMap": true,
         "lib": [
             "DOM"
         ],
-        "esModuleInterop": true
+        "esModuleInterop": true,
     }
 }

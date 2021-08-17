@@ -4,17 +4,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DBManager = void 0;
-var sqlite3_1 = __importDefault(require("sqlite3"));
-var Event_1 = require("./Event");
-var DBManager = /** @class */ (function () {
-    function DBManager() {
-    }
-    DBManager.prototype.updateEvent = function (event) {
-        return new Promise(function (resolve, reject) {
-            var db = new sqlite3_1.default.Database('event.db', function (err) {
-                var sql = "UPDATE register SET arrival=datetime('now','localtime') where uuid=\"" + event.uuid + "\";";
+const sqlite3_1 = __importDefault(require("sqlite3"));
+const Event_1 = require("./Event");
+class DBManager {
+    updateEvent(event) {
+        return new Promise((resolve, reject) => {
+            let db = new sqlite3_1.default.Database('event.db', (err) => {
+                let sql = "UPDATE register SET arrival=datetime('now','localtime') where uuid=\"" + event.uuid + "\";";
                 console.log("sql:" + sql);
-                db.run(sql, function (err) {
+                db.run(sql, (err) => {
                     if (err) {
                         console.log("Update failed" + err);
                         reject(err);
@@ -25,16 +23,16 @@ var DBManager = /** @class */ (function () {
             });
             db.close();
         });
-    };
-    DBManager.prototype.setEvent = function (event) {
-        return new Promise(function (resolve, reject) {
-            var db = new sqlite3_1.default.Database('event.db', function (err) {
+    }
+    setEvent(event) {
+        return new Promise((resolve, reject) => {
+            let db = new sqlite3_1.default.Database('event.db', (err) => {
                 if (err) {
                     reject(err);
                 }
-                var sql = "INSERT INTO register(email, name, vorname, event, webhook,registered, uuid,eventDate) VALUES (\"" + event.email + "\",\"" + event.name + "\",\"" + event.vorname + "\"," + ((event.eventName == undefined) ? null : "\"" + event.eventName + "\"") + "," + ((event.webhook == undefined) ? null : "\"" + event.webhook + "\"") + ",datetime(\'now\',\'localtime\'),\"" + event.uuid + "\"," + ((event.eventDate == undefined) ? null : "\"" + event.eventDate + "\"") + ");";
+                let sql = "INSERT INTO register(email, name, vorname, event, webhook,registered, uuid,eventDate) VALUES (\"" + event.email + "\",\"" + event.name + "\",\"" + event.vorname + "\"," + ((event.eventName == undefined) ? null : "\"" + event.eventName + "\"") + "," + ((event.webhook == undefined) ? null : "\"" + event.webhook + "\"") + ",datetime(\'now\',\'localtime\'),\"" + event.uuid + "\"," + ((event.eventDate == undefined) ? null : "\"" + event.eventDate + "\"") + ");";
                 console.log("SQL=" + sql);
-                db.run(sql, function (err) {
+                db.run(sql, (err) => {
                     if (err) {
                         console.log("Insert failed" + err);
                         reject(err);
@@ -45,18 +43,18 @@ var DBManager = /** @class */ (function () {
             });
             db.close();
         });
-    };
-    DBManager.prototype.getEvent = function (uuid) {
-        var event = new Event_1.Event();
+    }
+    getEvent(uuid) {
+        let event = new Event_1.Event();
         event.uuid = uuid;
-        return new Promise(function (resolve, reject) {
-            var db = new sqlite3_1.default.Database('event.db', function (err) {
+        return new Promise((resolve, reject) => {
+            let db = new sqlite3_1.default.Database('event.db', (err) => {
                 if (err) {
                     reject(err);
                 }
-                var sql = "select * from register where uuid=\"" + uuid + "\";";
+                let sql = "select * from register where uuid=\"" + uuid + "\";";
                 console.log("sql:" + sql);
-                db.all(sql, [], function (err, rows) {
+                db.all(sql, [], (err, rows) => {
                     if (err) {
                         console.log("SELECT * caused Error");
                         reject(err);
@@ -80,17 +78,17 @@ var DBManager = /** @class */ (function () {
             });
             db.close();
         });
-    };
-    DBManager.prototype.readEvent = function (name, vorname, email, eventName) {
-        var event = new Event_1.Event();
-        return new Promise(function (resolve, reject) {
-            var db = new sqlite3_1.default.Database('event.db', function (err) {
+    }
+    readEvent(name, vorname, email, eventName) {
+        let event = new Event_1.Event();
+        return new Promise((resolve, reject) => {
+            let db = new sqlite3_1.default.Database('event.db', (err) => {
                 if (err) {
                     reject(err);
                 }
-                var sql = "select * from register where name=\"" + name + "\" AND vorname=\"" + vorname + "\" AND email=\"" + email + "\" AND event=\"" + eventName + "\";";
+                let sql = "select * from register where name=\"" + name + "\" AND vorname=\"" + vorname + "\" AND email=\"" + email + "\" AND event=\"" + eventName + "\";";
                 console.log("sql:" + sql);
-                db.all(sql, [], function (err, rows) {
+                db.all(sql, [], (err, rows) => {
                     if (err) {
                         console.log("SELECT caused Error");
                         reject(err);
@@ -115,9 +113,8 @@ var DBManager = /** @class */ (function () {
             });
             db.close();
         });
-    };
-    return DBManager;
-}());
+    }
+}
 exports.DBManager = DBManager;
 /*
 let dbm: DBManager = new DBManager();

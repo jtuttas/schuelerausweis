@@ -16,15 +16,17 @@ export class WalletBuilder {
 
 
     genPng(res: any, id: string, s: any) {
-        console.log("Gen PNG");
+        console.log("Gen PNG!");
         id = id.split("+").join("%2B");
         res.set({
             "Content-type": "image/png",
             "Content-disposition": `attachment; filename=ausweis.png`,
         });
         //res.setHeader('Content-Type', 'image/png');
-        
+
         canvas.registerFont('./src/HelveticaNeue-Medium-11.ttf', { family: 'Comic Sans' })
+        console.log("Load Font");
+        
         const ca = canvas.createCanvas(800, 1005)
         const context = ca.getContext('2d')
         canvas.loadImage('./src/Ausweis_PNG.png').then(image => {
@@ -55,6 +57,7 @@ export class WalletBuilder {
             ca.createPNGStream().pipe(res);
         })
     }
+
 
     genpdf(res: any, id: string, s: any) {
         console.log("Gen PDF");
