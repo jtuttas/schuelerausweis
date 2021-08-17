@@ -10,6 +10,18 @@
   color: #145189;
 }
 
+.anleitung a {
+  text-decoration: dotted;
+  color: #fff;
+}
+.anleitung a:hover,
+.anleitung a:focus,
+.anleitung a.active,
+.anleitung a.disabled {
+  text-decoration: unterline;
+  color: #fff;
+}
+
 #d-pdf {
   position: absolute;
   top: -50px;
