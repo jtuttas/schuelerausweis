@@ -30,8 +30,12 @@ class WalletBuilder {
             "Content-disposition": `attachment; filename=ausweis.png`,
         });
         //res.setHeader('Content-Type', 'image/png');
-        canvas_1.default.registerFont('./src/HelveticaNeue-Medium-11.ttf', { family: 'Comic Sans' });
-        console.log("Load Font");
+        try {
+            canvas_1.default.registerFont('HelveticaNeue-Medium-11.ttf', { family: 'Comic Sans' });
+        }
+        catch (err) {
+            console.log(err);
+        }
         const ca = canvas_1.default.createCanvas(800, 1005);
         const context = ca.getContext('2d');
         canvas_1.default.loadImage('./src/Ausweis_PNG.png').then(image => {

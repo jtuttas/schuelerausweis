@@ -24,8 +24,13 @@ export class WalletBuilder {
         });
         //res.setHeader('Content-Type', 'image/png');
 
-        canvas.registerFont('./src/HelveticaNeue-Medium-11.ttf', { family: 'Comic Sans' })
-        console.log("Load Font");
+
+        try {
+            canvas.registerFont('HelveticaNeue-Medium-11.ttf', { family: 'Comic Sans' })
+        }
+        catch (err) {
+            console.log(err)
+        }
         
         const ca = canvas.createCanvas(800, 1005)
         const context = ca.getContext('2d')
