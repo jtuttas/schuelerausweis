@@ -31,7 +31,7 @@ class WalletBuilder {
         });
         //res.setHeader('Content-Type', 'image/png');
         try {
-            canvas_1.default.registerFont('HelveticaNeue-Medium-11.ttf', { family: 'Comic Sans' });
+            canvas_1.default.registerFont('./src/HelveticaNeue-Medium-11.ttf', { family: 'Comic Sans' });
         }
         catch (err) {
             console.log(err);

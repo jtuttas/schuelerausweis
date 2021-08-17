@@ -26,7 +26,7 @@ export class WalletBuilder {
 
 
         try {
-            canvas.registerFont('HelveticaNeue-Medium-11.ttf', { family: 'Comic Sans' })
+            canvas.registerFont('./src/HelveticaNeue-Medium-11.ttf', { family: 'Comic Sans' })
         }
         catch (err) {
             console.log(err)
