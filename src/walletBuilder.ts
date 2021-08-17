@@ -26,7 +26,7 @@ export class WalletBuilder {
 
 
         try {
-            canvas.registerFont('./src/HelveticaNeue-Medium-11.ttf', { family: 'Comic Sans' })
+            canvas.registerFont('./src/HelveticaNeue-Medium-11.ttf', { family: 'Sans-serif' })
         }
         catch (err) {
             console.log(err)
@@ -36,19 +36,19 @@ export class WalletBuilder {
         const context = ca.getContext('2d')
         canvas.loadImage('./src/Ausweis_PNG.png').then(image => {
             context.drawImage(image, 0, 0, 800, 1005)
-            context.font = 'bold 28pt Comic Sans'
+            context.font = 'bold 28pt Sans-serif'
             context.textAlign = 'start'
             context.fillStyle = '#16538C'
 
             context.fillText(s.vn.toUpperCase(), 46, 412)
             context.fillText(s.nn.toUpperCase(), 46, 450)
-            context.font = 'bold 22pt Comic Sans'
+            context.font = 'bold 22pt Sans-serif'
             context.textAlign = "right"
             context.fillText(this.formatDate(new Date(s.v)), 753, 450)
             context.textAlign = "left"
             context.fillText(this.formatDate(new Date(s.gd)), 46, 595)
             context.fillStyle = '#FFFFFF'
-            context.font = 'bold 28pt Comic Sans'
+            context.font = 'bold 28pt Sans-serif'
             context.fillText(s.kl, 600, 85)
 
             const caqr = canvas.createCanvas(300, 300)
