@@ -3,6 +3,12 @@
   position: relative;
 }
 
+a[type="'button"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
 #d-png {
   position: absolute;
   top: -50px;
