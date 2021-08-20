@@ -38,6 +38,10 @@ body {
   border: none;
 }
 
+#Msg {
+  color: red;
+}
+
 .headline {
   padding-bottom: 6px;
   border-bottom: 7px solid #ededed;

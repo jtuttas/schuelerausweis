@@ -2,14 +2,6 @@
   box-sizing: border-box;
 }
 
-.error {
-  color: red;
-}
-
-.success {
-  color: green;
-}
-
 html,
 body {
   margin: 0;
@@ -26,17 +18,8 @@ body {
   display: flex;
   -ms-flex-align: center;
   align-items: center;
-  background-color: #fff;
   font-family: "Helvetica Neue", Arial, sans-serif;
   overflow: hidden;
-}
-
-body.valid {
-  border: 10px solid #05b936;
-}
-
-body.invalid {
-  border: 10px solid #ff3131;
 }
 
 body.valid #gdat-response {
@@ -47,36 +30,52 @@ body.invalid #gdat-response {
   color: #ff3131;
 }
 
-.underage {
-  margin-bottom: 0px;
-  font-size: 1em !important;
-}
-
-.viewAusweis {
-  width: 450px;
+.viewVerification {
+  width: 300px;
   padding: 0px;
   z-index: 100;
-  background: #ffe6e6 url("img/Logo_blau.png") no-repeat top left;
-  background-size: 40px 40px;
+  margin: auto;
 }
 
-.headline {
-  padding-bottom: 6px;
-  border-bottom: 4px solid #ededed;
-  margin-top: 16px;
+.viewVerification p {
+  margin: 0px;
+  line-height: 1.2;
 }
 
-.row {
-  padding-top: 1rem;
-  --bs-gutter-x: 0;
+.veri {
+  width: 100%;
+  background: green;
+  color: #fff;
+  padding: 10px;
 }
 
-.headline h1 {
-  text-transform: uppercase;
+.valid .veri {
+  background: green;
+}
+
+.invalid .veri {
+  background: red;
+}
+
+.box {
+  background: #fff;
+  border: 2px solid;
+}
+
+.valid .box {
+  border-color: green;
+}
+
+.invalid .box {
+  border-color: red;
+}
+
+.userData {
+  padding: 10px;
 }
 
 .item {
-  font-size: 13px;
+  font-size: 14px;
   margin: 0;
   margin-bottom: 2px;
   padding: 0;
@@ -86,19 +85,16 @@ body.invalid #gdat-response {
   margin-bottom: 1px;
 }
 
-#gdat-sign {
-  top: 55px;
-  left: -50px;
+body.valid i.bi-check-circle {
+  font-size: 5rem;
+  color: #fff;
+  line-height: 1.2;
 }
 
-body.valid #gdat-sign i.bi-check-circle {
-  font-size: 7rem;
-  color: #05b936;
-}
-
-body.invalid #gdat-sign i.bi-x-circle {
-  font-size: 7rem;
+body.invalid i.bi-x-circle {
+  font-size: 5rem;
   color: #ff3131;
+  line-height: 1.2;
 }
 
 div.d {
@@ -130,14 +126,6 @@ div.d {
     border: 0 none;
   }
 
-  .space-l {
-    margin-left: 50px;
-  }
-
-  .space-r {
-    margin-right: 20px;
-  }
-
   .underage {
     padding-right: 20px;
     text-align: right;
@@ -149,11 +137,6 @@ div.d {
     -webkit-box-shadow: none !important;
     -moz-box-shadow: none !important;
     box-shadow: none !important;
-  }
-
-  .viewAusweis {
-    border-radius: 0px !important;
-    margin: 15px !important;
   }
 
   .headline {
