@@ -396,6 +396,7 @@ app.get("/validate", (req, res) => {
         rs = rs.replace("<!--comment-->", "Der Schülerausweis ist ungültig! (missing id Parameter!)");
         s = s.replace("<!--result-->", rs);
     }
+    s = s.replace("<!--timestamp-->", format(new Date(), "dd.MM.yyyy, hh:mm:ss"));
     res.statusCode = 200;
     res.send(s);
 });
