@@ -53,7 +53,8 @@ body.invalid #gdat-response {
   width: 100%;
   background: green;
   color: #fff;
-  padding: 12px;
+  padding: 10px;
+  padding-bottom: 12px;
 }
 
 .valid .veri {
