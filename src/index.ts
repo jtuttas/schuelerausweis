@@ -367,7 +367,7 @@ app.get("/validate", (req, res) => {
                 rs = rs.replace("<!--nachname-->", obj.nn);
                 rs = rs.replace("<!--vorname-->", obj.vn);
                 rs = rs.replace("<!--klasse-->", obj.kl);
-                rs = rs.replace("<!--birthday-->", obj.gd);
+                rs = rs.replace("<!--birthday-->", format(new Date(obj.gd), "dd.MM.yyyy"));
                 rs = rs.replace("<!--date-->", format(new Date(obj.v), "dd.MM.yyyy"));
                 s = s.replace("<!--result-->", rs);
             }
@@ -383,7 +383,7 @@ app.get("/validate", (req, res) => {
                 rs = rs.replace("<!--nachname-->", obj.nn);
                 rs = rs.replace("<!--vorname-->", obj.vn);
                 rs = rs.replace("<!--klasse-->", obj.kl);
-                rs = rs.replace("<!--birthday-->", obj.gd);
+                rs = rs.replace("<!--birthday-->", format(new Date(obj.gd), "dd.MM.yyyy"));
                 rs = rs.replace("<!--date-->", format(new Date(obj.v), "dd.MM.yyyy"));
                 s = s.replace("<!--result-->", rs);
             }
