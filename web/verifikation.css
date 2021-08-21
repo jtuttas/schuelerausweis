@@ -92,15 +92,15 @@ body.invalid #gdat-response {
   margin-bottom: 1px;
 }
 
-body.valid i.bi-check-circle {
-  font-size: 5rem;
+body.valid .bi-check2-circle {
+  font-size: 4rem;
   color: #fff;
   line-height: 1.2;
 }
 
-body.invalid i.bi-x-circle {
-  font-size: 5rem;
-  color: #ff3131;
+body.invalid .bi-x-circle-fill {
+  font-size: 4rem;
+  color: #fff;
   line-height: 1.2;
 }
 
