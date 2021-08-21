@@ -19,6 +19,7 @@ const PDFDocument = require("pdfkit");
 const qr_image_1 = __importDefault(require("qr-image"));
 const canvas_1 = __importDefault(require("canvas"));
 const qrcode_1 = __importDefault(require("qrcode"));
+const date_fns_1 = require("date-fns");
 class WalletBuilder {
     constructor() {
     }
@@ -47,9 +48,9 @@ class WalletBuilder {
             context.fillText(s.nn.toUpperCase(), 46, 450);
             context.font = 'bold 22pt Sans-serif';
             context.textAlign = "right";
-            context.fillText(this.formatDate(new Date(s.v)), 753, 450);
+            context.fillText(date_fns_1.format(new Date(s.v), "dd.MM.yyyy"), 753, 450);
             context.textAlign = "left";
-            context.fillText(this.formatDate(new Date(s.gd)), 46, 595);
+            context.fillText(date_fns_1.format(new Date(s.gd), "dd.MM.yyyy"), 46, 595);
             context.fillStyle = '#FFFFFF';
             context.font = 'bold 28pt Sans-serif';
             context.fillText(s.kl, 600, 85);
@@ -78,8 +79,8 @@ class WalletBuilder {
         doc.fillColor("#16538C").text(s.vn.toUpperCase(), 32, 123);
         doc.fillColor("#16538C").text(s.nn.toUpperCase(), 32, 136);
         doc.font('./src/HelveticaNeue-Medium-11.ttf').fontSize(6);
-        doc.text(this.formatDate(new Date(s.gd)), 252, 39);
-        doc.text(this.formatDate(new Date(s.v)), 163, 137, {
+        doc.text(date_fns_1.format(new Date(s.gd), "dd.MM.yyyy"), 252, 39);
+        doc.text(date_fns_1.format(new Date(s.v), "dd.MM.yyyy"), 163, 137, {
             width: 65,
             align: 'right'
         });
@@ -101,9 +102,6 @@ class WalletBuilder {
             "Content-disposition": `attachment; filename=ausweis.pdf`,
         });
         doc.pipe(res);
-    }
-    formatDate(v) {
-        return "" + v.getDate() + "." + (v.getMonth() + 1) + "." + v.getFullYear();
     }
     genit(res, id, s) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -178,7 +176,7 @@ class WalletBuilder {
         }
         if (item.key == "birthday") {
             console.log("Found birthday and set it to " + s.gd);
-            item.value = s.gd;
+            item.value = date_fns_1.format(new Date(s.gd), "dd.MM.yyyy");
         }
     }
 }

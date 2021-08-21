@@ -8,6 +8,7 @@ import qrImage from "qr-image";
 import canvas from 'canvas'
 import fs from 'fs'
 import qrcode from 'qrcode'
+import { format, parse } from "date-fns";
 
 export class WalletBuilder {
 
@@ -44,9 +45,9 @@ export class WalletBuilder {
             context.fillText(s.nn.toUpperCase(), 46, 450)
             context.font = 'bold 22pt Sans-serif'
             context.textAlign = "right"
-            context.fillText(this.formatDate(new Date(s.v)), 753, 450)
+            context.fillText(format(new Date(s.v), "dd.MM.yyyy"), 753, 450)
             context.textAlign = "left"
-            context.fillText(this.formatDate(new Date(s.gd)), 46, 595)
+            context.fillText(format(new Date(s.gd), "dd.MM.yyyy"), 46, 595)
             context.fillStyle = '#FFFFFF'
             context.font = 'bold 28pt Sans-serif'
             context.fillText(s.kl, 600, 85)
@@ -79,8 +80,8 @@ export class WalletBuilder {
         doc.fillColor("#16538C").text(s.vn.toUpperCase(), 32, 123);
         doc.fillColor("#16538C").text(s.nn.toUpperCase(), 32, 136);
         doc.font('./src/HelveticaNeue-Medium-11.ttf').fontSize(6);
-        doc.text(this.formatDate(new Date(s.gd)), 252, 39);
-        doc.text(this.formatDate(new Date(s.v)), 163, 137, {
+        doc.text(format(new Date(s.gd), "dd.MM.yyyy"), 252, 39);
+        doc.text(format(new Date(s.v), "dd.MM.yyyy"), 163, 137, {
             width: 65,
             align: 'right'
         });
@@ -105,9 +106,6 @@ export class WalletBuilder {
         });
         doc.pipe(res);
 
-    }
-    formatDate(v: Date): string {
-        return "" + v.getDate() + "." + (v.getMonth() + 1) + "." + v.getFullYear()
     }
 
     async genit(res: any, id: string, s: any) {
@@ -185,7 +183,7 @@ export class WalletBuilder {
         }
         if (item.key == "birthday") {
             console.log("Found birthday and set it to " + s.gd);
-            item.value = s.gd;
+            item.value = format(new Date(s.gd), "dd.MM.yyyy");
         }
 
     }

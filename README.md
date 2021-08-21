@@ -20,10 +20,10 @@ Der Schlüssel zum Entschlüsseln dieses JSON befindet sich auf dem Server. Übe
 ![valid](ScreenshotValid.png)
 ![invalid](ScreenshotInvalid.png)
 
-![seqSchueler](seqSchueler.png)
+Der Ausweis wird in Form einer Grafik (png), als pdf oder als IOS Wallet heraus gegeben und enthält den QR Code der zum validieren des Ausweises genutzt wird.
+![Auseis](ausweisMaxMustermann.png)
 
-### Beispiel
-![qr](qrcode.png)
+![seqSchueler](seqSchueler.png)
 
 ## Konfiguration
 Die notwendigen Schlüssel befinden sich im Verzeichnis config.
@@ -44,8 +44,8 @@ Die Datei **config.json** hat dabei folgende Einträge.
 }
 ```
 
--- **validDate**: Das Daten an dem der Ausweis abläuft.
--- **schuljkahr**: Das Schuljahr in dem der Ausweis gültig ist
+- **validDate**: Das Daten an dem der Ausweis abläuft.
+- **schuljkahr**: Das Schuljahr in dem der Ausweis gültig ist
 
 ## Docker Container
 Der Docker Container arbeitet default auf Port 8080 über https. Der RSA Schlüssel **ausweis.private** und die SSH Schlüssel **server.cert** und **server.key** liegen außerhab des Docker Containers in einem Volume, welche die entsprechenden Dateien enthält. Daher muss der Container wie folgt gestartet werden.
