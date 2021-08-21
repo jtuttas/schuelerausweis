@@ -49,6 +49,14 @@ body.invalid #gdat-response {
   line-height: 1.2;
 }
 
+span.rounded-pill {
+  right: -10px;
+  top: -2px;
+  position: absolute;
+  background: white;
+  font-size: 0.9rem;
+}
+
 .veri {
   width: 100%;
   background: green;
@@ -68,6 +76,7 @@ body.invalid #gdat-response {
 .box {
   background: #fff;
   border: 2px solid;
+  border-radius: 5px;
 }
 
 .valid .box {

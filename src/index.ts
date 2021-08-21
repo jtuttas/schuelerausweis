@@ -374,10 +374,10 @@ app.get("/validate", (req, res) => {
             else {
                 let rs: string = fs.readFileSync('src/valid.html', 'utf8');
                 if (underage(obj.gd)) {
-                    rs = rs.replace("<!--underage-->", "<p class=\"col-12 col-sm-4 fs-5 underage fw-light\" style=\"color: #ff3131\">minderjährig</p>");
+                    rs = rs.replace("<!--underage-->", "<18");
                 }
                 else {
-                    rs = rs.replace("<!--underage-->", "<p class=\"col-12 col-sm-4 fs-5 underage fw-light\" style=\"color: #05b936\">volljährig</p>");
+                    rs = rs.replace("<!--underage-->", ">18");
 
                 }
                 rs = rs.replace("<!--nachname-->", obj.nn);
