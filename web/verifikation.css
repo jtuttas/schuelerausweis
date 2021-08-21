@@ -54,6 +54,7 @@ body.invalid #gdat-response {
   background: green;
   color: #fff;
   padding: 10px;
+  padding-bottom: 12px;
 }
 
 .valid .veri {
