@@ -316,7 +316,7 @@ app.get("/validate", (req, res) => {
             let obj = JSON.parse(decrypted);
             if (expired(obj.v)) {
                 let rs = fs_1.default.readFileSync('src/invalid.html', 'utf8');
-                rs = rs.replace("<!--comment-->", "Der Schülerausweis ist ungültig (Gültigkeitsdauer überschritten)!");
+                rs = rs.replace("<!--comment-->", "Der Schülerausweis ist ungültig <br>(Gültigkeitsdauer überschritten)!");
                 s = s.replace("<!--result-->", rs);
             }
             else {
@@ -338,14 +338,14 @@ app.get("/validate", (req, res) => {
         catch (error) {
             console.log(error);
             let rs = fs_1.default.readFileSync('src/invalid.html', 'utf8');
-            rs = rs.replace("<!--comment-->", "Der Schülerausweis ist ungültig!");
+            rs = rs.replace("<!--comment-->", "Der Schülerausweis ist ungültig <br>(ID fehlerhaft)!");
             s = s.replace("<!--result-->", rs);
         }
     }
     else {
         console.log("No ID Parameter");
         let rs = fs_1.default.readFileSync('src/invalid.html', 'utf8');
-        rs = rs.replace("<!--comment-->", "Der Schülerausweis ist ungültig! (missing id Parameter!)");
+        rs = rs.replace("<!--comment-->", "Der Schülerausweis ist ungültig! <br>(fehlender id Parameter!)");
         s = s.replace("<!--result-->", rs);
     }
     s = s.replace("<!--timestamp-->", date_fns_1.format(new Date(), "dd.MM.yyyy, hh:mm:ss"));
