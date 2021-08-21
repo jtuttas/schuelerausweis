@@ -303,7 +303,7 @@ app.post("/wallet", (req, res) => {
                 obj = JSON.parse(d);
                 res.setHeader("content-type", "text/html");
                 let s: string = fs.readFileSync('web/index.html', 'utf8');
-                s = s.replace("<!--error-->", obj.message);
+                s = s.replace("<!--error-->", "Anmeldedaten ungültig");
                 res.send(s);
             }
 
@@ -363,7 +363,7 @@ app.get("/validate", (req, res) => {
             let obj: ID = JSON.parse(decrypted);
             if (expired(obj.v)) {
                 let rs: string = fs.readFileSync('src/invalid.html', 'utf8');
-                rs = rs.replace("<!--comment-->", "Der Schülerausweis ist ungültig <br>(Gültigkeitsdauer überschritten)!");
+                rs = rs.replace("<!--comment-->", "Gültigkeitsdauer überschritten");
                 rs = rs.replace("<!--nachname-->", obj.nn);
                 rs = rs.replace("<!--vorname-->", obj.vn);
                 rs = rs.replace("<!--klasse-->", obj.kl);
@@ -391,7 +391,7 @@ app.get("/validate", (req, res) => {
         catch (error) {
             console.log(error);
             let rs: string = fs.readFileSync('src/invalid.html', 'utf8');
-            rs = rs.replace("<!--comment-->", "Der Schülerausweis ist ungültig <br>(ID fehlerhaft)!");
+            rs = rs.replace("<!--comment-->", "ID fehlerhaft");
             rs = rs.replace("<!--nachname-->", "---");
             rs = rs.replace("<!--vorname-->", "---");
             rs = rs.replace("<!--klasse-->", "---");
@@ -404,7 +404,7 @@ app.get("/validate", (req, res) => {
     else {
         console.log("No ID Parameter");
         let rs: string = fs.readFileSync('src/invalid.html', 'utf8');
-        rs = rs.replace("<!--comment-->", "Der Schülerausweis ist ungültig! <br>(fehlender id Parameter!)");
+        rs = rs.replace("<!--comment-->", "fehlender id Parameter!");
         rs = rs.replace("<!--nachname-->", "---");
         rs = rs.replace("<!--vorname-->", "---");
         rs = rs.replace("<!--klasse-->", "---");
