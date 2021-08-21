@@ -364,6 +364,11 @@ app.get("/validate", (req, res) => {
             if (expired(obj.v)) {
                 let rs: string = fs.readFileSync('src/invalid.html', 'utf8');
                 rs = rs.replace("<!--comment-->", "Der Schülerausweis ist ungültig <br>(Gültigkeitsdauer überschritten)!");
+                rs = rs.replace("<!--nachname-->", obj.nn);
+                rs = rs.replace("<!--vorname-->", obj.vn);
+                rs = rs.replace("<!--klasse-->", obj.kl);
+                rs = rs.replace("<!--birthday-->", obj.gd);
+                rs = rs.replace("<!--date-->", format(new Date(obj.v), "dd.MM.yyyy"));
                 s = s.replace("<!--result-->", rs);
             }
             else {
@@ -387,6 +392,12 @@ app.get("/validate", (req, res) => {
             console.log(error);
             let rs: string = fs.readFileSync('src/invalid.html', 'utf8');
             rs = rs.replace("<!--comment-->", "Der Schülerausweis ist ungültig <br>(ID fehlerhaft)!");
+            rs = rs.replace("<!--nachname-->", "---");
+            rs = rs.replace("<!--vorname-->", "---");
+            rs = rs.replace("<!--klasse-->", "---");
+            rs = rs.replace("<!--birthday-->", "---");
+            rs = rs.replace("<!--date-->", "---");
+
             s = s.replace("<!--result-->", rs);
         }
     }
@@ -394,6 +405,12 @@ app.get("/validate", (req, res) => {
         console.log("No ID Parameter");
         let rs: string = fs.readFileSync('src/invalid.html', 'utf8');
         rs = rs.replace("<!--comment-->", "Der Schülerausweis ist ungültig! <br>(fehlender id Parameter!)");
+        rs = rs.replace("<!--nachname-->", "---");
+        rs = rs.replace("<!--vorname-->", "---");
+        rs = rs.replace("<!--klasse-->", "---");
+        rs = rs.replace("<!--birthday-->", "---");
+        rs = rs.replace("<!--date-->", "---");
+
         s = s.replace("<!--result-->", rs);
     }
     s = s.replace("<!--timestamp-->", format(new Date(), "dd.MM.yyyy, hh:mm:ss"));
