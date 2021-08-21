@@ -183,7 +183,7 @@ export class WalletBuilder {
         }
         if (item.key == "birthday") {
             console.log("Found birthday and set it to " + s.gd);
-            item.value = s.gd;
+            item.value = format(new Date(s.gd), "dd.MM.yyyy");
         }
 
     }

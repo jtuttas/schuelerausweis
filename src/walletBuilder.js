@@ -176,7 +176,7 @@ class WalletBuilder {
         }
         if (item.key == "birthday") {
             console.log("Found birthday and set it to " + s.gd);
-            item.value = s.gd;
+            item.value = date_fns_1.format(new Date(s.gd), "dd.MM.yyyy");
         }
     }
 }
