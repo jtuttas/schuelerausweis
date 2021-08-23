@@ -541,7 +541,7 @@ app.post("/decode", (req, res) => {
 });
 
 
-
+process.env.TZ = 'Europe/Amsterdam'
 https.createServer({
     key: fs.readFileSync('config/server.key'),
     cert: fs.readFileSync('config/server.cert')

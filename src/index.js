@@ -474,6 +474,7 @@ app.post("/decode", (req, res) => {
         res.send('{"msg":"no key"}');
     }
 });
+process.env.TZ = 'Europe/Amsterdam';
 https_1.default.createServer({
     key: fs_1.default.readFileSync('config/server.key'),
     cert: fs_1.default.readFileSync('config/server.cert')
