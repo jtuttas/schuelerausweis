@@ -366,7 +366,7 @@ app.get("/validate", (req, res) => {
     let date = new Date();
     date = new Date(date.toLocaleString("de-DE", { timeZone: "Europe/Berlin" }));
     date = new Date(date.getTime() - date.getTimezoneOffset());
-    s = s.replace("<!--timestamp-->", date_fns_1.format(date, "dd.MM.yyyy, hh:mm:ss"));
+    s = s.replace("<!--timestamp-->", date_fns_1.format(new Date(date.getTime()), "dd.MM.yyyy, hh:mm:ss"));
     res.statusCode = 200;
     res.send(s);
 });
