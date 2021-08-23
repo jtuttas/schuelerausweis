@@ -151,6 +151,7 @@ export class WalletBuilder {
             let d: Date = new Date(config.validDate);
             console.log("Set Wallet expiration Date to " + d);
             examplePass.expiration(d)
+            
 
             // Generate the stream .pkpass file stream
             const stream = examplePass.generate();
@@ -165,6 +166,7 @@ export class WalletBuilder {
     }
 
     private repaceVales(item, s) {
+        
         if (item.key == "valid") {
             console.log("Found Valid and set it to " + config.schuljahr);
             item.value = config.schuljahr;

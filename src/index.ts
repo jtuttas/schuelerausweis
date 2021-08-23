@@ -413,7 +413,10 @@ app.get("/validate", (req, res) => {
 
         s = s.replace("<!--result-->", rs);
     }
-    s = s.replace("<!--timestamp-->", format(new Date(), "dd.MM.yyyy, hh:mm:ss"));
+    let date:Date = new Date()
+    date=new Date(date.toLocaleString("de-DE",{timeZone:"Europe/Berlin"}))
+    date = new Date(date.getTime()-date.getTimezoneOffset())
+    s = s.replace("<!--timestamp-->", format(date, "dd.MM.yyyy, hh:mm:ss"));
     res.statusCode = 200;
     res.send(s);
 });

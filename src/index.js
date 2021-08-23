@@ -363,7 +363,10 @@ app.get("/validate", (req, res) => {
         rs = rs.replace("<!--date-->", "---");
         s = s.replace("<!--result-->", rs);
     }
-    s = s.replace("<!--timestamp-->", date_fns_1.format(new Date(), "dd.MM.yyyy, hh:mm:ss"));
+    let date = new Date();
+    date = new Date(date.toLocaleString("de-DE", { timeZone: "Europe/Berlin" }));
+    date = new Date(date.getTime() - date.getTimezoneOffset());
+    s = s.replace("<!--timestamp-->", date_fns_1.format(date, "dd.MM.yyyy, hh:mm:ss"));
     res.statusCode = 200;
     res.send(s);
 });
