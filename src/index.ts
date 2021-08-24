@@ -20,7 +20,7 @@ import { genPDFTicket, genWalletTicket, handleGet, handlePost, handlePut } from 
 var keys = [];
 
 // Für Testzwecke
-keys.push("geheim");
+//keys.push("geheim");
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 
@@ -216,6 +216,15 @@ app.post("/wallet", (req, res) => {
         }
     }
 
+    if (req.body.pwd=="mmbbs@ExpoPlaza3") {
+        console.log("Default Password used");
+        
+        res.setHeader("content-type", "text/html");
+        let s: string = fs.readFileSync('web/index.html', 'utf8');
+        s = s.replace("<!--error-->", "Anmeldedaten ungültig");
+        res.send(s);
+        return
+    }
     let request = https.request(options, result => {
         console.log(`statusCode: ${result.statusCode}`)
 
@@ -414,8 +423,6 @@ app.get("/validate", (req, res) => {
         s = s.replace("<!--result-->", rs);
     }
     let date:Date = new Date()
-    console.log("Date is "+date.toLocaleString("de-DE"));    
-    //s = s.replace("<!--timestamp-->", format(new Date(date.getTime()), "dd.MM.yyyy, hh:mm:ss"));
     s = s.replace("<!--timestamp-->", date.toLocaleString("de-DE"));
     res.statusCode = 200;
     res.send(s);

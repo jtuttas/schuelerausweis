@@ -15,7 +15,7 @@ const qr_image_1 = __importDefault(require("qr-image"));
 const Event_1 = require("./Event");
 var keys = [];
 // Für Testzwecke
-keys.push("geheim");
+//keys.push("geheim");
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 let rsakey = fs_1.default.readFileSync("config/ausweis.private");
 const key = new node_rsa_1.default(rsakey);
@@ -190,6 +190,14 @@ app.post("/wallet", (req, res) => {
             'Content-Length': JSON.stringify(data).length
         }
     };
+    if (req.body.pwd == "mmbbs@ExpoPlaza3") {
+        console.log("Default Password used");
+        res.setHeader("content-type", "text/html");
+        let s = fs_1.default.readFileSync('web/index.html', 'utf8');
+        s = s.replace("<!--error-->", "Anmeldedaten ungültig");
+        res.send(s);
+        return;
+    }
     let request = https_1.default.request(options, result => {
         console.log(`statusCode: ${result.statusCode}`);
         result.on('data', d => {
@@ -364,8 +372,6 @@ app.get("/validate", (req, res) => {
         s = s.replace("<!--result-->", rs);
     }
     let date = new Date();
-    console.log("Date is " + date.toLocaleString("de-DE"));
-    //s = s.replace("<!--timestamp-->", format(new Date(date.getTime()), "dd.MM.yyyy, hh:mm:ss"));
     s = s.replace("<!--timestamp-->", date.toLocaleString("de-DE"));
     res.statusCode = 200;
     res.send(s);
