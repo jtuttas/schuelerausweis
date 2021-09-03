@@ -50,7 +50,12 @@ class WalletBuilder {
             context.textAlign = "right";
             context.fillText(date_fns_1.format(new Date(s.v), "dd.MM.yyyy"), 753, 450);
             context.textAlign = "left";
-            context.fillText(date_fns_1.format(new Date(s.gd), "dd.MM.yyyy"), 46, 595);
+            if (s.hasOwnProperty("gd")) {
+                context.fillText(date_fns_1.format(new Date(s.gd), "dd.MM.yyyy"), 46, 595);
+            }
+            else {
+                context.fillText("unknown", 46, 595);
+            }
             context.fillStyle = '#FFFFFF';
             context.font = 'bold 28pt Sans-serif';
             context.fillText(s.kl, 600, 85);
@@ -79,7 +84,12 @@ class WalletBuilder {
         doc.fillColor("#16538C").text(s.vn.toUpperCase(), 32, 123);
         doc.fillColor("#16538C").text(s.nn.toUpperCase(), 32, 136);
         doc.font('./src/HelveticaNeue-Medium-11.ttf').fontSize(6);
-        doc.text(date_fns_1.format(new Date(s.gd), "dd.MM.yyyy"), 252, 39);
+        if (s.hasOwnProperty("gd")) {
+            doc.text(date_fns_1.format(new Date(s.gd), "dd.MM.yyyy"), 252, 39);
+        }
+        else {
+            doc.text("unknown", 252, 39);
+        }
         doc.text(date_fns_1.format(new Date(s.v), "dd.MM.yyyy"), 163, 137, {
             width: 65,
             align: 'right'
@@ -175,8 +185,14 @@ class WalletBuilder {
             item.value = s.kl;
         }
         if (item.key == "birthday") {
-            console.log("Found birthday and set it to " + s.gd);
-            item.value = date_fns_1.format(new Date(s.gd), "dd.MM.yyyy");
+            if (s.hasOwnProperty("gd")) {
+                console.log("Found birthday and set it to " + s.gd);
+                item.value = date_fns_1.format(new Date(s.gd), "dd.MM.yyyy");
+            }
+            else {
+                console.log("No birthday set !");
+                item.value = "unknown";
+            }
         }
     }
 }

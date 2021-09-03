@@ -194,7 +194,7 @@ app.post("/wallet", (req, res) => {
         console.log("Default Password used");
         res.setHeader("content-type", "text/html");
         let s = fs_1.default.readFileSync('web/index.html', 'utf8');
-        s = s.replace("<!--error-->", "Anmeldedaten ungültig");
+        s = s.replace("<!--error-->", "Anmeldedaten ungültig!");
         res.send(s);
         return;
     }
@@ -328,7 +328,12 @@ app.get("/validate", (req, res) => {
                 rs = rs.replace("<!--nachname-->", obj.nn);
                 rs = rs.replace("<!--vorname-->", obj.vn);
                 rs = rs.replace("<!--klasse-->", obj.kl);
-                rs = rs.replace("<!--birthday-->", date_fns_1.format(new Date(obj.gd), "dd.MM.yyyy"));
+                if (obj.hasOwnProperty("gd")) {
+                    rs = rs.replace("<!--birthday-->", date_fns_1.format(new Date(obj.gd), "dd.MM.yyyy"));
+                }
+                else {
+                    rs = rs.replace("<!--birthday-->", "unknown");
+                }
                 rs = rs.replace("<!--date-->", date_fns_1.format(new Date(obj.v), "dd.MM.yyyy"));
                 s = s.replace("<!--result-->", rs);
             }
@@ -343,7 +348,12 @@ app.get("/validate", (req, res) => {
                 rs = rs.replace("<!--nachname-->", obj.nn);
                 rs = rs.replace("<!--vorname-->", obj.vn);
                 rs = rs.replace("<!--klasse-->", obj.kl);
-                rs = rs.replace("<!--birthday-->", date_fns_1.format(new Date(obj.gd), "dd.MM.yyyy"));
+                if (obj.hasOwnProperty("gd")) {
+                    rs = rs.replace("<!--birthday-->", date_fns_1.format(new Date(obj.gd), "dd.MM.yyyy"));
+                }
+                else {
+                    rs = rs.replace("<!--birthday-->", "unknown");
+                }
                 rs = rs.replace("<!--date-->", date_fns_1.format(new Date(obj.v), "dd.MM.yyyy"));
                 s = s.replace("<!--result-->", rs);
             }

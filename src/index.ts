@@ -221,7 +221,7 @@ app.post("/wallet", (req, res) => {
         
         res.setHeader("content-type", "text/html");
         let s: string = fs.readFileSync('web/index.html', 'utf8');
-        s = s.replace("<!--error-->", "Anmeldedaten ungültig");
+        s = s.replace("<!--error-->", "Anmeldedaten ungültig!");
         res.send(s);
         return
     }
@@ -376,7 +376,12 @@ app.get("/validate", (req, res) => {
                 rs = rs.replace("<!--nachname-->", obj.nn);
                 rs = rs.replace("<!--vorname-->", obj.vn);
                 rs = rs.replace("<!--klasse-->", obj.kl);
-                rs = rs.replace("<!--birthday-->", format(new Date(obj.gd), "dd.MM.yyyy"));
+                if (obj.hasOwnProperty("gd")) {
+                    rs = rs.replace("<!--birthday-->", format(new Date(obj.gd), "dd.MM.yyyy"));
+                }
+                else {
+                    rs = rs.replace("<!--birthday-->", "unknown");
+                }
                 rs = rs.replace("<!--date-->", format(new Date(obj.v), "dd.MM.yyyy"));
                 s = s.replace("<!--result-->", rs);
             }
@@ -392,7 +397,12 @@ app.get("/validate", (req, res) => {
                 rs = rs.replace("<!--nachname-->", obj.nn);
                 rs = rs.replace("<!--vorname-->", obj.vn);
                 rs = rs.replace("<!--klasse-->", obj.kl);
-                rs = rs.replace("<!--birthday-->", format(new Date(obj.gd), "dd.MM.yyyy"));
+                if (obj.hasOwnProperty("gd")) {
+                    rs = rs.replace("<!--birthday-->", format(new Date(obj.gd), "dd.MM.yyyy"));
+                }
+                else {
+                    rs = rs.replace("<!--birthday-->", "unknown");
+                }
                 rs = rs.replace("<!--date-->", format(new Date(obj.v), "dd.MM.yyyy"));
                 s = s.replace("<!--result-->", rs);
             }
@@ -406,7 +416,6 @@ app.get("/validate", (req, res) => {
             rs = rs.replace("<!--klasse-->", "---");
             rs = rs.replace("<!--birthday-->", "---");
             rs = rs.replace("<!--date-->", "---");
-
             s = s.replace("<!--result-->", rs);
         }
     }
