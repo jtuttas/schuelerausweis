@@ -176,8 +176,10 @@ app.post("/wallet", (req, res) => {
     console.log("body:" + JSON.stringify(req.body));
     let obj = {};
     let obj2 = {};
+    let user = req.body.user;
+    user = user.trim();
     let data = {
-        "benutzer": req.body.user,
+        "benutzer": user,
         "kennwort": req.body.pwd
     };
     let options = {
