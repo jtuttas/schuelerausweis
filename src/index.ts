@@ -204,7 +204,7 @@ app.post("/wallet", (req, res) => {
     let user:string = req.body.user
     user=user.trim()
     let pwd:string=req.body.pwd
-    pwd =decodeURIComponent(pwd)
+    //pwd =decodeURIComponent(pwd)
     let data = {
         "benutzer": user,
         "kennwort": pwd
