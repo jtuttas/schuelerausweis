@@ -200,14 +200,16 @@ app.post("/wallet", (req, res) => {
     console.log("body:" + JSON.stringify(req.body));
     let obj: any = {};
     let obj2: any = {};
-
+    
     let user:string = req.body.user
     user=user.trim()
-
+    let pwd:string=req.body.Password
+    pwd=decodeURI(pwd)
     let data = {
         "benutzer": user,
-        "kennwort": req.body.pwd
+        "kennwort": pwd
     }
+    console.log("data:" + JSON.stringify(data));
     
     let options = {
         hostname: 'diklabu.mm-bbs.de',

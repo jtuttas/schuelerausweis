@@ -178,10 +178,13 @@ app.post("/wallet", (req, res) => {
     let obj2 = {};
     let user = req.body.user;
     user = user.trim();
+    let pwd = req.body.Password;
+    pwd = decodeURI(pwd);
     let data = {
         "benutzer": user,
-        "kennwort": req.body.pwd
+        "kennwort": pwd
     };
+    console.log("data:" + JSON.stringify(data));
     let options = {
         hostname: 'diklabu.mm-bbs.de',
         port: 8080,
