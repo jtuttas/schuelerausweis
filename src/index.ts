@@ -203,7 +203,7 @@ app.post("/wallet", (req, res) => {
     
     let user:string = req.body.user
     user=user.trim()
-    let pwd:string=req.body.Password
+    let pwd:string=req.body.pwd
     pwd=decodeURI(pwd)
     let data = {
         "benutzer": user,
