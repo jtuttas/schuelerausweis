@@ -412,8 +412,7 @@ app.post("/log", (req, res) => {
         path: "/Diklabu/api/v1/auth/login",
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': JSON.stringify(data).length
+            'Content-Type': 'application/json; charset=utf-8',
         }
     };
     let request = https_1.default.request(options, result => {
