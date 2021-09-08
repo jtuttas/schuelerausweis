@@ -191,8 +191,7 @@ app.post("/wallet", (req, res) => {
         path: "/Diklabu/api/v1/auth/login",
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': JSON.stringify(data).length
+            'Content-Type': 'application/json; charset=utf-8',
         }
     };
     if (req.body.pwd == "mmbbs@ExpoPlaza3") {
@@ -224,7 +223,7 @@ app.post("/wallet", (req, res) => {
                         path: "/Diklabu/api/v1/sauth/" + obj.ID,
                         method: 'GET',
                         headers: {
-                            'Content-Type': 'application/json',
+                            'Content-Type': 'application/json; charset=utf-8',
                             'auth_token': obj.auth_token
                         }
                     };
