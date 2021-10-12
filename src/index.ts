@@ -474,7 +474,7 @@ app.post("/log", (req, res) => {
 
     let request = https.request(options, result => {
         console.log(`statusCode: ${result.statusCode}`)
-
+        
         result.on('data', d => {
             console.log("data:" + d);
             obj = JSON.parse(d);
