@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const path_1 = __importDefault(require("path"));
 const ID_1 = require("./ID");
 const fs_1 = __importDefault(require("fs"));
 const node_rsa_1 = __importDefault(require("node-rsa"));
@@ -13,6 +14,8 @@ const walletBuilder_1 = require("./walletBuilder");
 const config_json_1 = __importDefault(require("../config/config.json"));
 const qr_image_1 = __importDefault(require("qr-image"));
 const Event_1 = require("./Event");
+const express_fileupload_1 = __importDefault(require("express-fileupload"));
+const sharp_1 = __importDefault(require("sharp"));
 var keys = [];
 // Für Testzwecke
 //keys.push("geheim");
@@ -22,6 +25,7 @@ const key = new node_rsa_1.default(rsakey);
 const app = express_1.default();
 const port = 8080; // default port to listen
 console.log(__dirname);
+app.use(express_fileupload_1.default());
 app.use(express_1.default.static(__dirname + '/../web'));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
@@ -47,6 +51,150 @@ function expired(dateString) {
     //console.log("expired");
     return true;
 }
+/**
+ * Endpunkt zum Upload der Schülerbilder
+ */
+app.post('/image', function (req, res) {
+    res.setHeader("content-type", "application/json");
+    let sampleFile;
+    let uploadPath;
+    let scaledPath;
+    let result = {
+        sucess: false,
+        msg: null
+    };
+    if (!req.files) {
+        result.msg = "No files were uploaded!!";
+        return res.status(400).send(JSON.stringify(result));
+    }
+    if (Object.keys(req.files).length === 0) {
+        result.msg = "No files were uploaded!";
+        return res.status(400).send(JSON.stringify(result));
+    }
+    try {
+        let decrypted = key.decrypt("" + req.headers.key, 'utf8');
+        console.log("Decrypted:" + decrypted);
+        let obj = JSON.parse(decrypted);
+        // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+        sampleFile = req.files.image;
+        let filename = sampleFile.name;
+        let parts = filename.split(".");
+        let suffix = parts[parts.length - 1];
+        console.log("Suffix is: " + suffix);
+        ;
+        uploadPath = __dirname + '/../config/img' + obj.did + ".jpg";
+        scaledPath = __dirname + '/../config/img_' + obj.did + ".jpg";
+        // Use the mv() method to place the file somewhere on your server
+        sampleFile.mv(uploadPath, function (err) {
+            if (err) {
+                result.msg = err;
+                return res.status(500).send(JSON.stringify(result));
+            }
+            console.log("Image uploaded to: " + uploadPath);
+            try {
+                let inStream = fs_1.default.createReadStream(uploadPath);
+                var transformer = sharp_1.default()
+                    .resize(500)
+                    .on('info', function (info) {
+                    console.log('Image height is ' + info.height);
+                });
+                let outStream = fs_1.default.createWriteStream(scaledPath, { flags: "w" });
+                var transformer = sharp_1.default()
+                    .resize(500)
+                    .on('info', function (info) {
+                    console.log('Image height is ' + info.height);
+                });
+                transformer.on('error', function () {
+                    console.log("Error!!");
+                    res.status(500);
+                    result.sucess = false;
+                    result.msg = "Fehler beim Upload";
+                    res.send(JSON.stringify(result));
+                });
+                outStream.on('close', function () {
+                    console.log("Successfully saved file");
+                    console.log("Image scaled to: " + scaledPath);
+                    fs_1.default.unlinkSync(uploadPath);
+                    result.sucess = true;
+                    result.msg = 'File ' + filename + ' uploaded und scaled!';
+                    res.send(JSON.stringify(result));
+                });
+                inStream.pipe(transformer).pipe(outStream);
+            }
+            catch (error) {
+                console.log("Err:" + error);
+                res.status(500);
+                result.sucess = false;
+                result.msg = "Fehler beim Upload";
+                res.send(JSON.stringify(result));
+            }
+        });
+    }
+    catch (_a) {
+        result.sucess = false;
+        result.msg = 'Unknown or invalid Header key';
+        res.status(400).send(JSON.stringify(result));
+    }
+});
+/**
+ * Endpunkt zur Abfrage der Schülerbilder
+ */
+app.get('/image', function (req, res) {
+    let result = {
+        sucess: false,
+        msg: null
+    };
+    try {
+        let id = req.query.id.toString();
+        id = id.split(" ").join("+");
+        console.log("ID is " + id);
+        let decrypted = key.decrypt(id, 'utf8');
+        console.log("Decrypted:" + decrypted);
+        let obj = JSON.parse(decrypted);
+        let downloadPath = __dirname + '/../config/img_' + obj.did + ".jpg";
+        console.log("return Image:" + downloadPath);
+        try {
+            if (fs_1.default.existsSync(downloadPath)) {
+                if (!req.query.width) {
+                    res.setHeader("content-type", "image/jpeg");
+                    res.sendFile(path_1.default.resolve(downloadPath));
+                }
+                else {
+                    console.log("Mit Width Parameter");
+                    res.setHeader("content-type", "image/jpeg");
+                    let w = Number(req.query.width.toString());
+                    console.log("Start resize:" + w);
+                    let inStream = fs_1.default.createReadStream(downloadPath);
+                    var transformer = sharp_1.default()
+                        .resize(w)
+                        .on('info', function (info) {
+                        console.log('Image height is ' + info.height);
+                    });
+                    inStream.pipe(transformer).pipe(res);
+                }
+            }
+            else {
+                res.setHeader("content-type", "application/json");
+                result.sucess = false;
+                result.msg = "File Not Found " + downloadPath;
+                res.status(404).send(JSON.stringify(result));
+            }
+        }
+        catch (err) {
+            res.setHeader("content-type", "application/json");
+            result.sucess = false;
+            result.msg = err;
+            res.status(400).send(JSON.stringify(result));
+        }
+    }
+    catch (err) {
+        console.log("Fehler: " + err);
+        res.setHeader("content-type", "application/json");
+        result.sucess = false;
+        result.msg = 'Unknown or invalid ID';
+        res.status(400).send(JSON.stringify(result));
+    }
+});
 /**
  * Event Ticket als Wallet
  */

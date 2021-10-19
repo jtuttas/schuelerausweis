@@ -16,6 +16,8 @@ import { registerFont } from "pdfkit/js/mixins/fonts";
 import { readShort } from "pdfkit/js/data";
 import request from "request";
 import { genPDFTicket, genWalletTicket, handleGet, handlePost, handlePut } from "./Event";
+import fileUpload from "express-fileupload"
+import sh from "sharp"
 
 var keys = [];
 
@@ -31,6 +33,7 @@ const app = express();
 const port = 8080; // default port to listen
 console.log(__dirname);
 
+app.use(fileUpload());
 app.use(express.static(__dirname + '/../web'));
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
@@ -58,6 +61,170 @@ function expired(dateString: string): boolean {
     //console.log("expired");
     return true;
 }
+
+/**
+ * Endpunkt zum Upload der Schülerbilder
+ */
+app.post('/image', function (req, res) {
+    res.setHeader("content-type", "application/json");
+    let sampleFile;
+    let uploadPath;
+    let scaledPath;
+    let result = {
+        sucess: false,
+        msg: null
+    }
+    if (!req.files) {
+        result.msg = "No files were uploaded!!"
+        return res.status(400).send(JSON.stringify(result));
+    }
+    if (Object.keys(req.files).length === 0) {
+        result.msg = "No files were uploaded!"
+        return res.status(400).send(JSON.stringify(result));
+    }
+
+    try {
+        let decrypted = key.decrypt("" + req.headers.key, 'utf8');
+        console.log("Decrypted:" + decrypted);
+        let obj = JSON.parse(decrypted);
+
+        // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+        sampleFile = req.files.image;
+        let filename: string = sampleFile.name;
+        let parts = filename.split(".")
+        let suffix = parts[parts.length - 1];
+        console.log("Suffix is: " + suffix);;
+
+        uploadPath = __dirname + '/../config/img' + obj.did + ".jpg";
+        scaledPath = __dirname + '/../config/img_' + obj.did + ".jpg";
+
+        // Use the mv() method to place the file somewhere on your server
+        sampleFile.mv(uploadPath, function (err) {
+            if (err) {
+                result.msg = err
+                return res.status(500).send(JSON.stringify(result));
+            }
+            console.log("Image uploaded to: " + uploadPath);
+            try {
+
+                let inStream = fs.createReadStream(uploadPath);
+                var transformer = sh()
+                    .resize(500)
+                    .on('info', function (info) {
+                        console.log('Image height is ' + info.height);
+                    });
+                let outStream = fs.createWriteStream(scaledPath, { flags: "w" });
+
+                var transformer = sh()
+                    .resize(500)
+                    .on('info', function (info) {
+                        console.log('Image height is ' + info.height);
+                    });
+                transformer.on('error', function () {
+                    console.log("Error!!");
+                    res.status(500)
+                    result.sucess = false
+                    result.msg = "Fehler beim Upload"
+                    res.send(JSON.stringify(result));
+                });
+                outStream.on('close', function () {
+                    console.log("Successfully saved file");
+                    console.log("Image scaled to: " + scaledPath);
+                    fs.unlinkSync(uploadPath);
+                    result.sucess = true
+                    result.msg = 'File ' + filename + ' uploaded und scaled!'
+                    res.send(JSON.stringify(result));
+                });
+
+                inStream.pipe(transformer).pipe(outStream);
+
+            } catch (error) {
+                console.log("Err:" + error);
+                res.status(500)
+                result.sucess = false
+                result.msg = "Fehler beim Upload"
+                res.send(JSON.stringify(result));
+            }
+
+        });
+    }
+    catch {
+        result.sucess = false
+        result.msg = 'Unknown or invalid Header key'
+        res.status(400).send(JSON.stringify(result));
+
+    }
+});
+
+/**
+ * Endpunkt zur Abfrage der Schülerbilder
+ */
+app.get('/image', function (req, res) {
+    let result = {
+        sucess: false,
+        msg: null
+    }
+
+    try {
+        let id: string = req.query.id.toString()
+        id = id.split(" ").join("+");
+        console.log("ID is " + id);
+        let decrypted = key.decrypt(id, 'utf8');
+        console.log("Decrypted:" + decrypted);
+        let obj = JSON.parse(decrypted);
+
+
+        let downloadPath = __dirname + '/../config/img_' + obj.did + ".jpg";
+        console.log("return Image:" + downloadPath);
+
+        try {
+
+            if (fs.existsSync(downloadPath)) {
+                if (!req.query.width) {
+                    res.setHeader("content-type", "image/jpeg");
+                    res.sendFile(path.resolve(downloadPath));
+                }
+                else {
+                    console.log("Mit Width Parameter");
+                    res.setHeader("content-type", "image/jpeg");
+                    let w: number = Number(req.query.width.toString());
+                    console.log("Start resize:" + w);
+                    
+                   
+                    let inStream = fs.createReadStream(downloadPath);
+                    var transformer = sh()
+                        .resize(w)
+                        .on('info', function (info) {
+                            console.log('Image height is ' + info.height);
+                        });
+
+                    inStream.pipe(transformer).pipe(res);
+                }
+            }
+            else {
+                res.setHeader("content-type", "application/json");
+                result.sucess = false;
+                result.msg = "File Not Found " + downloadPath;
+                res.status(404).send(JSON.stringify(result));
+            }
+        } catch (err) {
+            res.setHeader("content-type", "application/json");
+            result.sucess = false;
+            result.msg = err;
+            res.status(400).send(JSON.stringify(result));
+        }
+    }
+    catch (err) {
+        console.log("Fehler: " + err);
+
+        res.setHeader("content-type", "application/json");
+        result.sucess = false
+        result.msg = 'Unknown or invalid ID'
+        res.status(400).send(JSON.stringify(result));
+
+    }
+});
+
 
 /**
  * Event Ticket als Wallet
