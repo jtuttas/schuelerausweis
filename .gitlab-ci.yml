@@ -27,7 +27,7 @@ docker pushdev2local:
     - dev2
   script:
     - echo "$LOCAL_REGISTRY" | docker login -u root --password-stdin service.joerg-tuttas.de:5555
-    - docker build -t service.joerg-tuttas.de:5555/root/schuelerausweisdev .
-    - docker push service.joerg-tuttas.de:5555/root/schuelerausweisdev
+    - docker build -t service.joerg-tuttas.de:5555/root/schuelerausweis:dev .
+    - docker push service.joerg-tuttas.de:5555/root/schuelerausweis:dev
   tags:
     - myrunner
