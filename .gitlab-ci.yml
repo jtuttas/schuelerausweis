@@ -4,6 +4,7 @@ variables:
 
 stages:
   - Push to local Registry
+  - Push dev2 to local Registry
 
 
 
@@ -16,5 +17,17 @@ docker pushlocal:
     - echo "$LOCAL_REGISTRY" | docker login -u root --password-stdin service.joerg-tuttas.de:5555
     - docker build -t service.joerg-tuttas.de:5555/root/schuelerausweis .
     - docker push service.joerg-tuttas.de:5555/root/schuelerausweis
+  tags:
+    - myrunner
+
+docker pushdev2local:
+  image: docker:stable
+  stage: Push dev2 to local Registry
+  only:
+    - dev2
+  script:
+    - echo "$LOCAL_REGISTRY" | docker login -u root --password-stdin service.joerg-tuttas.de:5555
+    - docker build -t service.joerg-tuttas.de:5555/root/schuelerausweisdev .
+    - docker push service.joerg-tuttas.de:5555/root/schuelerausweisdev
   tags:
     - myrunner
