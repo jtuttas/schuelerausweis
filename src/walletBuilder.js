@@ -21,6 +21,7 @@ const canvas_1 = __importDefault(require("canvas"));
 const fs_1 = __importDefault(require("fs"));
 const qrcode_1 = __importDefault(require("qrcode"));
 const date_fns_1 = require("date-fns");
+const node_fetch_1 = __importDefault(require("node-fetch"));
 class WalletBuilder {
     constructor() {
     }
@@ -88,6 +89,11 @@ class WalletBuilder {
         });
         //console.log(dateFormat(new Date(s.v), "dd.mm.yyyy"));
         doc.image('src/Ausweis_PDF.png', 20, 20, { width: 440 });
+        let downloadPath = __dirname + '/../config/img_' + s.did + ".jpg";
+        if (!fs_1.default.existsSync(downloadPath)) {
+            downloadPath = __dirname + "/../web/img/anonym.png";
+        }
+        doc.image(downloadPath, 180, 60, { width: 50, height: 50 });
         doc.font('./src/HelveticaNeue-Medium-11.ttf').fontSize(11);
         doc.fillColor("#16538C").text(s.vn.toUpperCase(), 32, 123);
         doc.fillColor("#16538C").text(s.nn.toUpperCase(), 32, 136);
@@ -124,6 +130,10 @@ class WalletBuilder {
     genit(res, id, s) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const avatar = yield node_fetch_1.default("https://localhost:8080/image?id=" + id + "&width=90").then((re) => re.buffer());
+                const additionalBuffers = {
+                    "thumbnail@2x.png": avatar,
+                };
                 const examplePass = yield passkit_generator_1.createPass({
                     model: "./student.pass",
                     certificates: {
@@ -138,7 +148,7 @@ class WalletBuilder {
                         // keys to be added or overridden
                         serialNumber: "AAGH44625236dddaffbda"
                     }
-                });
+                }, additionalBuffers);
                 // Adding some settings to be written inside pass.json
                 //examplePass.barcode("Test"); 
                 examplePass.barcodes({

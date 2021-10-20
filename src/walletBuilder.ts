@@ -9,6 +9,7 @@ import canvas from 'canvas'
 import fs from 'fs'
 import qrcode from 'qrcode'
 import { format, parse } from "date-fns";
+import fetch from "node-fetch";
 
 export class WalletBuilder {
 
@@ -89,6 +90,12 @@ export class WalletBuilder {
         //console.log(dateFormat(new Date(s.v), "dd.mm.yyyy"));
 
         doc.image('src/Ausweis_PDF.png', 20, 20, { width: 440 });
+        let downloadPath = __dirname + '/../config/img_' + s.did + ".jpg";
+        if (!fs.existsSync(downloadPath)) {
+            downloadPath = __dirname + "/../web/img/anonym.png"
+        }
+        doc.image(downloadPath, 180, 60, { width: 50,height: 50 });
+
         doc.font('./src/HelveticaNeue-Medium-11.ttf').fontSize(11);
         doc.fillColor("#16538C").text(s.vn.toUpperCase(), 32, 123);
         doc.fillColor("#16538C").text(s.nn.toUpperCase(), 32, 136);
@@ -129,6 +136,13 @@ export class WalletBuilder {
 
     async genit(res: any, id: string, s: any) {
         try {
+            const avatar = await fetch(
+                "https://localhost:8080/image?id="+id+"&width=90",
+            ).then((re) => re.buffer());
+
+            const additionalBuffers = {
+                "thumbnail@2x.png": avatar,
+            };
             const examplePass = await createPass({
                 model: "./student.pass",
                 certificates: {
@@ -143,7 +157,7 @@ export class WalletBuilder {
                     // keys to be added or overridden
                     serialNumber: "AAGH44625236dddaffbda"
                 }
-            });
+            },additionalBuffers);
 
             // Adding some settings to be written inside pass.json
             //examplePass.barcode("Test"); 
@@ -153,7 +167,7 @@ export class WalletBuilder {
                 altText: "Gültigkeit prüfen",
                 messageEncoding: "iso-8859-1"
             });
-
+            
             examplePass.headerFields.map(item => {
                 this.repaceVales(item, s);
             });
