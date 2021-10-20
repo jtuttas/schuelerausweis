@@ -130,7 +130,7 @@ class WalletBuilder {
     genit(res, id, s) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const avatar = yield node_fetch_1.default("https://localhost:8080/image?id=" + id + "&width=90").then((re) => re.buffer());
+                const avatar = yield node_fetch_1.default("/image?id=" + id + "&width=90").then((re) => re.buffer());
                 const additionalBuffers = {
                     "thumbnail@2x.png": avatar,
                 };
