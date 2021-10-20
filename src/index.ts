@@ -114,14 +114,15 @@ app.post('/image', function (req, res) {
 
                 let inStream = fs.createReadStream(uploadPath);
                 var transformer = sh()
-                    .resize(500)
+                    .resize(500,500)
                     .on('info', function (info) {
                         console.log('Image height is ' + info.height);
                     });
                 let outStream = fs.createWriteStream(scaledPath, { flags: "w" });
 
                 var transformer = sh()
-                    .resize(500)
+                    .resize(500,500)
+                    
                     .on('info', function (info) {
                         console.log('Image height is ' + info.height);
                     });

@@ -98,13 +98,13 @@ app.post('/image', function (req, res) {
             try {
                 let inStream = fs_1.default.createReadStream(uploadPath);
                 var transformer = sharp_1.default()
-                    .resize(500)
+                    .resize(500, 500)
                     .on('info', function (info) {
                     console.log('Image height is ' + info.height);
                 });
                 let outStream = fs_1.default.createWriteStream(scaledPath, { flags: "w" });
                 var transformer = sharp_1.default()
-                    .resize(500)
+                    .resize(500, 500)
                     .on('info', function (info) {
                     console.log('Image height is ' + info.height);
                 });

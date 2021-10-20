@@ -18,6 +18,7 @@ const config_json_1 = __importDefault(require("../config/config.json"));
 const PDFDocument = require("pdfkit");
 const qr_image_1 = __importDefault(require("qr-image"));
 const canvas_1 = __importDefault(require("canvas"));
+const fs_1 = __importDefault(require("fs"));
 const qrcode_1 = __importDefault(require("qrcode"));
 const date_fns_1 = require("date-fns");
 class WalletBuilder {
@@ -44,6 +45,13 @@ class WalletBuilder {
             context.font = 'bold 28pt Sans-serif';
             context.textAlign = 'start';
             context.fillStyle = '#16538C';
+            let downloadPath = __dirname + '/../config/img_' + s.did + ".jpg";
+            if (!fs_1.default.existsSync(downloadPath)) {
+                downloadPath = __dirname + "/../web/img/anonym.png";
+            }
+            canvas_1.default.loadImage(downloadPath).then(img => {
+                context.drawImage(img, 550, 120, 200, 200);
+            });
             context.fillText(s.vn.toUpperCase(), 46, 412);
             context.fillText(s.nn.toUpperCase(), 46, 450);
             context.font = 'bold 22pt Sans-serif';

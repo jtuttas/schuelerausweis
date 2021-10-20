@@ -40,6 +40,13 @@ export class WalletBuilder {
             context.font = 'bold 28pt Sans-serif'
             context.textAlign = 'start'
             context.fillStyle = '#16538C'
+            let downloadPath = __dirname + '/../config/img_' + s.did + ".jpg";
+            if (!fs.existsSync(downloadPath)) {
+                downloadPath = __dirname + "/../web/img/anonym.png"
+            }
+            canvas.loadImage(downloadPath).then(img => {
+                context.drawImage(img,550,120,200,200);
+            })
 
             context.fillText(s.vn.toUpperCase(), 46, 412)
             context.fillText(s.nn.toUpperCase(), 46, 450)
