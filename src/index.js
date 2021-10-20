@@ -72,11 +72,15 @@ app.post('/image', function (req, res) {
         return res.status(400).send(JSON.stringify(result));
     }
     try {
-        let decrypted = key.decrypt("" + req.headers.key, 'utf8');
-        console.log("Decrypted:" + decrypted);
+        let id = req.query.id.toString();
+        id = id.split(" ").join("+");
+        console.log("ID is " + id);
+        let decrypted = key.decrypt(id, 'utf8');
         let obj = JSON.parse(decrypted);
+        console.log("Decrypted:" + decrypted);
         // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
         sampleFile = req.files.image;
+        console.log("File name:" + sampleFile);
         let filename = sampleFile.name;
         let parts = filename.split(".");
         let suffix = parts[parts.length - 1];
@@ -104,22 +108,30 @@ app.post('/image', function (req, res) {
                     .on('info', function (info) {
                     console.log('Image height is ' + info.height);
                 });
-                transformer.on('error', function () {
-                    console.log("Error!!");
-                    res.status(500);
-                    result.sucess = false;
-                    result.msg = "Fehler beim Upload";
-                    res.send(JSON.stringify(result));
-                });
-                outStream.on('close', function () {
-                    console.log("Successfully saved file");
-                    console.log("Image scaled to: " + scaledPath);
-                    fs_1.default.unlinkSync(uploadPath);
-                    result.sucess = true;
-                    result.msg = 'File ' + filename + ' uploaded und scaled!';
-                    res.send(JSON.stringify(result));
+                let err = false;
+                transformer.on('error', () => {
+                    console.log("error");
+                    err = true;
                 });
                 inStream.pipe(transformer).pipe(outStream);
+                outStream.on('close', () => {
+                    console.log("close out Stream");
+                    if (err) {
+                        fs_1.default.unlinkSync(uploadPath);
+                        fs_1.default.unlinkSync(scaledPath);
+                        res.status(500);
+                        result.sucess = false;
+                        result.msg = "Fehler beim Upload";
+                        res.send(JSON.stringify(result));
+                    }
+                    else {
+                        fs_1.default.unlinkSync(uploadPath);
+                        res.status(200);
+                        result.sucess = true;
+                        result.msg = "Image Uploaded and Scaled";
+                        res.send(JSON.stringify(result));
+                    }
+                });
             }
             catch (error) {
                 console.log("Err:" + error);
@@ -132,7 +144,7 @@ app.post('/image', function (req, res) {
     }
     catch (_a) {
         result.sucess = false;
-        result.msg = 'Unknown or invalid Header key';
+        result.msg = 'Unknown or invalid id';
         res.status(400).send(JSON.stringify(result));
     }
 });
@@ -395,6 +407,16 @@ app.post("/wallet", (req, res) => {
                             s = s.replace("<!--sj-->", config_json_1.default.schuljahr);
                             s = s.replace("<!--pdf-->", "/pdf?id=" + id);
                             s = s.replace("<!--png-->", "/png?id=" + id);
+                            s = s.replaceAll("<!--id-->", id);
+                            let downloadPath = __dirname + '/../config/img_' + student.did + ".jpg";
+                            if (fs_1.default.existsSync(downloadPath)) {
+                                console.log("Image Found: " + downloadPath);
+                                s = s.replace("<!--img-->", "/image?id=" + id + "&width=90");
+                            }
+                            else {
+                                console.log("No Image Found:" + downloadPath);
+                                s = s.replace("<!--img-->", "img/anonym.png");
+                            }
                             s = s.replace("<!--wallet-->", "/wallet?id=" + id);
                             s = s.replace("<!--username-->", student.vn + "&nbsp;" + student.nn);
                             //s = s.replace("<!--link-->", "/validate?id=" + id);

@@ -16,6 +16,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
         integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
         crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 </head>
 
 <body>
@@ -28,9 +29,13 @@
             </a>
 
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                <img id="image" src="<!--img-->" width="90px">
                 <li>Angemeldet als:
                     <!--username-->
                 </li>
+                <br>
+                <input type="file" id="file" name="file" multiple />
+                <button id="upload" type="button" class="btn btn-primary">Upload</button>
             </ul>
 
             <div class="col-md-3 text-end">
@@ -102,7 +107,34 @@
 
         </div>
     </footer>
-
+    <script type="text/javascript">
+        $(document).ready(function (e) {
+            $('#upload').on('click', function () {
+                console.log('Start Upload');
+                var file_data = $('#file').prop('files')[0];
+                var form_data = new FormData();
+                form_data.append('image', file_data);
+                $.ajax({
+                    url: '/image?id=<!--id-->', // point to server-side controller method
+                    dataType: 'json', // what to expect back from the server
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    data: form_data,
+                    type: 'post',
+                    success: function (response) {
+                        console.log('Receive:' + JSON.stringify(response));
+                        if (response.sucess) {
+                            $("#image").attr("src","/image?id=<!--id-->")
+                        }
+                    },
+                    error: function (response) {
+                        console.log('Receive:' + JSON.stringify(response));
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

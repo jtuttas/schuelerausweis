@@ -5,7 +5,8 @@
         "resolveJsonModule": true,
         "sourceMap": true,
         "lib": [
-            "DOM"
+            "DOM",
+            "ES2021.String"
         ],
         "esModuleInterop": true,
     }
