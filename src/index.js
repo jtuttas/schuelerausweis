@@ -307,11 +307,12 @@ app.get("/wallet", (req, res) => {
     if (req.query.id) {
         let sid = req.query.id.toString();
         console.log("ID=" + sid);
+        console.log("Server " + req.hostname + ":" + req.protocol);
         try {
             let decrypted = key.decrypt(req.query.id.toString(), 'utf8');
             console.log("Decrypted:" + decrypted);
             let obj = JSON.parse(decrypted);
-            wb.genit(res, sid, obj);
+            wb.genit(req, res, sid, obj);
         }
         catch (_a) {
             console.log("Failed to Decode!");

@@ -134,10 +134,11 @@ export class WalletBuilder {
 
     }
 
-    async genit(res: any, id: string, s: any) {
+    async genit(req:any,res: any, id: string, s: any) {
         try {
+            
             const avatar = await fetch(
-                "/image?id="+id+"&width=90",
+                "https://"+req.hostname+":8080/image?id="+id+"&width=90",
             ).then((re) => re.buffer());
 
             const additionalBuffers = {
