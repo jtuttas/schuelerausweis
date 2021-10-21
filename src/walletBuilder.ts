@@ -6,7 +6,7 @@ import https from "https";
 import request = require("request");
 import qrImage from "qr-image";
 import canvas from 'canvas'
-import fs from 'fs'
+import fs, { appendFile } from 'fs'
 import qrcode from 'qrcode'
 import { format, parse } from "date-fns";
 import fetch from "node-fetch";
@@ -138,7 +138,7 @@ export class WalletBuilder {
         try {
             
             const avatar = await fetch(
-                "https://"+req.hostname+":8080/image?id="+id+"&width=90",
+                req.protocol+"://"+req.hostname+":8080/image?id="+id+"&width=90",
             ).then((re) => re.buffer());
 
             const additionalBuffers = {
