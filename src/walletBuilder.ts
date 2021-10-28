@@ -138,7 +138,7 @@ export class WalletBuilder {
         try {
             
             const avatar = await fetch(
-                req.protocol+"://"+req.hostname+":8080/image?id="+id+"&width=90",
+                req.protocol + "://" + req.get("host")+"/image?id="+id+"&width=90",
             ).then((re) => re.buffer());
 
             const additionalBuffers = {

@@ -349,7 +349,7 @@ app.get("/wallet", (req, res) => {
     if (req.query.id) {
         let sid: string = req.query.id.toString();
         console.log("ID=" + sid);
-        //console.log("Server "+req.hostname+":"+req.protocol);
+        //console.log("Server "+req.get("host"));
         
         try {
             let decrypted = key.decrypt(req.query.id.toString(), 'utf8');
