@@ -159,6 +159,7 @@
                         }
                     },
                     error: function (response) {
+                        $('.spinner-border').fadeOut();
                         console.log('Receive:' + JSON.stringify(response));
                     }
                 });
