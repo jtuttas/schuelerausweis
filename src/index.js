@@ -95,6 +95,15 @@ app.post('/image', function (req, res) {
                 return res.status(500).send(JSON.stringify(result));
             }
             console.log("Image uploaded to: " + uploadPath);
+            var sizeOf = require('image-size');
+            var dimensions = sizeOf(uploadPath);
+            console.log(dimensions.width, dimensions.height);
+            if (dimensions.width > 5000 || dimensions.height > 5000) {
+                console.log("To large Image");
+                fs_1.default.unlinkSync(uploadPath);
+                result.msg = "Image to large!";
+                return res.status(400).send(JSON.stringify(result));
+            }
             try {
                 let inStream = fs_1.default.createReadStream(uploadPath);
                 var transformer = sharp_1.default()
