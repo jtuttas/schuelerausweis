@@ -47,7 +47,7 @@
                     <a href="https://idcard.mmbbs.de" type="button" class="btn btn-primary"><i class="bi bi-box-arrow-right"></i> Abmelden</a>
                 </span>
                               
-                <input type="file" accept="image/jpeg" capture="camera" id="file" name="file" onchange="UploadAvatar(this)"/>
+                <input type="file" accept="image/png, image/jpeg" capture="camera" name="file" onchange="UploadAvatar(this)"/>
             </div>
         </header>
     </div>
@@ -133,7 +133,7 @@
                 if(img.files.length === 0) {
                     // Keine Datei ausgewählt, bzw. falscher Dateityp
                 } else {
-                    // Upload intiieren
+                    // Upload initiieren
                     console.log('Start Upload');
                     console.log(file_data);
 
