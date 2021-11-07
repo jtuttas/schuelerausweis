@@ -133,12 +133,14 @@
                 if(img.files.length === 0) {
                     // Keine Datei ausgewählt, bzw. falscher Dateityp
                 } else {
+                    var file_data = img.files[0];
+                    
                     // Upload initiieren
+                    
+                    var form_data = new FormData();
                     console.log('Start Upload');
                     console.log(file_data);
 
-                    var file_data = img.files[0];
-                    var form_data = new FormData();
                     form_data.append('image', file_data);
                     $('.avatar-overlay i').hide();
                     $('.spinner-border').fadeIn();
