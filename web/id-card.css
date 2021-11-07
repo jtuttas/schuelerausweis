@@ -35,6 +35,43 @@ a[type="button"] {
   color: #145189;
 }
 
+.avatar {
+  display: inline-block !important;
+  overflow: hidden;
+}
+
+.avatar img {
+  border: 1px solid #ddd;
+}
+
+.avatar-position {
+  position: relative !important; 
+}
+
+.avatar-overlay {
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+}
+
+.avatar-overlay i {
+  font-size: 30px;
+  display: none;
+}
+
+.spinner-border {
+  display: none;
+}
+
+/* Inputfelder verstecken und per JS auslösen */
+
+input#file {
+  display: none;
+}
+
 .qr-code {
   background: white;
 }
