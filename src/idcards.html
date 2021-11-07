@@ -172,7 +172,7 @@
                                 if (response.sucess) {
                                     $('.spinner-border').fadeOut();
 
-                                    // IMG vom Server neu laden, fixed chaching
+                                    // IMG vom Server neu laden, workaround chaching
                                     var d = new Date();
                                     $("#image").attr("src","/image?id=<!--id-->&"+d.getTime());
                                 }
