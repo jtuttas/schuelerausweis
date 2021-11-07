@@ -128,46 +128,68 @@
             });
         });
 
-        function UploadAvatar(img) {
+        function UploadAvatar(img) {   
+ 
+        //Prüfe ob HTML5 zulässig ist
+        if (typeof (img.files) != "undefined") {
 
-                if(img.files.length === 0) {
-                    // Keine Datei ausgewählt, bzw. falscher Dateityp
-                } else {
-                    var file_data = img.files[0];
-                    
-                    // Upload initiieren
-                    
-                    var form_data = new FormData();
-                    console.log('Start Upload');
-                    console.log(file_data);
+            //Initiiere FileReader
+            var reader = new FileReader();
 
-                    form_data.append('image', file_data);
-                    $('.avatar-overlay i').hide();
-                    $('.spinner-border').fadeIn();
+            //Content aus FileReader auslesen
+            reader.readAsDataURL(img.files[0]);
+            reader.onload = function (e) {
+
+                //Initiiere JavaScript Image Objekt
+                var image = new Image();
+                image.src = e.target.result;
+                       
+                //Prüfe Auflösung
+                image.onload = function () {
+                    var height = this.height;
+                    var width = this.width;
+                    if (height < 5000 || width < 5000) {
+                        
+                        // Upload intiieren
+                        console.log('Start Upload');
+                    
+                        var file_data = img.files[0];
+                        var form_data = new FormData();
+                        form_data.append('image', file_data);
+                        $('.avatar-overlay i').hide();
+                        $('.spinner-border').fadeIn();
                                         
-                    $.ajax({
-                        url: '/image?id=<!--id-->', // point to server-side controller method
-                        dataType: 'json', // what to expect back from the server
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        data: form_data,
-                        type: 'post',
-                    success: function (response) {
-                        console.log('Receive:' + JSON.stringify(response));
-                        if (response.sucess) {
-                            $('.spinner-border').fadeOut();
-                            $("#image").attr("src","/image?id=<!--id-->")
-                        }
-                    },
-                    error: function (response) {
-                        $('.spinner-border').fadeOut();
-                        console.log('Receive:' + JSON.stringify(response));
+                        $.ajax({
+                                url: '/image?id=<!--id-->', // point to server-side controller method
+                                dataType: 'json', // what to expect back from the server
+                                cache: false,
+                                contentType: false,
+                                processData: false,
+                                data: form_data,
+                                type: 'post',
+                            success: function (response) {
+                                console.log('Receive:' + JSON.stringify(response));
+                                if (response.sucess) {
+                                    $('.spinner-border').fadeOut();
+                                    $("#image").attr("src","/image?id=<!--id-->")
+                                }
+                            },
+                            error: function (response) {
+                                console.log('Receive:' + JSON.stringify(response));
+                                $('.avatar-overlay i').hide();
+                            }
+                        });
+                    } else {
+                        alert("Die Auflösung darf 5000px x 5000px nicht überschreiten.");
+                        return false;
                     }
-                });
-                }
-        }
-        
+                } 
+            }
+        } else {
+            alert("Der Browser unterstützt nicht HTML5.");
+            return false;
+        }       
+    }
     </script>
 </body>
 
