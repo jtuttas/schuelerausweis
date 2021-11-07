@@ -416,7 +416,7 @@ app.post("/wallet", (req, res) => {
                             }
                             else {
                                 console.log("No Image Found:" + downloadPath);
-                                s = s.replace("<!--img-->", "img/anonym.png");
+                                s = s.replace("<!--img-->", "img/anonym_210x210.jpg");
                             }
                             s = s.replace("<!--wallet-->", "/wallet?id=" + id);
                             s = s.replace("<!--username-->", student.vn + "&nbsp;" + student.nn);
