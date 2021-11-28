@@ -47,12 +47,11 @@ class WalletBuilder {
             context.textAlign = 'start';
             context.fillStyle = '#16538C';
             let downloadPath = __dirname + '/../config/img_' + s.did + ".jpg";
-            if (!fs_1.default.existsSync(downloadPath)) {
-                downloadPath = __dirname + "/../web/img/anonym.png";
+            if (fs_1.default.existsSync(downloadPath)) {
+                canvas_1.default.loadImage(downloadPath).then(img => {
+                    context.drawImage(img, 535, 147, 217, 217);
+                });
             }
-            canvas_1.default.loadImage(downloadPath).then(img => {
-                context.drawImage(img, 550, 120, 200, 200);
-            });
             context.fillText(s.vn.toUpperCase(), 46, 412);
             context.fillText(s.nn.toUpperCase(), 46, 450);
             context.font = 'bold 22pt Sans-serif';
@@ -90,10 +89,9 @@ class WalletBuilder {
         //console.log(dateFormat(new Date(s.v), "dd.mm.yyyy"));
         doc.image('src/Ausweis_PDF.png', 20, 20, { width: 440 });
         let downloadPath = __dirname + '/../config/img_' + s.did + ".jpg";
-        if (!fs_1.default.existsSync(downloadPath)) {
-            downloadPath = __dirname + "/../web/img/anonym.png";
+        if (fs_1.default.existsSync(downloadPath)) {
+            doc.image(downloadPath, 167.5, 60.5, { width: 59.5, height: 59.5 });
         }
-        doc.image(downloadPath, 180, 60, { width: 50, height: 50 });
         doc.font('./src/HelveticaNeue-Medium-11.ttf').fontSize(11);
         doc.fillColor("#16538C").text(s.vn.toUpperCase(), 32, 123);
         doc.fillColor("#16538C").text(s.nn.toUpperCase(), 32, 136);
