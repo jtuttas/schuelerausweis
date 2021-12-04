@@ -91,7 +91,7 @@ export class WalletBuilder {
         doc.image('src/Ausweis_PDF.png', 20, 20, { width: 440 });
         let downloadPath = __dirname + '/../config/img_' + s.did + ".jpg";
         if (fs.existsSync(downloadPath)) {
-            doc.image(downloadPath, 167.5, 60.5, { width: 59.5,height: 59.5 });            
+            doc.image(downloadPath, 167.2, 60.4, { width: 59.7,height: 59.7 });            
         }
 
         doc.font('./src/HelveticaNeue-Medium-11.ttf').fontSize(11);
