@@ -41,8 +41,22 @@ Die Datei **config.json** hat dabei folgende Einträge.
 
 ```JSON
 {
-    "validDate" : "2021-08-30",
-    "schuljahr": "20/21",
+    "validDate": "2022-08-30",
+    "schuljahr": "21/22",
+    "mailer": {
+        "host": "ex.mmbbs.de",
+        "port": 587,
+        "logger": true,
+        "secure": false,
+        "auth": {
+            "user": "Tuttas",
+            "pass": "geheim"
+        }
+    },
+    "mailfrom":"tuttas@mmbbs.de",
+    "mailSubject":"Ihr Schülerausweis",
+    "mailHeader":"Hallo,\r\nmit dieser Mail erhalten Sie ihren Schülerausweis!\r\n\r\n",
+    "mailFooter":"Mit freundlichen Grüßen\r\n\r\nIhre MMBbS",
     "png": {
     },
     "pdf": {
@@ -52,6 +66,11 @@ Die Datei **config.json** hat dabei folgende Einträge.
 
 - **validDate**: Das Daten an dem der Ausweis abläuft.
 - **schuljkahr**: Das Schuljahr in dem der Ausweis gültig ist
+- **mailer**: SMTP Konfiguration für den Node Mailer
+- **mailfrom**: Absender Adresse
+- **mailSubject**: Betreff der eMail
+- **mailHeader**: Anfang der eMail
+- **mailTail**: Ende der eMail. Zwischen Anfang und Ende der eMail wir die URL zum Abrufen des Ausweises eingefügt
 - **png**: Configuration für die PNG Ansicht
 - **pdf**: Configuration für die pdf Ansicht!
 
@@ -71,10 +90,18 @@ npm run start
 
 ## Docker Container
 
-Der Docker Container arbeitet default auf Port 8080 über https. Der RSA Schlüssel **ausweis.private** und die SSH Schlüssel **server.cert** und **server.key** liegen außerhab des Docker Containers in einem Volume, welche die entsprechenden Dateien enthält. Daher muss der Container wie folgt gestartet werden.
+Der Docker Container arbeitet default auf Port 8080 über https. Der RSA Schlüssel **ausweis.private** und die SSH Schlüssel **server.cert** und **server.key** liegen außerhalb des Docker Containers in einem Volume *config*, welche die entsprechenden Dateien enthält. 
+
+Alle statischen und damit anpassbaren Webinhalt befinden sich ebenso in einem externen Verzeichnis außerhalb des Containers. Dazu ist ein Volume zu erzeugen.Wichtig dabei ist, dass dieses Verzeichnis zunächst leer ist:
 
 ```
-docker run --rm -v c:/config:/usr/src/app/config -it -p 8080:8080 service.joerg-tuttas.de:5555/root/schuelerausweis
+docker volume create --driver local --opt type=none --opt device=c:/web --opt o=bind web
+```
+
+Anschließend kann der Container wie folgt gestartet werden.
+
+```
+docker run --rm -v c:/config:/usr/src/app/config -v web:/usr/src/app/web -it -p 8080:8080 service.joerg-tuttas.de:5555/root/schuelerausweis
 ```
 
 ## Use Case 1 - Der MMBbS Scanner
