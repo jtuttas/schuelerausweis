@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Schülerausweis der Multi Media Berufsbildenden Schulen (MMBbS)">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Schülerausweis MMBbS</title>
+    <title>Schülerausweis</title>
     <!-- Favicons-->
     <link rel="apple-touch-icon" sizes="57x57" href="img/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="img/apple-icon-60x60.png">
@@ -41,26 +41,11 @@
 
 <body class="text-center">
     <main class="form-signin">
-        <form method="POST" id="input-form" class="form-signin" action="/wallet" accept-charset="utf-8">
             <img class="mb-4" src="img/mmbbs-logo.svg" alt="" height="80"
                 onerror="this.onerror=null; this.src='img/mmbbs-logo.svg'">
             <h1 class="h3 mb-3 fw-normal">Schülerausweis</h1>
-
-            <div class="form-floating">
-                <input type="text" name="user" class="form-control" id="floatingInput" placeholder="Klasse.Nachname"
-                    aria-describedby="inputNameFeedback" required autofocus>
-                <label for="floatingInput">Klasse.Nachname</label>
-            </div>
-            <div class="form-floating">
-                <input type="password" class="form-control" id="floatingPassword" name="pwd" placeholder="Password" required>
-                <label for="floatingPassword">Password</label>
-            </div>
-            <button class="w-100 btn btn-lg btn-primary" type="submit">Anmelden</button>
-            <p class="mt-4 mb-1 text-muted">&copy; 2021 MMBbS Hannover</p>
-            <p class="mb-2 text-muted"><small><i>v2.0</i></small></p>
-        </form>
-        <div class="mt-3 d-flex justify-content-center" id="Msg">
-            <!--error-->
+        <div class="mt-3 d-flex justify-content-center" id="ok">
+            <!--msg-->
         </div>
     </main>
 

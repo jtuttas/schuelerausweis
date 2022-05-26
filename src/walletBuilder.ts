@@ -1,6 +1,6 @@
 import { createPass, Pass } from "passkit-generator";
 import { Student } from "./Student";
-import config from '../config/config.json';
+//import config from '../config/config.json';
 import PDFDocument = require('pdfkit');
 import https from "https";
 import request = require("request");
@@ -10,15 +10,17 @@ import fs, { appendFile } from 'fs'
 import qrcode from 'qrcode'
 import { format, parse } from "date-fns";
 import fetch from "node-fetch";
+import { getTrailingCommentRanges } from "typescript";
 
 export class WalletBuilder {
 
     constructor() {
     }
 
-
-    genPng(res: any, id: string, s: any) {
+    genPng(req:any, res: any, id: string, s: any) {
         console.log("Gen PNG!");
+        var config = JSON.parse(fs.readFileSync("config/config.json",'utf8'));
+        
         id = id.split("+").join("%2B");
         res.set({
             "Content-type": "image/png",
@@ -26,60 +28,70 @@ export class WalletBuilder {
         });
         //res.setHeader('Content-Type', 'image/png');
 
-
         try {
-            canvas.registerFont('./src/HelveticaNeue-Medium-11.ttf', { family: 'Sans-serif' })
+            canvas.registerFont('./web/HelveticaNeue-Medium-11.ttf', { family: 'Sans-serif' })
         }
         catch (err) {
-            console.log(err)
+            console.log("Font Error:"+err)
         }
-        
-        const ca = canvas.createCanvas(800, 1005)
+
+        const ca = canvas.createCanvas(config.png.width || 800, config.png.height || 1005)
         const context = ca.getContext('2d')
-        canvas.loadImage('./src/Ausweis_PNG.png').then(image => {
-            context.drawImage(image, 0, 0, 800, 1005)
-            context.font = 'bold 28pt Sans-serif'
-            context.textAlign = 'start'
-            context.fillStyle = '#16538C'
-            let downloadPath = __dirname + '/../config/img_' + s.did + ".jpg";
+        canvas.loadImage('./web/img/Ausweis_PNG.png').then(image => {
+            context.drawImage(image, 0, 0, config.png.width || 800, config.png.height || 1005)
+            let downloadPath =  getDownloadPath(s);
+            console.log("Download: "+downloadPath);
+            
             if (fs.existsSync(downloadPath)) {
+                console.log("Load Image");
+                
                 canvas.loadImage(downloadPath).then(img => {
-                    context.drawImage(img,535,147,217,217);
+                    context.drawImage(img, config.png.idImageX || 535, config.png.idImageY || 147, config.png.idImageWidth || 217, config.png.idImageHeight || 217);
                 })
             }
 
-            context.fillText(s.vn.toUpperCase(), 46, 412)
-            context.fillText(s.nn.toUpperCase(), 46, 450)
-            context.font = 'bold 22pt Sans-serif'
-            context.textAlign = "right"
-            context.fillText(format(new Date(s.v), "dd.MM.yyyy"), 753, 450)
-            context.textAlign = "left"
+            context.font = config.png.nameFont || 'bold 28pt Sans-serif'
+            genAlignment(context, config.png.nameAlign || "start")
+            context.fillStyle = config.png.nameColor || '#16538C'
+            context.fillText(s.vn.toUpperCase(), config.png.vnameX || 46, config.png.vnameY || 412)
+            context.fillText(s.nn.toUpperCase(), config.png.nnameX || 46, config.png.nnameY || 450)
+            
+            context.font = config.png.validFont || 'bold 22pt Sans-serif'
+            genAlignment(context, config.png.validAlign || "start")
+            context.fillStyle = config.png.validColor || '#16538C'
+            context.fillText(format(new Date(s.v), "dd.MM.yyyy"), config.png.validX || 753, config.png.validY || 450)
+
+            context.font = config.png.birthFont || 'bold 22pt Sans-serif'
+            genAlignment(context, config.png.birthAlign || "start")
+            context.fillStyle = config.png.birthColor || '#16538C'
             if (s.hasOwnProperty("gd")) {
-                context.fillText(format(new Date(s.gd), "dd.MM.yyyy"), 46, 595)
+                context.fillText(format(new Date(s.gd), "dd.MM.yyyy"), config.png.birthX || 46, config.png.birthY || 595)
             }
             else {
-                context.fillText("unknown", 46, 595)
+                context.fillText("unknown", config.png.birthX || 46, config.png.birthY || 595)
             }
 
-            context.fillStyle = '#FFFFFF'
-            context.font = 'bold 28pt Sans-serif'
-            context.fillText(s.kl, 600, 85)
+            context.font = config.png.courseFont || 'bold 22pt Sans-serif'
+            genAlignment(context, config.png.courseAlign || "start")
+            context.fillStyle = config.png.courseColor || '#16538C'
+            context.fillText(s.kl, config.png.courseX || 600, config.png.courseY || 85)
 
-            const caqr = canvas.createCanvas(300, 300)
-            qrcode.toCanvas(caqr, "https://idcard.mmbbs.de/validate?id=" + id, { width: 350 }, err => {
+            const caqr = canvas.createCanvas(config.png.qrImageWidth || 300, config.png.qrImageWidth || 300)
+            qrcode.toCanvas(caqr, req.protocol + '://' + req.get('host') + "/validate?id=" + id, { width: config.png.qrImageWidth || 350 }, err => {
                 if (err) {
                     console.log("Error:" + err);
                 }
                 console.log("success width=" + caqr.width);
-                context.drawImage(caqr, 440, 540);
+                context.drawImage(caqr, config.png.qrImageX || 440, config.png.qrImageY || 540);
             })
             ca.createPNGStream().pipe(res);
         })
     }
 
 
-    genpdf(res: any, id: string, s: any) {
+    genpdf(req:any, res: any, id: string, s: any) {
         console.log("Gen PDF");
+        var config = JSON.parse(fs.readFileSync("config/config.json", 'utf8'));
         id = id.split("+").join("%2B");
         var doc = new PDFDocument({
             size: "A4",
@@ -88,32 +100,37 @@ export class WalletBuilder {
         });
         //console.log(dateFormat(new Date(s.v), "dd.mm.yyyy"));
 
-        doc.image('src/Ausweis_PDF.png', 20, 20, { width: 440 });
-        let downloadPath = __dirname + '/../config/img_' + s.did + ".jpg";
+        doc.image('./web/img/Ausweis_PDF.png', 20, 20, { width: config.pdf.width || 440 });
+        
+        let downloadPath = getDownloadPath(s);
         if (fs.existsSync(downloadPath)) {
-            doc.image(downloadPath, 167.2, 60.4, { width: 59.7,height: 59.7 });            
+            doc.image(downloadPath, config.pdf.idImageX || 167.2, config.pdf.idImageY || 60.4, { width: config.pdf.idImageWidth || 59.7, height: config.pdf.idImageHeight || 59.7 });
         }
+        
+        doc.font(config.pdf.nameFont || './web/HelveticaNeue-Medium-11.ttf').fontSize(config.pdf.nameFontSize || 11);
+        console.log("Font loaded!");
+        doc.fillColor(config.pdf.nameColor || "#16538C").text(s.vn.toUpperCase(), config.pdf.vnameX || 32, config.pdf.vnameY || 123);
+        doc.fillColor(config.pdf.nameColor || "#16538C").text(s.nn.toUpperCase(), config.pdf.nnameX || 32, config.pdf.nnameY || 136);
 
-        doc.font('./src/HelveticaNeue-Medium-11.ttf').fontSize(11);
-        doc.fillColor("#16538C").text(s.vn.toUpperCase(), 32, 123);
-        doc.fillColor("#16538C").text(s.nn.toUpperCase(), 32, 136);
-        doc.font('./src/HelveticaNeue-Medium-11.ttf').fontSize(6);
+
+        doc.font( config.pdf.birthFont || './web/HelveticaNeue-Medium-11.ttf').fontSize( config.pdf.birthFontSize || 6);
         if (s.hasOwnProperty("gd")) {
-            doc.text(format(new Date(s.gd), "dd.MM.yyyy"), 252, 39);
+            doc.text(format(new Date(s.gd), "dd.MM.yyyy"),config.pdf.birthX || 252, config.pdf.birthY || 39);
         }
         else {
-            doc.text("unknown", 252, 39);
+            doc.text("unknown", config.pdf.birthX || 252, config.pdf.birthY || 39);
         }
 
-        doc.text(format(new Date(s.v), "dd.MM.yyyy"), 163, 137, {
-            width: 65,
-            align: 'right'
+        doc.text(format(new Date(s.v), "dd.MM.yyyy"), config.pdf.validX || 163, config.pdf.validY || 137, {
+            width: config.pdf.validWidth || 65,
+            align: config.pdf.validAlign || 'right'
         });
-        doc.font('./src/HelveticaNeue-Medium-11.ttf').fontSize(10);
-        doc.fillColor("#FFFFFF").text(s.kl, 190, 35);
+
+        doc.font(config.pdf.courseFont || './web/HelveticaNeue-Medium-11.ttf').fontSize(config.pdf.courseFontSize || 10);
+        doc.fillColor(config.pdf.courseColor || "#FFFFFF").text(s.kl, config.pdf.courseX || 190, config.pdf.courseY ||  35);
         try {
-            let img = qrImage.imageSync("https://idcard.mmbbs.de/validate?id=" + id, { type: 'png', size: 3 });
-            doc.image(img, 360, 27, { width: 90 })
+            let img = qrImage.imageSync(req.protocol + '://' + req.get('host') +"/validate?id=" + id, { type: 'png', size: 3 });
+            doc.image(img, config.pdf.qrImageX || 360, config.pdf.qrImageY || 27, { width: config.pdf.qrImageWidth || 90 })
         }
         catch (err) {
             console.log("Exception:" + err);
@@ -132,11 +149,12 @@ export class WalletBuilder {
 
     }
 
-    async genit(req:any,res: any, id: string, s: any) {
+    async genit(req: any, res: any, id: string, s: any) {
+        var config = JSON.parse(fs.readFileSync("config/config.json", 'utf8'));
         try {
-            
+
             const avatar = await fetch(
-                req.protocol + "://" + req.get("host")+"/image?id="+id+"&width=90",
+                req.protocol + "://" + req.get("host") + "/image?id=" + id + "&width=90",
             ).then((re) => re.buffer());
 
             const additionalBuffers = {
@@ -156,34 +174,34 @@ export class WalletBuilder {
                     // keys to be added or overridden
                     serialNumber: "AAGH44625236dddaffbda"
                 }
-            },additionalBuffers);
+            }, additionalBuffers);
 
             // Adding some settings to be written inside pass.json
             //examplePass.barcode("Test"); 
             examplePass.barcodes({
-                message: "http://idcard.mmbbs.de/validate?id=" + id.split("+").join("%2B"),
+                message: req.protocol + '://' + req.get('host') + "/validate?id=" + id.split("+").join("%2B"),
                 format: "PKBarcodeFormatQR",
                 altText: "Gültigkeit prüfen",
                 messageEncoding: "iso-8859-1"
             });
-            
+
             examplePass.headerFields.map(item => {
-                this.repaceVales(item, s);
+                this.repaceVales(config,item, s);
             });
             examplePass.primaryFields.map(item => {
-                this.repaceVales(item, s);
+                this.repaceVales(config,item, s);
             });
             examplePass.secondaryFields.map(item => {
-                this.repaceVales(item, s);
+                this.repaceVales(config,item, s);
             });
             examplePass.auxiliaryFields.map(item => {
-                this.repaceVales(item, s);
+                this.repaceVales(config,item, s);
             });
 
             let d: Date = new Date(config.validDate);
             console.log("Set Wallet expiration Date to " + d);
             examplePass.expiration(d)
-            
+
 
             // Generate the stream .pkpass file stream
             const stream = examplePass.generate();
@@ -197,8 +215,8 @@ export class WalletBuilder {
         }
     }
 
-    private repaceVales(item, s) {
-        
+    private repaceVales(config,item, s) {
+
         if (item.key == "valid") {
             console.log("Found Valid and set it to " + config.schuljahr);
             item.value = config.schuljahr;
@@ -229,3 +247,34 @@ export class WalletBuilder {
 
     }
 }
+function genAlignment(context: canvas.NodeCanvasRenderingContext2D, arg1: string) {
+    switch (arg1) {
+        case "start":
+            context.textAlign = "start"
+            break;
+        case "left":
+            context.textAlign = "left"
+            break;
+        case "right":
+            context.textAlign = "right"
+            break;
+        case "center":
+            context.textAlign = "center"
+            break;
+        case "end":
+            context.textAlign = "end"
+            break;
+        default:
+            context.textAlign = "start"
+            break;
+    }
+}
+
+function getDownloadPath(s: any):string {
+    var crypto = require('crypto');
+    var name =  s.kl + "_" + s.nn + "_" + s.vn;
+    var hash = crypto.createHash('md5').update(name).digest('hex');
+    console.log(hash); 
+    return __dirname + '/../config/img_' + hash + ".jpg";
+}
+

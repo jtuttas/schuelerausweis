@@ -16,7 +16,26 @@ const qr_image_1 = __importDefault(require("qr-image"));
 const Event_1 = require("./Event");
 const express_fileupload_1 = __importDefault(require("express-fileupload"));
 const sharp_1 = __importDefault(require("sharp"));
+const sync_1 = require("csv-parse/sync");
+const MailSender_1 = require("./MailSender");
+const MailObject_1 = require("./MailObject");
 var keys = [];
+let students = {};
+let mailsender;
+if (fs_1.default.existsSync("config/students.csv")) {
+    console.log("Students.CSV gefunden, importiere Daten");
+    const records = sync_1.parse(fs_1.default.readFileSync("config/students.csv", 'latin1'), {
+        delimiter: ';',
+        from_line: 2,
+        trim: true
+    });
+    //console.log(JSON.stringify(records));
+    records.forEach(element => {
+        students[element[0]] = element;
+    });
+    console.log(JSON.stringify(students));
+    mailsender = new MailSender_1.MailSender();
+}
 // Für Testzwecke
 //keys.push("geheim");
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -86,8 +105,12 @@ app.post('/image', function (req, res) {
         let suffix = parts[parts.length - 1];
         console.log("Suffix is: " + suffix);
         ;
-        uploadPath = __dirname + '/../config/img' + obj.did + ".jpg";
-        scaledPath = __dirname + '/../config/img_' + obj.did + ".jpg";
+        var crypto = require('crypto');
+        var name = obj.kl + "_" + obj.nn + "_" + obj.vn;
+        var hash = crypto.createHash('md5').update(name).digest('hex');
+        console.log(hash);
+        uploadPath = __dirname + '/../config/img' + hash + ".jpg";
+        scaledPath = __dirname + '/../config/img_' + hash + ".jpg";
         // Use the mv() method to place the file somewhere on your server
         sampleFile.mv(uploadPath, function (err) {
             if (err) {
@@ -172,7 +195,11 @@ app.get('/image', function (req, res) {
         let decrypted = key.decrypt(id, 'utf8');
         console.log("Decrypted:" + decrypted);
         let obj = JSON.parse(decrypted);
-        let downloadPath = __dirname + '/../config/img_' + obj.did + ".jpg";
+        var crypto = require('crypto');
+        var name = obj.kl + "_" + obj.nn + "_" + obj.vn;
+        var hash = crypto.createHash('md5').update(name).digest('hex');
+        console.log(hash);
+        let downloadPath = __dirname + '/../config/img_' + hash + ".jpg";
         console.log("return Image:" + downloadPath);
         try {
             if (fs_1.default.existsSync(downloadPath)) {
@@ -262,7 +289,7 @@ app.get("/png", (req, res) => {
             let decrypted = key.decrypt(req.query.id.toString(), 'utf8');
             console.log("Decrypted:" + decrypted);
             let obj = JSON.parse(decrypted);
-            wb.genPng(res, sid, obj);
+            wb.genPng(req, res, sid, obj);
         }
         catch (_a) {
             console.log("Failed to Decode!");
@@ -291,7 +318,7 @@ app.get("/pdf", (req, res) => {
             let decrypted = key.decrypt(req.query.id.toString(), 'utf8');
             console.log("Decrypted:" + decrypted);
             let obj = JSON.parse(decrypted);
-            wb.genpdf(res, sid, obj);
+            wb.genpdf(req, res, sid, obj);
         }
         catch (_a) {
             console.log("Failed to Decode!");
@@ -309,9 +336,9 @@ app.get("/pdf", (req, res) => {
     }
 });
 /**
- * Endpunkt Zum erzeugen eines Wallets
+ * Endpunkt Zum erzeugen eines ioS Wallets
  */
-app.get("/wallet", (req, res) => {
+app.get("/iwallet", (req, res) => {
     let obj = {};
     if (req.query.id) {
         let sid = req.query.id.toString();
@@ -355,122 +382,219 @@ app.post("/wallet", (req, res) => {
         "kennwort": pwd
     };
     console.log("data:" + JSON.stringify(data));
-    let options = {
-        hostname: 'diklabu.mm-bbs.de',
-        port: 8080,
-        path: "/Diklabu/api/v1/auth/login",
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json; charset=utf-8',
+    if (students.size != 0) {
+        if (students[data.benutzer] != undefined) {
+            console.log("Found " + data.benutzer);
+            res.setHeader("content-type", "text/html");
+            let s = fs_1.default.readFileSync('web/confirm.htm', 'utf8');
+            let student = {};
+            student.nn = students[data.benutzer][2];
+            student.vn = students[data.benutzer][1];
+            student.kl = students[data.benutzer][4];
+            student.v = config_json_1.default.validDate;
+            student.gd = students[data.benutzer][3];
+            student.did = 0;
+            console.log("student:" + JSON.stringify(student));
+            let id = key.encrypt(JSON.stringify(student), 'base64');
+            console.log("id=" + id);
+            id = id.split("+").join("%2B");
+            let mo = new MailObject_1.MailObject();
+            mo.from = config_json_1.default.mailfrom;
+            mo.to = data.benutzer;
+            mo.subject = config_json_1.default.mailSubject;
+            mo.text = config_json_1.default.mailHeader + req.protocol + '://' + req.get('host') + req.url + "?id=" + id + "\r\n\r\n" + config_json_1.default.mailFooter;
+            //console.log(mo.text);
+            mailsender.sendMail(mo).then(obj => {
+                console.log("Then:" + JSON.stringify(obj));
+                s = s.replace("<!--msg-->", "eMail gesendet an " + data.benutzer + "!");
+                res.statusCode = 200;
+                res.send(s);
+            }).catch(err => {
+                console.log("Catch Err: " + JSON.stringify(err));
+                res.statusCode = 400;
+                s = s.replace("<!--msg-->", "Fehler beim senden der eMail an " + data.benutzer + "! (" + JSON.stringify(err) + ")");
+                res.send(s);
+            });
         }
-    };
-    if (req.body.pwd == "mmbbs@ExpoPlaza3") {
-        console.log("Default Password used");
-        res.setHeader("content-type", "text/html");
-        let s = fs_1.default.readFileSync('web/index.html', 'utf8');
-        s = s.replace("<!--error-->", "Anmeldedaten ungültig!");
-        res.send(s);
-        return;
+        else {
+            console.log("unknown " + data.benutzer);
+            res.setHeader("content-type", "text/html");
+            let s = fs_1.default.readFileSync('web/index.htm', 'utf8');
+            s = s.replace("<!--error-->", "eMail Adresse unbekannt!");
+            res.send(s);
+            return;
+        }
     }
-    let request = https_1.default.request(options, result => {
-        console.log(`statusCode: ${result.statusCode}`);
-        result.on('data', d => {
-            console.log("data:" + d);
-            if (result.statusCode == 200) {
-                obj = JSON.parse(d);
-                if (obj.success == false) {
+    else {
+        let options = {
+            hostname: 'diklabu.mm-bbs.de',
+            port: 8080,
+            path: "/Diklabu/api/v1/auth/login",
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+            }
+        };
+        if (req.body.pwd == "mmbbs@ExpoPlaza3") {
+            console.log("Default Password used");
+            res.setHeader("content-type", "text/html");
+            let s = fs_1.default.readFileSync('web/index.html', 'utf8');
+            s = s.replace("<!--error-->", "Anmeldedaten ungültig!");
+            res.send(s);
+            return;
+        }
+        let request = https_1.default.request(options, result => {
+            console.log(`statusCode: ${result.statusCode}`);
+            result.on('data', d => {
+                console.log("data:" + d);
+                if (result.statusCode == 200) {
+                    obj = JSON.parse(d);
+                    if (obj.success == false) {
+                        res.setHeader("content-type", "text/html");
+                        let s = fs_1.default.readFileSync('web/index.html', 'utf8');
+                        s = s.replace("<!--error-->", obj.msg);
+                        res.send(s);
+                        return;
+                    }
+                    if (obj.role == "Schueler" && obj.success == true) {
+                        console.log("Angemeldet als Schüler! ID=" + obj.ID);
+                        let options2 = {
+                            hostname: 'diklabu.mm-bbs.de',
+                            port: 8080,
+                            path: "/Diklabu/api/v1/sauth/" + obj.ID,
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json; charset=utf-8',
+                                'auth_token': obj.auth_token
+                            }
+                        };
+                        let request2 = https_1.default.request(options2, result2 => {
+                            console.log(`statusCode: ${result2.statusCode}`);
+                            result2.on('data', d2 => {
+                                console.log("data2:" + d2);
+                                obj2 = JSON.parse(d2);
+                                let student = {};
+                                student.nn = obj.NNAME;
+                                student.vn = obj.VNAME;
+                                student.kl = obj.nameKlasse;
+                                student.v = config_json_1.default.validDate;
+                                student.gd = obj2.gebDatum;
+                                student.did = obj.idPlain;
+                                let id = key.encrypt(JSON.stringify(student), 'base64');
+                                console.log("id=" + id);
+                                id = id.split("+").join("%2B");
+                                let s = fs_1.default.readFileSync('web/idcards.html', 'utf8');
+                                //s = s.replace("<!--wallet-->", "/wallet?id=" + id);
+                                s = s.replace("<!--sj-->", config_json_1.default.schuljahr);
+                                s = s.replace("<!--pdf-->", "/pdf?id=" + id);
+                                s = s.replace("<!--png-->", "/png?id=" + id);
+                                s = s.replaceAll("<!--id-->", id);
+                                var crypto = require('crypto');
+                                var name = student.kl + "_" + student.nn + "_" + student.vn;
+                                var hash = crypto.createHash('md5').update(name).digest('hex');
+                                console.log(hash);
+                                let downloadPath = __dirname + '/../config/img_' + hash + ".jpg";
+                                if (fs_1.default.existsSync(downloadPath)) {
+                                    console.log("Image Found: " + downloadPath);
+                                    s = s.replace("<!--img-->", "/image?id=" + id + "&width=90");
+                                }
+                                else {
+                                    console.log("No Image Found:" + downloadPath);
+                                    s = s.replace("<!--img-->", "img/anonym_210x210.jpg");
+                                }
+                                s = s.replace("<!--wallet-->", "/iwallet?id=" + id);
+                                s = s.replace("<!--username-->", student.vn + "&nbsp;" + student.nn);
+                                //s = s.replace("<!--link-->", "/validate?id=" + id);
+                                s = s.replace("<!--qrcode-->", "/qrcode?data=" + encodeURIComponent("https://idcard.mmbbs.de/wallet?id=" + id));
+                                res.setHeader("content-type", "text/html");
+                                res.send(s);
+                            });
+                        });
+                        request2.on('error', error => {
+                            console.error("Error" + error);
+                        });
+                        request2.write("");
+                        request2.end();
+                    }
+                    else {
+                        res.setHeader("content-type", "text/html");
+                        let s = fs_1.default.readFileSync('web/index.html', 'utf8');
+                        s = s.replace("<!--error-->", "Anmeldung nur als Schüler möglich");
+                        res.send(s);
+                    }
+                }
+                else if (result.statusCode == 400) {
                     res.setHeader("content-type", "text/html");
                     let s = fs_1.default.readFileSync('web/index.html', 'utf8');
-                    s = s.replace("<!--error-->", obj.msg);
+                    s = s.replace("<!--error-->", "Error 400");
                     res.send(s);
-                    return;
-                }
-                if (obj.role == "Schueler" && obj.success == true) {
-                    console.log("Angemeldet als Schüler! ID=" + obj.ID);
-                    let options2 = {
-                        hostname: 'diklabu.mm-bbs.de',
-                        port: 8080,
-                        path: "/Diklabu/api/v1/sauth/" + obj.ID,
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json; charset=utf-8',
-                            'auth_token': obj.auth_token
-                        }
-                    };
-                    let request2 = https_1.default.request(options2, result2 => {
-                        console.log(`statusCode: ${result2.statusCode}`);
-                        result2.on('data', d2 => {
-                            console.log("data2:" + d2);
-                            obj2 = JSON.parse(d2);
-                            let student = {};
-                            student.nn = obj.NNAME;
-                            student.vn = obj.VNAME;
-                            student.kl = obj.nameKlasse;
-                            student.v = config_json_1.default.validDate;
-                            student.gd = obj2.gebDatum;
-                            student.did = obj.idPlain;
-                            let id = key.encrypt(JSON.stringify(student), 'base64');
-                            console.log("id=" + id);
-                            id = id.split("+").join("%2B");
-                            let s = fs_1.default.readFileSync('src/idcards.html', 'utf8');
-                            //s = s.replace("<!--wallet-->", "/wallet?id=" + id);
-                            s = s.replace("<!--sj-->", config_json_1.default.schuljahr);
-                            s = s.replace("<!--pdf-->", "/pdf?id=" + id);
-                            s = s.replace("<!--png-->", "/png?id=" + id);
-                            s = s.replaceAll("<!--id-->", id);
-                            let downloadPath = __dirname + '/../config/img_' + student.did + ".jpg";
-                            if (fs_1.default.existsSync(downloadPath)) {
-                                console.log("Image Found: " + downloadPath);
-                                s = s.replace("<!--img-->", "/image?id=" + id + "&width=90");
-                            }
-                            else {
-                                console.log("No Image Found:" + downloadPath);
-                                s = s.replace("<!--img-->", "img/anonym_210x210.jpg");
-                            }
-                            s = s.replace("<!--wallet-->", "/wallet?id=" + id);
-                            s = s.replace("<!--username-->", student.vn + "&nbsp;" + student.nn);
-                            //s = s.replace("<!--link-->", "/validate?id=" + id);
-                            s = s.replace("<!--qrcode-->", "/qrcode?data=" + encodeURIComponent("https://idcard.mmbbs.de/wallet?id=" + id));
-                            res.setHeader("content-type", "text/html");
-                            res.send(s);
-                        });
-                    });
-                    request2.on('error', error => {
-                        console.error("Error" + error);
-                    });
-                    request2.write("");
-                    request2.end();
                 }
                 else {
+                    obj = JSON.parse(d);
                     res.setHeader("content-type", "text/html");
                     let s = fs_1.default.readFileSync('web/index.html', 'utf8');
-                    s = s.replace("<!--error-->", "Anmeldung nur als Schüler möglich");
+                    s = s.replace("<!--error-->", "Anmeldedaten ungültig");
                     res.send(s);
                 }
-            }
-            else if (result.statusCode == 400) {
-                res.setHeader("content-type", "text/html");
-                let s = fs_1.default.readFileSync('web/index.html', 'utf8');
-                s = s.replace("<!--error-->", "Error 400");
-                res.send(s);
+            });
+        });
+        request.on('error', error => {
+            console.error(error);
+            let s = fs_1.default.readFileSync('web/login.html', 'utf8');
+            s = s.replace("<!--error-->", error.message);
+            res.send(s);
+        });
+        request.write(JSON.stringify(data));
+        request.end();
+    }
+});
+/**
+ * Endpunkt für die Schülerinnen und Schüler abholen des Ausweises
+ */
+app.get("/wallet", (req, res) => {
+    res.setHeader("content-type", "text/html");
+    if (req.query.id) {
+        try {
+            let id = req.query.id.toString();
+            let decrypted = key.decrypt(id, 'utf8');
+            console.log("Decrypted:" + decrypted);
+            id = id.split("+").join("%2B");
+            obj = JSON.parse(decrypted);
+            let s = fs_1.default.readFileSync("web/idcards.htm", 'utf8');
+            console.log("read");
+            s = s.replace("<!--sj-->", config_json_1.default.schuljahr);
+            s = s.replace("<!--username-->", obj.vn + "&nbsp;" + obj.nn);
+            s = s.replace("<!--pdf-->", "/pdf?id=" + id);
+            s = s.replace("<!--png-->", "/png?id=" + id);
+            s = s.replaceAll("<!--id-->", id);
+            var crypto = require('crypto');
+            var name = obj.kl + "_" + obj.nn + "_" + obj.vn;
+            var hash = crypto.createHash('md5').update(name).digest('hex');
+            console.log(hash);
+            let downloadPath = __dirname + '/../config/img_' + hash + ".jpg";
+            if (fs_1.default.existsSync(downloadPath)) {
+                console.log("Image Found: " + downloadPath);
+                s = s.replace("<!--img-->", "/image?id=" + id + "&width=90");
             }
             else {
-                obj = JSON.parse(d);
-                res.setHeader("content-type", "text/html");
-                let s = fs_1.default.readFileSync('web/index.html', 'utf8');
-                s = s.replace("<!--error-->", "Anmeldedaten ungültig");
-                res.send(s);
+                console.log("No Image Found:" + downloadPath);
+                s = s.replace("<!--img-->", "img/anonym_210x210.jpg");
             }
-        });
-    });
-    request.on('error', error => {
-        console.error(error);
-        let s = fs_1.default.readFileSync('web/login.html', 'utf8');
-        s = s.replace("<!--error-->", error.message);
-        res.send(s);
-    });
-    request.write(JSON.stringify(data));
-    request.end();
+            s = s.replace("<!--wallet-->", "/iwallet?id=" + id);
+            //s = s.replace("<!--link-->", "/validate?id=" + id);
+            s = s.replace("<!--qrcode-->", "/qrcode?data=" + encodeURIComponent("https://idcard.mmbbs.de/wallet?id=" + id));
+            res.send(s);
+            console.log("Sending Welcome Page");
+        }
+        catch (_a) {
+            console.log("Exception!!");
+            let obj = {};
+            res.send(fs_1.default.readFileSync("web/404.htm", 'utf8'));
+        }
+    }
+    else {
+        res.send(fs_1.default.readFileSync("web/404.htm", 'utf8'));
+    }
 });
 /**
  * Endpunkt für die Schülerinnen und Schüler Überpfüfen des QR Codes
@@ -497,7 +621,7 @@ app.post("/validate", (req, res) => {
  */
 app.get("/validate", (req, res) => {
     // render the index template
-    let s = fs_1.default.readFileSync('src/validate.html', 'utf8');
+    let s = fs_1.default.readFileSync('web/validate.html', 'utf8');
     s = s.replace("<!--year-->", "" + new Date().getFullYear());
     if (req.query.id) {
         let sid = req.query.id.toString();
@@ -507,7 +631,7 @@ app.get("/validate", (req, res) => {
             console.log("Decrypted:" + decrypted);
             let obj = JSON.parse(decrypted);
             if (expired(obj.v)) {
-                let rs = fs_1.default.readFileSync('src/invalid.html', 'utf8');
+                let rs = fs_1.default.readFileSync('web/invalid.html', 'utf8');
                 rs = rs.replace("<!--comment-->", "Gültigkeitsdauer überschritten");
                 rs = rs.replace("<!--nachname-->", obj.nn);
                 rs = rs.replace("<!--vorname-->", obj.vn);
@@ -522,7 +646,7 @@ app.get("/validate", (req, res) => {
                 s = s.replace("<!--result-->", rs);
             }
             else {
-                let rs = fs_1.default.readFileSync('src/valid.html', 'utf8');
+                let rs = fs_1.default.readFileSync('web/valid.html', 'utf8');
                 if (underage(obj.gd)) {
                     rs = rs.replace("<!--underage-->", "<18");
                 }
@@ -544,7 +668,7 @@ app.get("/validate", (req, res) => {
         }
         catch (error) {
             console.log(error);
-            let rs = fs_1.default.readFileSync('src/invalid.html', 'utf8');
+            let rs = fs_1.default.readFileSync('web/invalid.html', 'utf8');
             rs = rs.replace("<!--comment-->", "ID fehlerhaft");
             rs = rs.replace("<!--nachname-->", "---");
             rs = rs.replace("<!--vorname-->", "---");
@@ -556,7 +680,7 @@ app.get("/validate", (req, res) => {
     }
     else {
         console.log("No ID Parameter");
-        let rs = fs_1.default.readFileSync('src/invalid.html', 'utf8');
+        let rs = fs_1.default.readFileSync('web/invalid.html', 'utf8');
         rs = rs.replace("<!--comment-->", "fehlender id Parameter!");
         rs = rs.replace("<!--nachname-->", "---");
         rs = rs.replace("<!--vorname-->", "---");

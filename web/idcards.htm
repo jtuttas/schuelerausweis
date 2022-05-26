@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Digitaler Schülerausweis der Multi Media Berufsbildenden Schulen Hannover">
+    <title>Schülerausweis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="id-card.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+        crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <header
+            class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-2 mb-2 border-bottom">
+            <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+                <img src="img/mmbbs-logo.svg" alt="" height="60" onerror="this.onerror=null; this.src='img/mmbbs-logo.svg'">
+            </a>
+
+            <div class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                <div class="avatar mx-3 mt-1">
+                    <a id="upload" href="#">
+                        <div class="avatar-position">
+                            <div class="avatar-overlay">
+                                <div class="spinner-border" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <i class="bi bi-upload"></i>
+                            </div>
+                        <img id="image" class="rounded" src="<!--img-->" width="90px">
+                        </div>
+                    </a>
+                </div>
+                <span>
+                    Angemeldet als:
+                    <p style="margin-bottom: 10px;"><b><!--username--></b></p>
+                    
+                </span>
+                              
+                <input type="file" accept="image/png, image/jpeg" capture="camera" id="file" name="file" onchange="UploadAvatar(this)"/>
+            </div>
+        </header>
+    </div>
+
+    <main>
+
+        <section class="py-2 text-center container mb-4">
+            <div class="row py-1 mb-5">
+                <div class="col-lg-6 col-md-8 mx-auto">
+                    <h1 class="fw-light">Schülerausweis
+                    </h1>
+                    <h2 class="lead text-muted">Schuljahr
+                        <!--sj-->
+                    </h2>
+                </div>
+            </div>
+        </section>
+
+        <div class="sec py-5">
+            <div class="container">
+
+                <div class="row justify-content-center">
+
+                    <div class="mb-4 col-11 col-md-5 col-xl-4">
+                        <div class="id-card mb-4">
+                            <a id="d-png" href="<!--png-->" title="Download als PNG-Datei" download><i
+                                    class="bi bi-file-earmark-image-fill" style="font-size: 2rem"></i></a>
+                            <a id="d-pdf" href="<!--pdf-->" title="Download als PDF-Datei"><i
+                                    class="bi bi-file-earmark-pdf-fill" style="font-size: 2rem"></i></a>
+                            <img class=" shadow-lg" src="img/v_ausweis.png" width="100%" alt="Muster Schülerausweis">
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="row justify-content-center">
+                            <div id="qco" class="col-md-4 mb-4 text-center">
+                                <div class="qr-code p-1 rounded mb-3">
+                                    <img src="<!--qrcode-->" width="200px">
+                                </div>
+                                <a href="<!--wallet-->"><img src="img/apple-wallet.png" width="150px"></a>
+                            </div>
+
+                            <div class="col-11 col-md-8 anleitung text-white">
+                                <span><strong>Anleitung: </strong></span>
+                                <ol class="small">
+                                    <li>Scannen Sie den QR-Code mit Ihrem Handy (Kamera).</li>
+                                    <li>Fügen Sie den digitalen Ausweis Ihrem Wallet hinzu.*</li>
+                                    <li>Zeigen Sie den Ausweis in der Wallet vor, wenn Sie aufgefordert werden Ihren
+                                        Schülerausweis vorzuzeigen.</li>
+                                </ol>
+                                <span class="small"><em>* Android-Usern empfehlen wir die App
+                                        <a href="https://play.google.com/store/apps/details?id=io.walletpasses.android&hl=de"
+                                            target="_blank">WalletPasses</a></em></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+    </main>
+
+    <footer class="text-muted py-5">
+        <div class="container">
+            <p class="mb-1"><a href="https://www.mmbbs.de/impressum/Impressum">Impressum</a></p>
+
+        </div>
+    </footer>
+    <script type="text/javascript">
+        $(document).ready(function (e) {
+
+            // Upload-Icon ausgeben, wenn Platzhalterfoto vorhanden
+            if($("#image").attr('src').indexOf("anonym") != -1) {
+                $('.avatar-overlay i').show();
+            }
+
+            $('#upload').on('click', function (e) {
+                e.preventDefault();
+                $("#file:hidden").trigger('click');
+            });
+        });
+
+        function UploadAvatar(img) {   
+ 
+        //Prüfe ob HTML5 zulässig ist
+        if (typeof (img.files) != "undefined") {
+
+            //Initiiere FileReader
+            var reader = new FileReader();
+
+            //Content aus FileReader auslesen
+            reader.readAsDataURL(img.files[0]);
+            reader.onload = function (e) {
+
+                //Initiiere JavaScript Image Objekt
+                var image = new Image();
+                image.src = e.target.result;
+                       
+                //Prüfe Auflösung
+                image.onload = function () {
+                    var height = this.height;
+                    var width = this.width;
+                    if (height < 5000 || width < 5000) {
+                        
+                        // Upload intiieren
+                        console.log('Start Upload');
+                    
+                        var file_data = img.files[0];
+                        var form_data = new FormData();
+                        form_data.append('image', file_data);
+                        $('.avatar-overlay i').hide();
+                        $('.spinner-border').fadeIn();
+                                        
+                        $.ajax({
+                                url: '/image?id=<!--id-->', // point to server-side controller method
+                                dataType: 'json', // what to expect back from the server
+                                cache: false,
+                                contentType: false,
+                                processData: false,
+                                data: form_data,
+                                type: 'post',
+                            success: function (response) {
+                                console.log('Receive:' + JSON.stringify(response));
+                                if (response.sucess) {
+                                    $('.spinner-border').fadeOut();
+
+                                    // IMG vom Server neu laden, workaround chaching
+                                    var d = new Date();
+                                    $("#image").attr("src","/image?id=<!--id-->&"+d.getTime());
+                                }
+                            },
+                            error: function (response) {
+                                console.log('Receive:' + JSON.stringify(response));
+                                $('.avatar-overlay i').hide();
+                            }
+                        });
+                    } else {
+                        alert("Die Bildauflösung muss kleiner 5000px x 5000px sein.");
+                        return false;
+                    }
+                } 
+            }
+        } else {
+            alert("Der Browser unterstützt nicht HTML5.");
+            return false;
+        }       
+    }
+    </script>
+</body>
+
+</html>
