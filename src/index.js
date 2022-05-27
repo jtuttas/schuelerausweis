@@ -561,12 +561,12 @@ app.get("/wallet", (req, res) => {
             id = id.split("+").join("%2B");
             obj = JSON.parse(decrypted);
             let s = fs_1.default.readFileSync("web/idcards.htm", 'utf8');
-            console.log("read");
+            //console.log("read:"+s.length);
             s = s.replace("<!--sj-->", config_json_1.default.schuljahr);
             s = s.replace("<!--username-->", obj.vn + "&nbsp;" + obj.nn);
             s = s.replace("<!--pdf-->", "/pdf?id=" + id);
             s = s.replace("<!--png-->", "/png?id=" + id);
-            s = s.replaceAll("<!--id-->", id);
+            s = s.replace(/<!--id-->/g, id);
             var crypto = require('crypto');
             var name = obj.kl + "_" + obj.nn + "_" + obj.vn;
             var hash = crypto.createHash('md5').update(name).digest('hex');
@@ -586,8 +586,8 @@ app.get("/wallet", (req, res) => {
             res.send(s);
             console.log("Sending Welcome Page");
         }
-        catch (_a) {
-            console.log("Exception!!");
+        catch (e) {
+            console.log("Exception!!" + JSON.stringify(e));
             let obj = {};
             res.send(fs_1.default.readFileSync("web/404.htm", 'utf8'));
         }
