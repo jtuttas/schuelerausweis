@@ -2,7 +2,6 @@ FROM ubuntu:latest
 RUN apt update
 RUN apt -y upgrade
 RUN apt install -y nodejs
-RUN node -v
 RUN apt install -y npm
 ENV NODE_ENV=production
 WORKDIR /usr/src/app
