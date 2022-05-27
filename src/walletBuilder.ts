@@ -102,7 +102,7 @@ export class WalletBuilder {
 
         doc.image('./web/img/Ausweis_PDF.png', 20, 20, { width: config.pdf.width || 440 });
         
-        let downloadPath = getDownloadPath(s);
+        let downloadPath = getDownloadPath(s)
         if (fs.existsSync(downloadPath)) {
             doc.image(downloadPath, config.pdf.idImageX || 167.2, config.pdf.idImageY || 60.4, { width: config.pdf.idImageWidth || 59.7, height: config.pdf.idImageHeight || 59.7 });
         }
@@ -247,7 +247,7 @@ export class WalletBuilder {
 
     }
 }
-function genAlignment(context: canvas.NodeCanvasRenderingContext2D, arg1: string) {
+function genAlignment(context: any, arg1: string) {
     switch (arg1) {
         case "start":
             context.textAlign = "start"
