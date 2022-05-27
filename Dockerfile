@@ -3,7 +3,6 @@ ENV NODE_ENV=production
 WORKDIR /usr/src/app
 COPY ["package.json", "npm-shrinkwrap.json*", "./"]
 RUN node -v
-RUN npm install @mapbox/node-pre-gyp --save
 RUN npm install --production && mv node_modules ../
 COPY . .
 VOLUME ["/usr/src/app/config"]
