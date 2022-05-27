@@ -22,7 +22,7 @@
     "@types/sharp": "^0.29.2",
     "@types/sqlite3": "^3.1.8",
     "canvas": "^2.8.0",
-    "csv-parse": "^5.1.0",
+    "csv-parse": "^5.0.4",
     "date-fns": "^2.21.1",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
