@@ -1,6 +1,4 @@
-FROM ubuntu:20:04
-RUN apt update
-RUN apt install -y nodejs npm
+FROM node:16
 ENV NODE_ENV=production
 WORKDIR /usr/src/app
 COPY ["package.json", "npm-shrinkwrap.json*", "./"]
