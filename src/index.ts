@@ -18,7 +18,7 @@ import request from "request";
 import { genPDFTicket, genWalletTicket, handleGet, handlePost, handlePut } from "./Event";
 import fileUpload from "express-fileupload"
 import sh from "sharp"
-import { parse } from 'csv-parse/sync';
+import { parse } from 'csv-parse/lib/sync';
 import { MailSender } from "./MailSender";
 import { MailObject } from "./MailObject";
 
@@ -684,7 +684,7 @@ app.get("/wallet", (req, res) => {
             let obj: any = {};
             res.send(fs.readFileSync("web/404.htm", 'utf8'));
         }
-       
+    
     }
     else {
         res.send(fs.readFileSync("web/404.htm", 'utf8'));
