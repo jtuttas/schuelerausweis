@@ -1,7 +1,7 @@
 FROM ubuntu:latest
 RUN apt update
 RUN apt -y upgrade
-RUN apt install -y nodejs
+RUN apt install -y nodejs npm
 ENV NODE_ENV=production
 WORKDIR /usr/src/app
 COPY ["package.json", "npm-shrinkwrap.json*", "./"]
