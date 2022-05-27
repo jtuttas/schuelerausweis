@@ -118,6 +118,4 @@ docker run --rm -v c:/config:/usr/src/app/config -v web:/usr/src/app/web -it -p 
 
 ![powerautomate](powerautomate.png)
 
-## Ideen
 
-- Upload / Download von einem Bild in der Schüleransicht

@@ -18,7 +18,7 @@ import request from "request";
 import { genPDFTicket, genWalletTicket, handleGet, handlePost, handlePut } from "./Event";
 import fileUpload from "express-fileupload"
 import sh from "sharp"
-import { parse } from 'csv-parse/sync';
+import { parse } from 'csv-parse/lib/sync';
 import { MailSender } from "./MailSender";
 import { MailObject } from "./MailObject";
 
