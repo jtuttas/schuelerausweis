@@ -2,11 +2,10 @@ FROM ubuntu:latest
 RUN apt update
 RUN apt -y upgrade
 RUN apt install -y nodejs
-RUN apt install -y npm
 ENV NODE_ENV=production
 WORKDIR /usr/src/app
 COPY ["package.json", "npm-shrinkwrap.json*", "./"]
-RUN echo "los!"
+RUN node -v
 RUN npm install @mapbox/node-pre-gyp --save
 RUN npm install --production && mv node_modules ../
 COPY . .
