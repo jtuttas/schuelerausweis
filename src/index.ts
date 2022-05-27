@@ -577,7 +577,7 @@ app.post("/wallet", (req, res) => {
                                 s = s.replace("<!--wallet-->", "/iwallet?id=" + id);
                                 s = s.replace("<!--username-->", student.vn + "&nbsp;" + student.nn);
                                 //s = s.replace("<!--link-->", "/validate?id=" + id);
-                                s = s.replace("<!--qrcode-->", "/qrcode?data=" + encodeURIComponent("https://idcard.mmbbs.de/wallet?id=" + id));
+                                s = s.replace("<!--qrcode-->", "/qrcode?data=" + encodeURIComponent(req.protocol + '://' + req.get('host') + "/validate?id=" + id));
 
                                 res.setHeader("content-type", "text/html");
                                 res.send(s);
@@ -671,7 +671,7 @@ app.get("/wallet", (req, res) => {
 
             s = s.replace("<!--wallet-->", "/iwallet?id=" + id);
             //s = s.replace("<!--link-->", "/validate?id=" + id);
-            s = s.replace("<!--qrcode-->", "/qrcode?data=" + encodeURIComponent("https://idcard.mmbbs.de/wallet?id=" + id));
+           s = s.replace("<!--qrcode-->", "/qrcode?data=" + encodeURIComponent(req.protocol + '://' + req.get('host') + "/validate?id=" + id));
             res.send(s);
             console.log("Sending Welcome Page");
             
