@@ -1,5 +1,4 @@
-FROM ubuntu:latest
-RUN curl -s https://deb.nodesource.com/setup_16.x | sudo bash
+FROM ubuntu:20:04
 RUN apt update
 RUN apt install -y nodejs npm
 ENV NODE_ENV=production
