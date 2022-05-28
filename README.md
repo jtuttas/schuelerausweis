@@ -74,9 +74,19 @@ Die Datei **config.json** hat dabei folgende Einträge.
 - **png**: Configuration für die PNG Ansicht
 - **pdf**: Configuration für die pdf Ansicht!
 
+Befindet sich im Ordner config eine Datei **students.csv**, so wird diese Datei als Datenbasis genommen. Fehlt diese Datei so erfolgt die Authentifizierung über das diklabu. Die Datei muss dabei folgende Einträge (in der jeweiligen Reihenfolge) aufweisen und als latin1 (ISO 8859-1) gespeichert sein.
+
+![studnets](students.png)
+
+- Spalte A: Email Adresse des Schülers (über diese weist er sich aus und bekommt einen Einladungslink zugesandt)
+- Spalte B: Vorname
+- Spalte C: Nachname
+- Spalte D: Geburtstag im Format YYYY-MM-DD
+- Spalte E: Klasse
+
 ## Starten des Server
 
-zunächst müssen die notwendigen Abhängigkeiten installiert werden. Dieses geschieht über:
+Zunächst müssen die notwendigen Abhängigkeiten installiert werden. Dieses geschieht über:
 
 ```
 npm install

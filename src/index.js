@@ -30,10 +30,30 @@ if (fs_1.default.existsSync("config/students.csv")) {
         trim: true
     });
     //console.log(JSON.stringify(records));
-    records.forEach(element => {
-        students[element[0]] = element;
+    var p = 0;
+    records.forEach((element) => {
+        if (element[0].length == 0) {
+            console.log("Keine EMail Adresse im Datensatz " + JSON.stringify(element));
+        }
+        else if (element[1].length == 0) {
+            console.log("Kein Vorname im Datensatz " + JSON.stringify(element));
+        }
+        else if (element[2].length == 0) {
+            console.log("Kein Nachname im Datensatz " + JSON.stringify(element));
+        }
+        else if (element[3].length == 0) {
+            console.log("Kein Geburtsdatum im Datensatz " + JSON.stringify(element));
+        }
+        else if (element[4].length == 0) {
+            console.log("Keine Klassenbezeichnung im Datensatz " + JSON.stringify(element));
+        }
+        else {
+            students[element[0]] = element;
+            p++;
+        }
     });
-    console.log(JSON.stringify(students));
+    //console.log(JSON.stringify(students));
+    console.log(p + " Datensatze von " + records.length + " verareitet");
     mailsender = new MailSender_1.MailSender();
 }
 // Für Testzwecke
