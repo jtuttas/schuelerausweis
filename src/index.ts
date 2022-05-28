@@ -53,7 +53,7 @@ if (fs.existsSync("config/students.csv")) {
             console.log("Keine Klassenbezeichnung im Datensatz " + JSON.stringify(element));            
         }
         else {
-            students[element[0]] = element;
+            students[element[0].toLocaleLowerCase()] = element;
             p++;
         }
     });
@@ -450,7 +450,7 @@ app.post("/wallet", (req, res) => {
     let obj2: any = {};
 
     let user: string = req.body.user
-    user = user.trim()
+    user = user.trim().toLowerCase()
     let pwd: string = req.body.pwd
     //pwd =decodeURIComponent(pwd)
     let data = {
