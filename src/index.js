@@ -402,7 +402,7 @@ app.post("/wallet", (req, res) => {
         "kennwort": pwd
     };
     console.log("data:" + JSON.stringify(data));
-    if (students.size != 0) {
+    if (fs_1.default.existsSync("config/students.csv")) {
         if (students[data.benutzer] != undefined) {
             console.log("Found " + data.benutzer);
             res.setHeader("content-type", "text/html");
