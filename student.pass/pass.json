@@ -1,6 +1,6 @@
 {
-  "organizationName": "Multi Media Berufsbildenden Schulen Hannover",
-  "backgroundColor": "rgb(20,81,137)",
+  "organizationName": "Berufsbildende Schulen Hannah Arendt",
+  "backgroundColor": "rgb(124,134,144)",
   "foregroundColor": "rgb(255,255,255)",
   "labelColor":"rgb(255,255,255)",
   "sharingProhibited": true,
@@ -60,22 +60,22 @@
       {
         "key" : "terms",
         "label" : "Nutzungsbedingungen",
-        "value" : "Digitaler Schülerausweis der Multi Media Berufsbildenden Schulen Hannover. Ein bestehender physischer Schülerausweis wird durch den digitalen Ausweis ersetzt.\n\nMulti Media Berufsbildenden Schulen Hannover (MMBbS)\nExpo Plaza 3\n30539 Hannover\n\nTelefon: +49 (0)511-64619877\nE-Mail: info@mmbbs.de\n\nSchulleiter StD Jörg Sönckens"
+        "value" : "Digitaler Schülerausweis der Berufsbildende Schulen Hannah Arendt Hannover. Ein bestehender physischer Schülerausweis wird durch den digitalen Ausweis ersetzt.\n\nBerufsbildende Schulen Hannah Arendt Hannover\nLavesallee 16\n30169 Hannover\n\nTelefon: 0511 98091-0\nE-Mail: info@bbsha.de\n\nSchulleiter OStD Carsten Roisch"
       },
       {
         "key" : "website",
         "label" : "Website",
-        "value" : "http://www.mmbbs.de",
-        "attributedValue": "<a href='http://www.mmbbs.de'>http://www.mmbbs.de</a>"
+        "value" : "https://bbs-hannah-arendt.de/",
+        "attributedValue": "<a href='https://bbs-hannah-arendt.de/'>https://bbs-hannah-arendt.de/</a>"
       }
     ]
   },
   "serialNumber": "60bf9c4490bba",
   "formatVersion": 1,
-  "description": "Schülerausweis der Multi Media Berufsbildenden Schulen Hannover",
-  "passTypeIdentifier": "pass.de.mm-bbs",
+  "description": "Schülerausweis der Berufsbildende Schulen Hannah Arendt Hannover",
+  "passTypeIdentifier": "pass.de.bbs-hannah-arendt",
   "teamIdentifier": "N84N4RRXYF",
-  "webServiceURL": "https://www.mmbbs.de",
+  "webServiceURL": "https://www.bbs-hannah-arendt.de",
   "authenticationToken": "vxwxd7J8AlNNFPS8k0a0FfUFtq0ewzFdc",
   "expirationDate": "2021-08-31T00:00:00+00:00"
 }

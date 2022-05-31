@@ -13,7 +13,7 @@ a[type="button"] {
   position: absolute;
   top: -50px;
   right: 0px;
-  color: #145189;
+  color: #8A929C;
 }
 
 .anleitung a {
@@ -32,7 +32,7 @@ a[type="button"] {
   position: absolute;
   top: -50px;
   right: 35px;
-  color: #145189;
+  color: #8A929C;
 }
 
 .avatar {
@@ -90,11 +90,11 @@ input#file {
 }
 
 .sec {
-  background: #145189;
+  background: #8A929C;
 }
 
 .btn-primary {
-  background: #145189;
+  background: #8A929C;
   border: none;
 }
 
