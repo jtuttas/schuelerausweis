@@ -24,7 +24,7 @@ class Event {
         this.name = name;
         this.vorname = vorname;
         this.email = email;
-        this.uuid = uuid_1.v4();
+        this.uuid = (0, uuid_1.v4)();
     }
     arrived(dbm) {
         dbm.updateEvent(this).then((value) => {
@@ -58,7 +58,7 @@ class Event {
     }
     toWallet(res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const examplePass = yield passkit_generator_1.createPass({
+            const examplePass = yield (0, passkit_generator_1.createPass)({
                 model: "./event.pass",
                 certificates: {
                     wwdr: "./config/AppleWWDRCA.pem",
@@ -355,7 +355,7 @@ function handlePost(req, res) {
         res.send(JSON.stringify(event));
         return;
     }
-    event.uuid = uuid_1.v4();
+    event.uuid = (0, uuid_1.v4)();
     console.log("UUID=" + event.uuid);
     let dbm = new DBManager_1.DBManager();
     dbm.readEvent(event.name, event.vorname, event.email, event.eventName).then((v) => {

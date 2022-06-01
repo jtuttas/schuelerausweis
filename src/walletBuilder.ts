@@ -161,7 +161,7 @@ export class WalletBuilder {
                 "thumbnail@2x.png": avatar,
             };
             const examplePass = await createPass({
-                model: "./student.pass",
+                model: "./config/student.pass",
                 certificates: {
                     wwdr: "./config/AppleWWDRCA.pem",
                     signerCert: "./config/signerCert.pem",

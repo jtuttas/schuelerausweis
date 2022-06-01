@@ -28,7 +28,7 @@ Der Ausweis wird in Form einer Grafik (png), als pdf oder als IOS Wallet heraus 
 
 ## Konfiguration
 
-Die notwendigen Schlüssel befinden sich im Verzeichnis config.
+Alle wichtigen Dateien befinden sich im Ordner **config**. Hier finden sich die notwendigen Schlüssel für die Ver- / Entschlüsselung, wie auch die Zertifikate für die https Verbindung und die Dateien für das Apple Wallet im Ordner **student.pass**.
 
 ![config](configFiles.png)
 

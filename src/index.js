@@ -24,7 +24,7 @@ let students = {};
 let mailsender;
 if (fs_1.default.existsSync("config/students.csv")) {
     console.log("Students.CSV gefunden, importiere Daten");
-    const records = sync_1.parse(fs_1.default.readFileSync("config/students.csv", 'latin1'), {
+    const records = (0, sync_1.parse)(fs_1.default.readFileSync("config/students.csv", 'latin1'), {
         delimiter: ';',
         from_line: 2,
         trim: true
@@ -61,10 +61,10 @@ if (fs_1.default.existsSync("config/students.csv")) {
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 let rsakey = fs_1.default.readFileSync("config/ausweis.private");
 const key = new node_rsa_1.default(rsakey);
-const app = express_1.default();
+const app = (0, express_1.default)();
 const port = 8080; // default port to listen
 console.log(__dirname);
-app.use(express_fileupload_1.default());
+app.use((0, express_fileupload_1.default)());
 app.use(express_1.default.static(__dirname + '/../web'));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
@@ -149,13 +149,13 @@ app.post('/image', function (req, res) {
             }
             try {
                 let inStream = fs_1.default.createReadStream(uploadPath);
-                var transformer = sharp_1.default()
+                var transformer = (0, sharp_1.default)()
                     .resize(500, 500)
                     .on('info', function (info) {
                     console.log('Image height is ' + info.height);
                 });
                 let outStream = fs_1.default.createWriteStream(scaledPath, { flags: "w" });
-                var transformer = sharp_1.default()
+                var transformer = (0, sharp_1.default)()
                     .resize(500, 500)
                     .on('info', function (info) {
                     console.log('Image height is ' + info.height);
@@ -233,7 +233,7 @@ app.get('/image', function (req, res) {
                     let w = Number(req.query.width.toString());
                     console.log("Start resize:" + w);
                     let inStream = fs_1.default.createReadStream(downloadPath);
-                    var transformer = sharp_1.default()
+                    var transformer = (0, sharp_1.default)()
                         .resize(w)
                         .on('info', function (info) {
                         console.log('Image height is ' + info.height);
@@ -657,12 +657,12 @@ app.get("/validate", (req, res) => {
                 rs = rs.replace("<!--vorname-->", obj.vn);
                 rs = rs.replace("<!--klasse-->", obj.kl);
                 if (obj.hasOwnProperty("gd")) {
-                    rs = rs.replace("<!--birthday-->", date_fns_1.format(new Date(obj.gd), "dd.MM.yyyy"));
+                    rs = rs.replace("<!--birthday-->", (0, date_fns_1.format)(new Date(obj.gd), "dd.MM.yyyy"));
                 }
                 else {
                     rs = rs.replace("<!--birthday-->", "unknown");
                 }
-                rs = rs.replace("<!--date-->", date_fns_1.format(new Date(obj.v), "dd.MM.yyyy"));
+                rs = rs.replace("<!--date-->", (0, date_fns_1.format)(new Date(obj.v), "dd.MM.yyyy"));
                 s = s.replace("<!--result-->", rs);
             }
             else {
@@ -677,12 +677,12 @@ app.get("/validate", (req, res) => {
                 rs = rs.replace("<!--vorname-->", obj.vn);
                 rs = rs.replace("<!--klasse-->", obj.kl);
                 if (obj.hasOwnProperty("gd")) {
-                    rs = rs.replace("<!--birthday-->", date_fns_1.format(new Date(obj.gd), "dd.MM.yyyy"));
+                    rs = rs.replace("<!--birthday-->", (0, date_fns_1.format)(new Date(obj.gd), "dd.MM.yyyy"));
                 }
                 else {
                     rs = rs.replace("<!--birthday-->", "unknown");
                 }
-                rs = rs.replace("<!--date-->", date_fns_1.format(new Date(obj.v), "dd.MM.yyyy"));
+                rs = rs.replace("<!--date-->", (0, date_fns_1.format)(new Date(obj.v), "dd.MM.yyyy"));
                 s = s.replace("<!--result-->", rs);
             }
         }

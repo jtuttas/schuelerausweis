@@ -30,7 +30,7 @@ class ID {
             }
         };
         return new Promise((resolve, reject) => {
-            https_1.request(options, (res) => {
+            (0, https_1.request)(options, (res) => {
                 if (res.statusCode == 204) {
                     resolve(JSON.parse("{}"));
                 }

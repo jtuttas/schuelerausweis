@@ -60,12 +60,12 @@ class WalletBuilder {
             context.font = config.png.validFont || 'bold 22pt Sans-serif';
             genAlignment(context, config.png.validAlign || "start");
             context.fillStyle = config.png.validColor || '#16538C';
-            context.fillText(date_fns_1.format(new Date(s.v), "dd.MM.yyyy"), config.png.validX || 753, config.png.validY || 450);
+            context.fillText((0, date_fns_1.format)(new Date(s.v), "dd.MM.yyyy"), config.png.validX || 753, config.png.validY || 450);
             context.font = config.png.birthFont || 'bold 22pt Sans-serif';
             genAlignment(context, config.png.birthAlign || "start");
             context.fillStyle = config.png.birthColor || '#16538C';
             if (s.hasOwnProperty("gd")) {
-                context.fillText(date_fns_1.format(new Date(s.gd), "dd.MM.yyyy"), config.png.birthX || 46, config.png.birthY || 595);
+                context.fillText((0, date_fns_1.format)(new Date(s.gd), "dd.MM.yyyy"), config.png.birthX || 46, config.png.birthY || 595);
             }
             else {
                 context.fillText("unknown", config.png.birthX || 46, config.png.birthY || 595);
@@ -106,12 +106,12 @@ class WalletBuilder {
         doc.fillColor(config.pdf.nameColor || "#16538C").text(s.nn.toUpperCase(), config.pdf.nnameX || 32, config.pdf.nnameY || 136);
         doc.font(config.pdf.birthFont || './web/HelveticaNeue-Medium-11.ttf').fontSize(config.pdf.birthFontSize || 6);
         if (s.hasOwnProperty("gd")) {
-            doc.text(date_fns_1.format(new Date(s.gd), "dd.MM.yyyy"), config.pdf.birthX || 252, config.pdf.birthY || 39);
+            doc.text((0, date_fns_1.format)(new Date(s.gd), "dd.MM.yyyy"), config.pdf.birthX || 252, config.pdf.birthY || 39);
         }
         else {
             doc.text("unknown", config.pdf.birthX || 252, config.pdf.birthY || 39);
         }
-        doc.text(date_fns_1.format(new Date(s.v), "dd.MM.yyyy"), config.pdf.validX || 163, config.pdf.validY || 137, {
+        doc.text((0, date_fns_1.format)(new Date(s.v), "dd.MM.yyyy"), config.pdf.validX || 163, config.pdf.validY || 137, {
             width: config.pdf.validWidth || 65,
             align: config.pdf.validAlign || 'right'
         });
@@ -138,12 +138,12 @@ class WalletBuilder {
         return __awaiter(this, void 0, void 0, function* () {
             var config = JSON.parse(fs_1.default.readFileSync("config/config.json", 'utf8'));
             try {
-                const avatar = yield node_fetch_1.default(req.protocol + "://" + req.get("host") + "/image?id=" + id + "&width=90").then((re) => re.buffer());
+                const avatar = yield (0, node_fetch_1.default)(req.protocol + "://" + req.get("host") + "/image?id=" + id + "&width=90").then((re) => re.buffer());
                 const additionalBuffers = {
                     "thumbnail@2x.png": avatar,
                 };
-                const examplePass = yield passkit_generator_1.createPass({
-                    model: "./student.pass",
+                const examplePass = yield (0, passkit_generator_1.createPass)({
+                    model: "./config/student.pass",
                     certificates: {
                         wwdr: "./config/AppleWWDRCA.pem",
                         signerCert: "./config/signerCert.pem",
@@ -213,7 +213,7 @@ class WalletBuilder {
         if (item.key == "birthday") {
             if (s.hasOwnProperty("gd")) {
                 console.log("Found birthday and set it to " + s.gd);
-                item.value = date_fns_1.format(new Date(s.gd), "dd.MM.yyyy");
+                item.value = (0, date_fns_1.format)(new Date(s.gd), "dd.MM.yyyy");
             }
             else {
                 console.log("No birthday set !");
