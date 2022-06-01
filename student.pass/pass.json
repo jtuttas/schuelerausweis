@@ -73,7 +73,7 @@
   "serialNumber": "60bf9c4490bba",
   "formatVersion": 1,
   "description": "Schülerausweis der Berufsbildende Schulen Hannah Arendt Hannover",
-  "passTypeIdentifier": "pass.de.bbs-hannah-arendt",
+  "passTypeIdentifier": "pass.de.mm-bbs",
   "teamIdentifier": "N84N4RRXYF",
   "webServiceURL": "https://www.bbs-hannah-arendt.de",
   "authenticationToken": "vxwxd7J8AlNNFPS8k0a0FfUFtq0ewzFdc",
