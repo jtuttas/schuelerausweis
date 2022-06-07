@@ -58,7 +58,7 @@ if (fs.existsSync("config/students.csv")) {
         }
     });
     //console.log(JSON.stringify(students));
-    console.log(p+" Datensatze von "+records.length+" verareitet");
+    console.log(p+" Datensatze von "+records.length+" verarbeitet");
     
     mailsender = new MailSender();
 
@@ -766,6 +766,21 @@ app.get("/validate", (req, res) => {
                 rs = rs.replace("<!--date-->", format(new Date(obj.v), "dd.MM.yyyy"));
                 s = s.replace("<!--result-->", rs);
             }
+            else if (fs.existsSync("config/students.csv") && !validUser(obj,students)) {
+                let rs: string = fs.readFileSync('web/invalid.html', 'utf8');
+                rs = rs.replace("<!--comment-->", "unbekannte Daten");
+                rs = rs.replace("<!--nachname-->", obj.nn);
+                rs = rs.replace("<!--vorname-->", obj.vn);
+                rs = rs.replace("<!--klasse-->", obj.kl);
+                if (obj.hasOwnProperty("gd")) {
+                    rs = rs.replace("<!--birthday-->", format(new Date(obj.gd), "dd.MM.yyyy"));
+                }
+                else {
+                    rs = rs.replace("<!--birthday-->", "unknown");
+                }
+                rs = rs.replace("<!--date-->", format(new Date(obj.v), "dd.MM.yyyy"));
+                s = s.replace("<!--result-->", rs);
+            }
             else {
                 let rs: string = fs.readFileSync('web/valid.html', 'utf8');
                 if (underage(obj.gd)) {
@@ -947,3 +962,15 @@ https.createServer({
     console.log("Gültigkeitsdatum des Ausweises ist " + config.validDate);
 
 });
+
+
+function validUser(obj: ID, students: any):boolean {
+    var found=false;
+    Object.keys(students).forEach(function (element) {
+        if (obj.vn == students[element][1] && obj.nn == students[element][2] && obj.gd == students[element][3] && obj.kl == students[element][4]) {
+            found= true;
+        }
+    });
+    return found;
+}
+

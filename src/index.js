@@ -53,7 +53,7 @@ if (fs_1.default.existsSync("config/students.csv")) {
         }
     });
     //console.log(JSON.stringify(students));
-    console.log(p + " Datensatze von " + records.length + " verareitet");
+    console.log(p + " Datensatze von " + records.length + " verarbeitet");
     mailsender = new MailSender_1.MailSender();
 }
 // Für Testzwecke
@@ -665,6 +665,21 @@ app.get("/validate", (req, res) => {
                 rs = rs.replace("<!--date-->", (0, date_fns_1.format)(new Date(obj.v), "dd.MM.yyyy"));
                 s = s.replace("<!--result-->", rs);
             }
+            else if (fs_1.default.existsSync("config/students.csv") && !validUser(obj, students)) {
+                let rs = fs_1.default.readFileSync('web/invalid.html', 'utf8');
+                rs = rs.replace("<!--comment-->", "unbekannte Daten");
+                rs = rs.replace("<!--nachname-->", obj.nn);
+                rs = rs.replace("<!--vorname-->", obj.vn);
+                rs = rs.replace("<!--klasse-->", obj.kl);
+                if (obj.hasOwnProperty("gd")) {
+                    rs = rs.replace("<!--birthday-->", (0, date_fns_1.format)(new Date(obj.gd), "dd.MM.yyyy"));
+                }
+                else {
+                    rs = rs.replace("<!--birthday-->", "unknown");
+                }
+                rs = rs.replace("<!--date-->", (0, date_fns_1.format)(new Date(obj.v), "dd.MM.yyyy"));
+                s = s.replace("<!--result-->", rs);
+            }
             else {
                 let rs = fs_1.default.readFileSync('web/valid.html', 'utf8');
                 if (underage(obj.gd)) {
@@ -825,4 +840,13 @@ https_1.default.createServer({
     console.log(`server started at https://localhost:${port}`);
     console.log("Gültigkeitsdatum des Ausweises ist " + config_json_1.default.validDate);
 });
+function validUser(obj, students) {
+    var found = false;
+    Object.keys(students).forEach(function (element) {
+        if (obj.vn == students[element][1] && obj.nn == students[element][2] && obj.gd == students[element][3] && obj.kl == students[element][4]) {
+            found = true;
+        }
+    });
+    return found;
+}
 //# sourceMappingURL=index.js.map
