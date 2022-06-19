@@ -99,14 +99,14 @@
 
                     <div class="col-12">
                         <div class="row justify-content-center">
-                            <div id="qco" class="col-md-4 mb-4 text-center">
+                            <div id="qco" class="col-md-3 mb-3 text-center">
                                 <div class="qr-code p-1 rounded mb-3">
                                     <img src="<!--qrcode-->" width="200px">
                                 </div>
                                 <a href="<!--wallet-->"><img src="img/apple-wallet.png" width="150px"></a>
                             </div>
 
-                            <div class="col-11 col-md-8 anleitung text-white">
+                            <div class="col-8 col-md-6 anleitung text-white">
                                 <span><strong>Anleitung: </strong></span>
                                 <ol class="small">
                                     <li>Scannen Sie den QR-Code mit Ihrem Handy (Kamera).</li>
@@ -116,7 +116,19 @@
                                 </ol>
                                 <span class="small"><em>* Android-Usern empfehlen wir die App
                                         <a href="https://play.google.com/store/apps/details?id=io.walletpasses.android&hl=de"
-                                            target="_blank">WalletPasses</a></em></span>
+                                            target="_blank">WalletPasses</a>bzw. Sie tragen im nebenstehenden Feld ihre GMail Adresse ein und nutzen die App <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.walletnfcrel&hl=de" target="_blank">Google Wallet</a></em></span>
+                            </div>
+                            <div class="col-2 col-md-2 anleitung text-white">
+                                <ol class="small">
+                                <p>Tragen Sie hier ihre gmail Adresse ein, um einen neues Wallet zu erzeugen und fügen Sie es anschließend ihrem Wallet hinzu</p>
+                                </ol>
+                                <form id="form">
+                                    
+                                    <input required type="email" id="email" placeholder="GMail address">
+                                    <input type="submit" value="Create pass" id="submit">
+
+                                </form>
+                                <div id="button"></div>
                             </div>
                         </div>
                     </div>
@@ -141,6 +153,21 @@
             $('#upload').on('click', function (e) {
                 e.preventDefault();
                 $("#file:hidden").trigger('click');
+            });
+
+            document.getElementById('form').addEventListener('submit', e => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                fetch(`/requestgwallet?id=<!--id-->`, {
+                    method: 'POST',
+                    body: `email=${email}`,
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                }).then(res => {
+                    return res.text();
+                }).then(button => {
+                    document.getElementById('button').innerHTML = button;
+                    $("#form").hide()
+                });
             });
         });
 

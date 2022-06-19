@@ -28,7 +28,7 @@ Der Ausweis wird in Form einer Grafik (png), als pdf oder als IOS Wallet heraus 
 
 ## Konfiguration
 
-Alle wichtigen Dateien befinden sich im Ordner **config**. Hier finden sich die notwendigen Schlüssel für die Ver- / Entschlüsselung, wie auch die Zertifikate für die https Verbindung und die Dateien für das Apple Wallet im Ordner **student.pass**.
+Alle wichtigen Dateien befinden sich im Ordner **config**. Hier finden sich die notwendigen Schlüssel für die Ver- / Entschlüsselung, wie auch die Zertifikate für die https Verbindung und die Dateien für das Apple Wallet im Ordner **student.pass** sowie für das Google Wallet im Ordner **gwallet**.
 
 ![config](configFiles.png)
 
@@ -54,6 +54,8 @@ Die Datei **config.json** hat dabei folgende Einträge.
             "pass": "geheim"
         }
     },
+    "gwalletIssuerID":"123456789",
+    "gwalletClass":"ausweis",
     "mailfrom":"tuttas@mmbbs.de",
     "mailSubject":"Ihr Schülerausweis",
     "mailHeader":"Hallo,\r\nmit dieser Mail erhalten Sie ihren Schülerausweis!\r\n\r\n",
@@ -72,6 +74,8 @@ Die Datei **config.json** hat dabei folgende Einträge.
 - **mailSubject**: Betreff der eMail
 - **mailHeader**: Anfang der eMail
 - **mailTail**: Ende der eMail. Zwischen Anfang und Ende der eMail wir die URL zum Abrufen des Ausweises eingefügt
+- **gwalletIssuerID**: Issuer ID für das google Wallet
+- **gwalletClass**: Klasse des google Wallets
 - **png**: Configuration für die PNG Ansicht
 - **pdf**: Configuration für die pdf Ansicht!
 

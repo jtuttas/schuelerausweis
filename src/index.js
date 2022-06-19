@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -19,41 +28,21 @@ const sharp_1 = __importDefault(require("sharp"));
 const sync_1 = require("csv-parse/sync");
 const MailSender_1 = require("./MailSender");
 const MailObject_1 = require("./MailObject");
+const ImportResult_1 = require("./ImportResult");
+const google_auth_library_1 = require("google-auth-library");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var keys = [];
 let students = {};
+const { v1: uuidv1, v4: uuidv4, } = require('uuid');
 let mailsender;
+let adminUUID = uuidv4();
+let adminLoginTimestamp = 0;
 if (fs_1.default.existsSync("config/students.csv")) {
     console.log("Students.CSV gefunden, importiere Daten");
-    const records = (0, sync_1.parse)(fs_1.default.readFileSync("config/students.csv", 'latin1'), {
-        delimiter: ';',
-        from_line: 2,
-        trim: true
-    });
-    //console.log(JSON.stringify(records));
-    var p = 0;
-    records.forEach((element) => {
-        if (element[0].length == 0) {
-            console.log("Keine EMail Adresse im Datensatz " + JSON.stringify(element));
-        }
-        else if (element[1].length == 0) {
-            console.log("Kein Vorname im Datensatz " + JSON.stringify(element));
-        }
-        else if (element[2].length == 0) {
-            console.log("Kein Nachname im Datensatz " + JSON.stringify(element));
-        }
-        else if (element[3].length == 0) {
-            console.log("Kein Geburtsdatum im Datensatz " + JSON.stringify(element));
-        }
-        else if (element[4].length == 0) {
-            console.log("Keine Klassenbezeichnung im Datensatz " + JSON.stringify(element));
-        }
-        else {
-            students[element[0].toLocaleLowerCase()] = element;
-            p++;
-        }
-    });
+    let res = importStudents("config/students.csv");
     //console.log(JSON.stringify(students));
-    console.log(p + " Datensatze von " + records.length + " verarbeitet");
+    students = res.students;
+    console.log(res.imported + " Datensatze von " + res.total + " verarbeitet");
     mailsender = new MailSender_1.MailSender();
 }
 // Für Testzwecke
@@ -90,6 +79,240 @@ function expired(dateString) {
     //console.log("expired");
     return true;
 }
+/**
+ * Generate Google Walletr
+ */
+app.post('/requestgwallet', function (req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const issuerId = process.env.WALLET_ISSUER_ID || config_json_1.default.gwalletIssuerID;
+        const classId = process.env.WALLET_CLASS_ID || config_json_1.default.gwalletClass;
+        var credentials = JSON.parse(fs_1.default.readFileSync("config/gwallet/ausweis-key.json").toString());
+        const httpClient = new google_auth_library_1.GoogleAuth({
+            credentials: credentials,
+            scopes: "https://www.googleapis.com/auth/wallet_object.issuer",
+        });
+        const objectUrl = "https://walletobjects.googleapis.com/walletobjects/v1/genericObject/";
+        let objectResponse;
+        let obj = {};
+        if (req.query.id) {
+            let sid = req.query.id.toString();
+            console.log("ID=" + sid);
+            try {
+                let decrypted = key.decrypt(req.query.id.toString(), 'utf8');
+                let obj = JSON.parse(decrypted);
+                console.log("Decrypted:" + decrypted);
+                let objectPayload = wb.genGoogleWallet(req, sid, obj);
+                console.log("objPayload:" + JSON.stringify(objectPayload));
+                objectPayload.id = `${issuerId}.${req.body.email.replace(/[^\w.-]/g, "_")}-${classId}`;
+                objectPayload.classId = `${issuerId}.${classId}`;
+                try {
+                    // Ausweis ausstellen
+                    //objectResponse = await httpClient.request({url: objectUrl + objectPayload.id, method: 'GET'});
+                    // Ausweis aktualisieren
+                    console.log("Sende GET/PUT an: " + objectUrl + objectPayload.id);
+                    objectResponse = yield httpClient.request({
+                        url: objectUrl + objectPayload.id,
+                        method: "PUT",
+                        data: objectPayload,
+                    });
+                    console.log("existing object", objectPayload.id);
+                    //console.log("receive:" + JSON.stringify(objectResponse));
+                }
+                catch (err) {
+                    if (err.response && err.response.status === 404) {
+                        console.log("Sende POST an:" +
+                            objectUrl +
+                            " mit BODY: " +
+                            JSON.stringify(objectPayload));
+                        objectResponse = yield httpClient.request({
+                            url: objectUrl,
+                            method: "POST",
+                            data: objectPayload,
+                        });
+                        console.log("new object", objectPayload.id);
+                    }
+                    else {
+                        console.error(err);
+                        throw err;
+                    }
+                }
+                const claims = {
+                    iss: credentials.client_email,
+                    aud: "google",
+                    origins: ["http://localhost:3000"],
+                    typ: "savetowallet",
+                    payload: {
+                        genericObjects: [{ id: objectPayload.id }],
+                    },
+                };
+                const token = jsonwebtoken_1.default.sign(claims, credentials.private_key, {
+                    algorithm: "RS256",
+                });
+                const saveUrl = `https://pay.google.com/gp/v/save/${token}`;
+                res.send(`<a href="${saveUrl}"><img width=\"200px\" src="/img/button.png"></a>`);
+            }
+            catch (_a) {
+                console.log("Failed to Decode!");
+                res.setHeader("content-type", "text/htm");
+                res.send('<p>Wrong ID parameter</p>');
+            }
+        }
+        else {
+            res.setHeader("content-type", "text/htm");
+            res.send('<p>No ID parameter</p>');
+        }
+    });
+});
+/**
+ * Download der CSV Datei für den Admin
+ */
+app.get('/csvDownload', function (req, res) {
+    let uuid = req.query.uuid.toString();
+    if (uuid == adminUUID) {
+        let dif = Date.now() - adminLoginTimestamp;
+        console.log("Login after (ms)" + dif);
+        if (dif > 70000) {
+            res.setHeader("content-type", "text/html");
+            let s = fs_1.default.readFileSync('web/admin.htm', 'utf8');
+            res.statusCode = 200;
+            s = s.replace("<!--error-->", "Session Timeout");
+            res.send(s);
+        }
+        else {
+            const file = `${__dirname}/../config/students.csv`;
+            res.download(file); // Set disposition and send it.        
+        }
+    }
+    else {
+        res.setHeader("content-type", "text/html");
+        let s = fs_1.default.readFileSync('web/admin.htm', 'utf8');
+        res.statusCode = 200;
+        s = s.replace("<!--error-->", "falsche UUID");
+        res.send(s);
+    }
+});
+/**
+ * Upload der CSV Datei für den Admin
+ */
+app.post('/csvUpload', function (req, res) {
+    res.setHeader("content-type", "text/html");
+    let sampleFile;
+    let uploadPath;
+    let s = fs_1.default.readFileSync('src/upload.htm', 'utf8');
+    if (!req.query.uuid) {
+        res.setHeader("content-type", "text/html");
+        let s = fs_1.default.readFileSync('web/admin.htm', 'utf8');
+        res.statusCode = 200;
+        s = s.replace("<!--error-->", "Keine UUID gedeunfen");
+        res.send(s);
+    }
+    let uuid = req.query.uuid.toString();
+    if (uuid == adminUUID) {
+        let dif = Date.now() - adminLoginTimestamp;
+        console.log("Login after (ms)" + dif);
+        if (dif > 70000) {
+            res.setHeader("content-type", "text/html");
+            let s = fs_1.default.readFileSync('web/admin.htm', 'utf8');
+            res.statusCode = 200;
+            s = s.replace("<!--error-->", "Session Timeout");
+            res.send(s);
+        }
+        else {
+            s = s.replace(/<!--uuid-->/g, adminUUID);
+            //console.log("Receive:"+JSON.stringify(req.files));
+            if (!req.files) {
+                res.statusCode = 200;
+                s = s.replace("<!--error-->", "Keine Daten hochgeladen");
+                res.send(s);
+                return;
+            }
+            if (Object.keys(req.files).length === 0) {
+                res.statusCode = 200;
+                s = s.replace("<!--error-->", "Keine Daten hochgeladen!");
+                res.send(s);
+            }
+            try {
+                // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+                sampleFile = req.files.csv;
+                console.log("File name:" + JSON.stringify(sampleFile));
+                let filename = sampleFile.name;
+                let parts = filename.split(".");
+                let suffix = parts[parts.length - 1];
+                console.log("Suffix is: " + suffix);
+                if (suffix != "csv") {
+                    res.statusCode = 200;
+                    s = s.replace("<!--error-->", "ungültiges suffix");
+                    res.send(s);
+                }
+                else {
+                    uploadPath = __dirname + '/../config/students-upload.csv';
+                    // Use the mv() method to place the file somewhere on your server
+                    sampleFile.mv(uploadPath, function (err) {
+                        if (err) {
+                            console.log("Err:" + err);
+                            res.statusCode = 200;
+                            s = s.replace("<!--error-->", err);
+                            res.send(s);
+                        }
+                        else {
+                            try {
+                                let ir = importStudents("config/students-upload.csv");
+                                fs_1.default.cpSync("config/students-upload.csv", "config/students.csv");
+                                console.log(ir.imported + " Datensätze von " + ir.total + " verarbeitet");
+                                res.statusCode = 200;
+                                students = ir.students;
+                                s = s.replace("<!--error-->", "<h5>" + ir.imported + " Datensätze von " + ir.total + " verarbeitet!</h5>" + ir.htmlErrorOutput);
+                                res.send(s);
+                            }
+                            catch (e) {
+                                console.log("Exception:" + JSON.stringify(e));
+                                res.statusCode = 200;
+                                s = s.replace("<!--error-->", "Fehler beim Upload:" + e.code + " " + e.record);
+                                res.send(s);
+                            }
+                            fs_1.default.rmSync("config/students-upload.csv");
+                        }
+                    });
+                }
+            }
+            catch (error) {
+                console.log("Err:" + error);
+                res.statusCode = 200;
+                s = s.replace("<!--error-->", error);
+                res.send(s);
+            }
+        }
+    }
+    else {
+        res.setHeader("content-type", "text/html");
+        let s = fs_1.default.readFileSync('web/admin.htm', 'utf8');
+        res.statusCode = 200;
+        s = s.replace("<!--error-->", "Wrong UID");
+        res.send(s);
+    }
+});
+/**
+ * Anmeldung als admin
+ */
+app.post('/admin', function (req, res) {
+    console.log("body:" + JSON.stringify(req.body));
+    res.setHeader("content-type", "text/html");
+    if (req.body.password == config_json_1.default.adminPassword) {
+        let s = fs_1.default.readFileSync('src/upload.htm', 'utf8');
+        adminUUID = uuidv4();
+        adminLoginTimestamp = Date.now();
+        console.log("Generate " + adminUUID + " Timestamp=" + adminLoginTimestamp);
+        s = s.replace(/<!--uuid-->/g, adminUUID);
+        res.statusCode = 200;
+        res.send(s);
+    }
+    else {
+        let s = fs_1.default.readFileSync('web/admin.htm', 'utf8');
+        res.statusCode = 200;
+        s = s.replace("<!--error-->", "falsches Kennwort");
+        res.send(s);
+    }
+});
 /**
  * Endpunkt zum Upload der Schülerbilder
  */
@@ -848,5 +1071,54 @@ function validUser(obj, students) {
         }
     });
     return found;
+}
+function importStudents(path) {
+    let ir = new ImportResult_1.ImportResult();
+    const records = (0, sync_1.parse)(fs_1.default.readFileSync(path, 'latin1'), {
+        delimiter: ';',
+        from_line: 2,
+        trim: true
+    });
+    //console.log(JSON.stringify(records));
+    var p = 0;
+    let st = {};
+    ir.total = records.length;
+    records.forEach((element) => {
+        if (element.length < 5) {
+            console.error("Datensatz hat nicht genügend Elemente" + JSON.stringify(element));
+            ir.htmlErrorOutput = ir.htmlErrorOutput + "<p>" + "Datensatz hat nicht genügend Elemente " + JSON.stringify(element) + "</p>\r\n";
+        }
+        else if (element[0].length == 0) {
+            console.error("Keine EMail Adresse im Datensatz " + JSON.stringify(element));
+            ir.htmlErrorOutput = ir.htmlErrorOutput + "<p>" + "Keine EMail Adresse im Datensatz " + JSON.stringify(element) + "</p>\r\n";
+        }
+        else if (element[1].length == 0) {
+            console.error("Kein Vorname im Datensatz " + JSON.stringify(element));
+            ir.htmlErrorOutput = ir.htmlErrorOutput + "<p>" + "Kein Vorname im Datensatz " + JSON.stringify(element) + "</p>\r\n";
+        }
+        else if (element[2].length == 0) {
+            console.error("Kein Nachname im Datensatz " + JSON.stringify(element));
+            ir.htmlErrorOutput = ir.htmlErrorOutput + "<p>" + "Kein Nachname im Datensatz " + JSON.stringify(element) + "</p>\r\n";
+        }
+        else if (element[3].length == 0) {
+            console.error("Kein Geburtsdatum im Datensatz " + JSON.stringify(element));
+            ir.htmlErrorOutput = ir.htmlErrorOutput + "<p>" + "Kein Geburtsdatum im Datensatz " + JSON.stringify(element) + "</p>\r\n";
+        }
+        else if (element[3].split("-").length != 3) {
+            console.error("Geburtsdatum im falschen Format " + JSON.stringify(element));
+            ir.htmlErrorOutput = ir.htmlErrorOutput + "<p>" + "Geburtsdatum im falschen Format " + JSON.stringify(element) + "</p>\r\n";
+        }
+        else if (element[4].length == 0) {
+            console.error("Keine Klassenbezeichnung im Datensatz " + JSON.stringify(element));
+            ir.htmlErrorOutput = ir.htmlErrorOutput + "<p>" + "Keine Klassenbezeichnung im Datensatz " + JSON.stringify(element) + "</p>\r\n";
+        }
+        else {
+            st[element[0].toLocaleLowerCase()] = element;
+            p++;
+        }
+    });
+    ir.imported = p;
+    ir.students = st;
+    return ir;
 }
 //# sourceMappingURL=index.js.map

@@ -11,8 +11,26 @@ import qrcode from 'qrcode'
 import { format, parse } from "date-fns";
 import fetch from "node-fetch";
 import { getTrailingCommentRanges } from "typescript";
+import { Request, Response } from "express-serve-static-core";
+import { ParsedQs } from "qs";
+import { config } from "process";
 
 export class WalletBuilder {
+
+    genGoogleWallet(req: any, sid: string, obj: any) {
+        sid = sid.split("+").join("%2B");
+        var googlewallet=JSON.parse(fs.readFileSync("config/gwallet/generic-pass.json").toString())
+        var config = JSON.parse(fs.readFileSync("config/config.json", 'utf8'));
+        
+        googlewallet.header.defaultValue.value = obj.vn + " "+obj.nn
+        googlewallet.barcode.value = req.protocol + '://' + req.get('host') +"/validate?id="+sid
+        googlewallet.textModulesData[0].body = format(new Date(obj.gd), "dd.MM.yyyy")
+        googlewallet.textModulesData[1].body = obj.kl;
+        googlewallet.textModulesData[2].body = format(new Date(config.validDate), "dd.MM.yyyy")
+        googlewallet.textModulesData[3].body = config.schuljahr
+        console.log(JSON.stringify(googlewallet));
+        return googlewallet;
+    }
 
     constructor() {
     }

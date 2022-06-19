@@ -23,6 +23,19 @@ const qrcode_1 = __importDefault(require("qrcode"));
 const date_fns_1 = require("date-fns");
 const node_fetch_1 = __importDefault(require("node-fetch"));
 class WalletBuilder {
+    genGoogleWallet(req, sid, obj) {
+        sid = sid.split("+").join("%2B");
+        var googlewallet = JSON.parse(fs_1.default.readFileSync("config/gwallet/generic-pass.json").toString());
+        var config = JSON.parse(fs_1.default.readFileSync("config/config.json", 'utf8'));
+        googlewallet.header.defaultValue.value = obj.vn + " " + obj.nn;
+        googlewallet.barcode.value = req.protocol + '://' + req.get('host') + "/validate?id=" + sid;
+        googlewallet.textModulesData[0].body = (0, date_fns_1.format)(new Date(obj.gd), "dd.MM.yyyy");
+        googlewallet.textModulesData[1].body = obj.kl;
+        googlewallet.textModulesData[2].body = (0, date_fns_1.format)(new Date(config.validDate), "dd.MM.yyyy");
+        googlewallet.textModulesData[3].body = config.schuljahr;
+        console.log(JSON.stringify(googlewallet));
+        return googlewallet;
+    }
     constructor() {
     }
     genPng(req, res, id, s) {
