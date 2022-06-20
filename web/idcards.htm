@@ -99,7 +99,7 @@
 
                     <div class="col-12">
                         <div class="row justify-content-center">
-                            <div id="qco" class="col-md-3 mb-3 text-center">
+                            <div id="qco" class="col-md-2 mb-2 text-center">
                                 <div class="qr-code p-1 rounded mb-3">
                                     <img src="<!--qrcode-->" width="200px">
                                 </div>
@@ -114,20 +114,9 @@
                                     <li>Zeigen Sie den Ausweis in der Wallet vor, wenn Sie aufgefordert werden Ihren
                                         Schülerausweis vorzuzeigen.</li>
                                 </ol>
-                                <span class="small"><em>* Android-Usern empfehlen wir die App
-                                        <a href="https://play.google.com/store/apps/details?id=io.walletpasses.android&hl=de"
-                                            target="_blank">WalletPasses</a>bzw. Sie tragen im nebenstehenden Feld ihre GMail Adresse ein und nutzen die App <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.walletnfcrel&hl=de" target="_blank">Google Wallet</a></em></span>
+                                <span class="small"><em>* Android-Usern müssen ggf noch die App <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.walletnfcrel&hl=de" target="_blank">Google Wallet</a> installieren.</em></span>
                             </div>
-                            <div class="col-2 col-md-2 anleitung text-white">
-                                <ol class="small">
-                                <p>Tragen Sie hier ihre gmail Adresse ein, um einen neues Wallet zu erzeugen und fügen Sie es anschließend ihrem Wallet hinzu</p>
-                                </ol>
-                                <form id="form">
-                                    
-                                    <input required type="email" id="email" placeholder="GMail address">
-                                    <input type="submit" value="Create pass" id="submit">
-
-                                </form>
+                            <div class="col-2 col-md-2 anleitung text-white">                                                                
                                 <div id="button"></div>
                             </div>
                         </div>
@@ -144,6 +133,15 @@
     </footer>
     <script type="text/javascript">
         $(document).ready(function (e) {
+            fetch(`/requestgwallet?id=<!--id-->`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            }).then(res => {
+                return res.text();
+            }).then(button => {
+                document.getElementById('button').innerHTML = button;
+                $("#form").hide()
+            });
 
             // Upload-Icon ausgeben, wenn Platzhalterfoto vorhanden
             if($("#image").attr('src').indexOf("anonym") != -1) {
@@ -155,20 +153,6 @@
                 $("#file:hidden").trigger('click');
             });
 
-            document.getElementById('form').addEventListener('submit', e => {
-                e.preventDefault();
-                const email = document.getElementById('email').value;
-                fetch(`/requestgwallet?id=<!--id-->`, {
-                    method: 'POST',
-                    body: `email=${email}`,
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-                }).then(res => {
-                    return res.text();
-                }).then(button => {
-                    document.getElementById('button').innerHTML = button;
-                    $("#form").hide()
-                });
-            });
         });
 
         function UploadAvatar(img) {   

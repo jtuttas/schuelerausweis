@@ -93,7 +93,7 @@ function expired(dateString: string): boolean {
 /**
  * Generate Google Walletr
  */
-app.post('/requestgwallet', async function (req, res) {
+app.get('/requestgwallet', async function (req, res) {
     const issuerId = process.env.WALLET_ISSUER_ID || config.gwalletIssuerID;
     const classId = process.env.WALLET_CLASS_ID || config.gwalletClass
     var credentials = JSON.parse(fs.readFileSync("config/gwallet/ausweis-key.json").toString());
@@ -117,13 +117,11 @@ app.post('/requestgwallet', async function (req, res) {
             console.log("Decrypted:" + decrypted);
             let objectPayload = wb.genGoogleWallet(req, sid, obj);
             console.log("objPayload:" + JSON.stringify(objectPayload));
-            objectPayload.id = `${issuerId}.${req.body.email.replace(
-                /[^\w.-]/g,
-                "_"
-            )}-${classId}`;
+            var crypto = require('crypto');
+            var name = obj.kl + "_" + obj.nn + "_" + obj.vn;
+            var hash = crypto.createHash('md5').update(name).digest('hex');            
+            objectPayload.id = issuerId+"."+hash+"-"+classId;
             objectPayload.classId = `${issuerId}.${classId}`;
-
-
 
             try {
                 // Ausweis ausstellen
@@ -170,7 +168,7 @@ app.post('/requestgwallet', async function (req, res) {
                 algorithm: "RS256",
             });
             const saveUrl = `https://pay.google.com/gp/v/save/${token}`;
-            res.send(`<a href="${saveUrl}"><img width=\"200px\" src="/img/button.png"></a>`);
+            res.send("<img width=\"200px\" src=\"/qrcode?data=" + saveUrl +"\"></br></br><a href="+saveUrl+"><img width=\"200px\" src=\"/img/button.png\"></a>");
         }
         catch {
             console.log("Failed to Decode!");
