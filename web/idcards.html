@@ -24,7 +24,8 @@
         <header
             class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-2 mb-2 border-bottom">
             <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
-                <img src="img/mmbbs-logo.svg" alt="" height="60" onerror="this.onerror=null; this.src='img/mmbbs-logo.svg'">
+                <img src="img/mmbbs-logo.svg" alt="" height="60"
+                    onerror="this.onerror=null; this.src='img/mmbbs-logo.svg'">
             </a>
 
             <div class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
@@ -37,17 +38,21 @@
                                 </div>
                                 <i class="bi bi-upload"></i>
                             </div>
-                        <img id="image" class="rounded" src="<!--img-->" width="90px">
+                            <img id="image" class="rounded" src="<!--img-->" width="90px">
                         </div>
                     </a>
                 </div>
                 <span>
                     Angemeldet als:
-                    <p style="margin-bottom: 10px;"><b><!--username--></b></p>
-                    <a href="https://idcard.mmbbs.de" type="button" class="btn btn-primary"><i class="bi bi-box-arrow-right"></i> Abmelden</a>
+                    <p style="margin-bottom: 10px;"><b>
+                            <!--username-->
+                        </b></p>
+                    <a href="https://idcard.mmbbs.de" type="button" class="btn btn-primary"><i
+                            class="bi bi-box-arrow-right"></i> Abmelden</a>
                 </span>
-                              
-                <input type="file" accept="image/png, image/jpeg" capture="camera" id="file" name="file" onchange="UploadAvatar(this)"/>
+
+                <input type="file" accept="image/png, image/jpeg" capture="camera" id="file" name="file"
+                    onchange="UploadAvatar(this)" />
             </div>
         </header>
     </div>
@@ -83,14 +88,14 @@
 
                     <div class="col-12">
                         <div class="row justify-content-center">
-                            <div id="qco" class="col-md-4 mb-4 text-center">
+                            <div id="qco" class="col-md-2 mb-2 text-center">
                                 <div class="qr-code p-1 rounded mb-3">
                                     <img src="<!--qrcode-->" width="200px">
                                 </div>
                                 <a href="<!--wallet-->"><img src="img/apple-wallet.png" width="150px"></a>
                             </div>
 
-                            <div class="col-11 col-md-8 anleitung text-white">
+                            <div class="col-8 col-md-6 anleitung text-white">
                                 <span><strong>Anleitung: </strong></span>
                                 <ol class="small">
                                     <li>Scannen Sie den QR-Code mit Ihrem Handy (Kamera).</li>
@@ -98,13 +103,19 @@
                                     <li>Zeigen Sie den Ausweis in der Wallet vor, wenn Sie aufgefordert werden Ihren
                                         Schülerausweis vorzuzeigen.</li>
                                 </ol>
-                                <span class="small"><em>* Android-Usern empfehlen wir die App
-                                        <a href="https://play.google.com/store/apps/details?id=io.walletpasses.android&hl=de"
-                                            target="_blank">WalletPasses</a></em></span>
+                                <span class="small"><em>* Android-Usern müssen ggf noch die App <a
+                                            href="https://play.google.com/store/apps/details?id=com.google.android.apps.walletnfcrel&hl=de"
+                                            target="_blank">Google Wallet</a> installieren.</em></span>
+                            </div>
+                            <div class="col-2 col-md-2 anleitung text-white">
+                                <div id="button">
+                                    <img src="img/spinner.gif">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
     </main>
 
@@ -116,9 +127,18 @@
     </footer>
     <script type="text/javascript">
         $(document).ready(function (e) {
+            fetch(`/requestgwallet?id=<!--id-->`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            }).then(res => {
+                return res.text();
+            }).then(button => {
+                document.getElementById('button').innerHTML = button;
+                $("#form").hide()
+            });
 
             // Upload-Icon ausgeben, wenn Platzhalterfoto vorhanden
-            if($("#image").attr('src').indexOf("anonym") != -1) {
+            if ($("#image").attr('src').indexOf("anonym") != -1) {
                 $('.avatar-overlay i').show();
             }
 
@@ -126,40 +146,42 @@
                 e.preventDefault();
                 $("#file:hidden").trigger('click');
             });
+
+
         });
 
-        function UploadAvatar(img) {   
- 
-        //Prüfe ob HTML5 zulässig ist
-        if (typeof (img.files) != "undefined") {
+        function UploadAvatar(img) {
 
-            //Initiiere FileReader
-            var reader = new FileReader();
+            //Prüfe ob HTML5 zulässig ist
+            if (typeof (img.files) != "undefined") {
 
-            //Content aus FileReader auslesen
-            reader.readAsDataURL(img.files[0]);
-            reader.onload = function (e) {
+                //Initiiere FileReader
+                var reader = new FileReader();
 
-                //Initiiere JavaScript Image Objekt
-                var image = new Image();
-                image.src = e.target.result;
-                       
-                //Prüfe Auflösung
-                image.onload = function () {
-                    var height = this.height;
-                    var width = this.width;
-                    if (height < 5000 || width < 5000) {
-                        
-                        // Upload intiieren
-                        console.log('Start Upload');
-                    
-                        var file_data = img.files[0];
-                        var form_data = new FormData();
-                        form_data.append('image', file_data);
-                        $('.avatar-overlay i').hide();
-                        $('.spinner-border').fadeIn();
-                                        
-                        $.ajax({
+                //Content aus FileReader auslesen
+                reader.readAsDataURL(img.files[0]);
+                reader.onload = function (e) {
+
+                    //Initiiere JavaScript Image Objekt
+                    var image = new Image();
+                    image.src = e.target.result;
+
+                    //Prüfe Auflösung
+                    image.onload = function () {
+                        var height = this.height;
+                        var width = this.width;
+                        if (height < 5000 || width < 5000) {
+
+                            // Upload intiieren
+                            console.log('Start Upload');
+
+                            var file_data = img.files[0];
+                            var form_data = new FormData();
+                            form_data.append('image', file_data);
+                            $('.avatar-overlay i').hide();
+                            $('.spinner-border').fadeIn();
+
+                            $.ajax({
                                 url: '/image?id=<!--id-->', // point to server-side controller method
                                 dataType: 'json', // what to expect back from the server
                                 cache: false,
@@ -167,32 +189,32 @@
                                 processData: false,
                                 data: form_data,
                                 type: 'post',
-                            success: function (response) {
-                                console.log('Receive:' + JSON.stringify(response));
-                                if (response.sucess) {
-                                    $('.spinner-border').fadeOut();
+                                success: function (response) {
+                                    console.log('Receive:' + JSON.stringify(response));
+                                    if (response.sucess) {
+                                        $('.spinner-border').fadeOut();
 
-                                    // IMG vom Server neu laden, workaround chaching
-                                    var d = new Date();
-                                    $("#image").attr("src","/image?id=<!--id-->&"+d.getTime());
+                                        // IMG vom Server neu laden, workaround chaching
+                                        var d = new Date();
+                                        $("#image").attr("src", "/image?id=<!--id-->&" + d.getTime());
+                                    }
+                                },
+                                error: function (response) {
+                                    console.log('Receive:' + JSON.stringify(response));
+                                    $('.avatar-overlay i').hide();
                                 }
-                            },
-                            error: function (response) {
-                                console.log('Receive:' + JSON.stringify(response));
-                                $('.avatar-overlay i').hide();
-                            }
-                        });
-                    } else {
-                        alert("Die Bildauflösung muss kleiner 5000px x 5000px sein.");
-                        return false;
+                            });
+                        } else {
+                            alert("Die Bildauflösung muss kleiner 5000px x 5000px sein.");
+                            return false;
+                        }
                     }
-                } 
+                }
+            } else {
+                alert("Der Browser unterstützt nicht HTML5.");
+                return false;
             }
-        } else {
-            alert("Der Browser unterstützt nicht HTML5.");
-            return false;
-        }       
-    }
+        }
     </script>
 </body>
 
