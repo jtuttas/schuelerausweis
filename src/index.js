@@ -621,6 +621,7 @@ app.post("/wallet", (req, res) => {
     let obj2 = {};
     let user = req.body.user;
     user = user.trim().toLowerCase();
+    user = user.split("@")[0];
     let pwd = req.body.pwd;
     //pwd =decodeURIComponent(pwd)
     let data = {
