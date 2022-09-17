@@ -24,6 +24,7 @@ const date_fns_1 = require("date-fns");
 const node_fetch_1 = __importDefault(require("node-fetch"));
 class WalletBuilder {
     genGoogleWallet(req, sid, obj) {
+        console.log("genGoogleWallet");
         sid = sid.split("+").join("%2B");
         var googlewallet = JSON.parse(fs_1.default.readFileSync("config/gwallet/generic-pass.json").toString());
         var config = JSON.parse(fs_1.default.readFileSync("config/config.json", 'utf8'));
@@ -33,6 +34,7 @@ class WalletBuilder {
         googlewallet.textModulesData[1].body = obj.kl;
         googlewallet.textModulesData[2].body = (0, date_fns_1.format)(new Date(config.validDate), "dd.MM.yyyy");
         googlewallet.textModulesData[3].body = config.schuljahr;
+        googlewallet.validTimeInterval.end.date = config.validDate + "T23:20:50.52Z";
         console.log(JSON.stringify(googlewallet));
         return googlewallet;
     }
