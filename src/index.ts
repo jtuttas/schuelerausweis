@@ -707,6 +707,7 @@ app.post("/wallet", (req, res) => {
 
 
     if (fs.existsSync("config/students.csv")) {
+        data.benutzer = req.body.user.toLowerCase();
         if (students[data.benutzer] != undefined) {
             console.log("Found " + data.benutzer);
             res.setHeader("content-type", "text/html");
