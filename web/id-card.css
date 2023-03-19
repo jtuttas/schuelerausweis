@@ -16,6 +16,10 @@ a[type="button"] {
   color: #145189;
 }
 
+.tuttas {
+  text-align: center;
+}
+
 .anleitung a {
   text-decoration: dotted;
   color: #fff;
