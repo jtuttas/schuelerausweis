@@ -44,6 +44,7 @@ Die Datei **config.json** hat dabei folgende Einträge.
 {
     "validDate": "2022-08-30",
     "schuljahr": "21/22",
+    "adminPassword":"geheim",
     "mailer": {
         "host": "ex.mmbbs.de",
         "port": 587,
@@ -69,6 +70,7 @@ Die Datei **config.json** hat dabei folgende Einträge.
 
 - **validDate**: Das Daten an dem der Ausweis abläuft.
 - **schuljkahr**: Das Schuljahr in dem der Ausweis gültig ist
+- **adminPassword**: Kennwort für den Backendbereich (Möglichkeit zum Hochladen des CVS Datei) und *https://{sever}/admin.htm*
 - **mailer**: SMTP Konfiguration für den Node Mailer
 - **mailfrom**: Absender Adresse
 - **mailSubject**: Betreff der eMail
