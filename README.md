@@ -32,7 +32,7 @@ Alle wichtigen Dateien befinden sich im Ordner **config**. Hier finden sich die 
 
 ![config](configFiles.png)
 
-- **AppleWWDRCA.pem**, **signerCert.pem**, **passkey.pem** Zertifikate für IOS Wallet
+- **AppleWWDRCA.pem**, **signerCert.pem**, **passkey.pem** Zertifikate für IOS Wallet (wie hier beschrieben <https://github.com/alexandercerutti/passkit-generator/wiki/Generating-Certificates>)
 - **ausweis.private** RSA Key
 - **ausweis.xml** XML Version des RSA Keys (wird für die Powershell Scripte benötigt)
 - **server.cert** und **server.key** für die https-Verschlüsselung notwendig
